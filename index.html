@@ -1,3 +1,12 @@
+Here is the **Final Updated Code**.
+
+I have added a script that intercepts the right-click action and prevents the menu from opening. This, combined with the text selection disable I added earlier, makes the site feel more like an "app" or a video game interface.
+
+### **Change Made:**
+
+* **JavaScript:** Added an event listener for `contextmenu` that runs `e.preventDefault()`, effectively killing the right-click menu.
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -31,6 +40,12 @@
             cursor: none;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             transition: background-color 0.2s ease;
+            
+            /* Disable Text Selection Globally */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
 
         /* --- Realistic Space Background Layers --- */
@@ -56,7 +71,6 @@
             background: transparent; 
         }
 
-        /* Small distant stars */
         .stars {
             background-image: radial-gradient(white 1px, transparent 1.5px);
             background-size: 50px 50px;
@@ -64,7 +78,6 @@
             animation: space-drift var(--star-speed) linear infinite;
         }
 
-        /* Medium stars */
         .stars2 {
             background-image: radial-gradient(white 1.5px, transparent 2px);
             background-size: 100px 100px;
@@ -73,7 +86,6 @@
             animation: space-drift calc(var(--star-speed) * 0.8) linear infinite;
         }
 
-        /* Large bright stars with twinkling */
         .stars3 {
             background-image: radial-gradient(#fff 2px, transparent 3px);
             background-size: 200px 200px;
@@ -89,39 +101,44 @@
             width: 100%;
             height: 100%;
             background: radial-gradient(circle at 50% 50%, rgba(20, 20, 40, 0.4), transparent 80%);
-            z-index: -1;
+            z-index: -1; 
             pointer-events: none;
         }
 
-        /* --- Falling (Shooting) Star Styling --- */
+        /* --- Scribble Trail Canvas --- */
+        #scribbleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; 
+            z-index: 1; /* Behind text, above stars */
+        }
+
+        /* --- Falling Star Styling --- */
         .falling-star {
             position: fixed;
             height: 2px;
             background: linear-gradient(45deg, rgba(255,255,255,1), transparent);
             border-radius: 999px;
             filter: drop-shadow(0 0 6px rgba(255,255,255,1));
-            z-index: 1; /* Behind text but above BG */
+            z-index: 1; 
             pointer-events: none;
             opacity: 0;
             transform: rotate(-45deg);
         }
 
         @keyframes shoot {
-            0% {
-                transform: translate(0, 0) rotate(-45deg);
-                opacity: 1;
-            }
-            100% {
-                transform: translate(-300px, 300px) rotate(-45deg); /* Moves Left and Down */
-                opacity: 0;
-            }
+            0% { transform: translate(0, 0) rotate(-45deg); opacity: 1; }
+            100% { transform: translate(-300px, 300px) rotate(-45deg); opacity: 0; }
         }
 
         /* --- UFO Styling --- */
         .ufo-container {
             position: fixed;
-            left: -150px; /* Start off-screen */
-            z-index: 5; /* Behind text, in front of stars */
+            left: -150px; 
+            z-index: 5; 
             font-size: 3rem;
             filter: drop-shadow(0 0 10px rgba(0, 255, 0, 0.5));
             pointer-events: none;
@@ -149,10 +166,9 @@
 
         /* --- WARP SPEED STATE --- */
         body.warp-active {
-            background-color: #000510; /* Slight blue tint */
+            background-color: #000510; 
         }
 
-        /* Streaking effect for stars */
         body.warp-active .stars, 
         body.warp-active .stars2, 
         body.warp-active .stars3 {
@@ -162,10 +178,9 @@
             transform: scaleY(1.5); 
         }
         
-        /* Speed up text */
         body.warp-active .ticker-move {
-            animation-duration: 2s; /* Very fast */
-            filter: blur(2px); /* Motion blur on text */
+            animation-duration: 2s; 
+            filter: blur(2px); 
         }
 
         /* --- Cursor Star Follower --- */
@@ -200,10 +215,9 @@
             justify-content: center;
             align-items: center;
             width: 100%;
-            z-index: 10;
+            z-index: 10; 
         }
 
-        /* --- Seamless Stock Ticker --- */
         .ticker-wrap {
             width: 100%;
             overflow: hidden;
@@ -222,7 +236,7 @@
             font-size: 10vw; 
             color: #ffffff;
             padding-right: 100px; 
-            text-shadow: 0 0 10px rgba(0,0,0,0.5); 
+            text-shadow: 0 0 10px rgba(0,0,0,0.5);
         }
 
         @keyframes ticker-seamless {
@@ -230,7 +244,6 @@
             100% { transform: translateX(-50%); }
         }
 
-        /* --- Social Icons --- */
         .social-icons-container {
             margin-top: 50px;
             display: flex;
@@ -248,11 +261,10 @@
 
         .social-icon:hover {
             transform: scale(1.2);
-            color: #0ef; /* Electric Cyan */
+            color: #0ef; 
             text-shadow: 0 0 20px rgba(0, 238, 255, 0.8), 0 0 40px rgba(0, 238, 255, 0.4); 
         }
 
-        /* --- Footer Section --- */
         .footer-container {
             width: 100%;
             padding-bottom: 20px;
@@ -308,6 +320,8 @@
         <div class="stars3"></div>
     </div>
 
+    <canvas id="scribbleCanvas"></canvas>
+
     <div id="ufo" class="ufo-container">🛸</div>
 
     <div class="cursor-star" id="cursorStar"></div>
@@ -342,25 +356,79 @@
     </div>
 
     <script>
-        // --- Cursor Logic ---
+        // --- 1. Cursor & Scribble Logic ---
         const cursorStar = document.getElementById('cursorStar');
+        const canvas = document.getElementById('scribbleCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Set canvas size
+        let width, height;
+        function resizeCanvas() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Mouse Tracking
+        let mouseX = width / 2;
+        let mouseY = height / 2;
+        let lastX = mouseX;
+        let lastY = mouseY;
+
         document.addEventListener('mousemove', (e) => {
-            cursorStar.style.left = e.clientX + 'px';
-            cursorStar.style.top = e.clientY + 'px';
+            mouseX = e.clientX;
+            mouseY = e.clientY;
             
-            // Subtle parallax on nebula
+            // Move the star cursor
+            cursorStar.style.left = mouseX + 'px';
+            cursorStar.style.top = mouseY + 'px';
+            
+            // Parallax Nebula
             const moveX = (e.clientX * -0.01);
             const moveY = (e.clientY * -0.01);
             document.querySelector('.nebula').style.transform = `translate(${moveX}px, ${moveY}px)`;
         });
 
-        // --- Warp Speed Easter Egg ---
+        // Loop for Scribble Drawing & Fading
+        function renderScribble() {
+            ctx.save();
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'; 
+            ctx.fillRect(0, 0, width, height);
+            ctx.restore();
+
+            // Draw line from last position to new position
+            ctx.beginPath();
+            ctx.strokeStyle = '#0ef'; // Electric Cyan
+            ctx.lineWidth = 2;
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = '#0ef';
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(mouseX, mouseY);
+            ctx.stroke();
+
+            // Update last position
+            lastX = mouseX;
+            lastY = mouseY;
+
+            requestAnimationFrame(renderScribble);
+        }
+        renderScribble(); 
+
+
+        // --- 2. Warp Speed Easter Egg ---
         document.addEventListener('mousedown', () => document.body.classList.add('warp-active'));
         document.addEventListener('mouseup', () => document.body.classList.remove('warp-active'));
         document.addEventListener('touchstart', () => document.body.classList.add('warp-active'));
         document.addEventListener('touchend', () => document.body.classList.remove('warp-active'));
 
-        // --- UFO Flyby Logic ---
+        // --- 3. UFO Flyby Logic ---
         const ufo = document.getElementById('ufo');
 
         function triggerUFO() {
@@ -379,40 +447,31 @@
         }
         setTimeout(triggerUFO, 2000);
 
-        // --- NEW: Falling Stars Logic ---
+        // --- 4. Falling Stars Logic ---
         function createFallingStar() {
             const star = document.createElement('div');
             star.classList.add('falling-star');
-
-            // Random width between 100px and 200px (length of tail)
             const length = Math.random() * 100 + 100;
             star.style.width = length + 'px';
-
-            // Random position: Start anywhere from top -20% to 50% height, and anywhere horizontal
-            // We ensure it starts slightly off screen or high up so it falls IN view
             star.style.left = Math.random() * 100 + 'vw';
             star.style.top = Math.random() * 50 - 20 + 'vh'; 
-
-            // Random duration for the fall
-            const duration = Math.random() * 1 + 1; // 1 to 2 seconds
+            const duration = Math.random() * 1 + 1;
             star.style.animation = `shoot ${duration}s ease-out forwards`;
-
             document.body.appendChild(star);
-
-            // Clean up DOM after animation ends
-            setTimeout(() => {
-                star.remove();
-            }, duration * 1000);
-
-            // Schedule next falling star (Random between 2s and 6s)
+            setTimeout(() => { star.remove(); }, duration * 1000);
             const nextStarTime = Math.random() * 4000 + 2000;
             setTimeout(createFallingStar, nextStarTime);
         }
-
-        // Initialize falling stars
         createFallingStar();
+
+        // --- 5. Disable Right Click ---
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+        });
 
     </script>
 
 </body>
 </html>
+
+```
