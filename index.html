@@ -26,12 +26,12 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            overflow: hidden; /* Important for mobile to stop scrolling */
+            overflow: hidden; 
             cursor: none;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             transition: background-color 0.2s ease;
             
-            /* Disable Text Selection & touch highlights */
+            /* Disable Selection & Highlights */
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
@@ -39,7 +39,7 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* --- Realistic Space Background Layers --- */
+        /* --- Background Layers --- */
         .stars-container {
             position: fixed;
             top: 0;
@@ -104,7 +104,7 @@
             width: 100%;
             height: 100%;
             pointer-events: none; 
-            z-index: 1; 
+            z-index: 1; /* Behind text */
         }
 
         /* --- Falling Star Styling --- */
@@ -367,13 +367,14 @@
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
-        // --- 2. Pointer Tracking (Mouse + Touch) ---
+        // --- 2. Pointer Tracking ---
         let mouseX = width / 2;
         let mouseY = height / 2;
         let lastX = mouseX;
         let lastY = mouseY;
+        let warpTimer;
 
-        // Helper to update position and nebula
+        // Helper to update visual position
         function updatePointer(x, y) {
             mouseX = x;
             mouseY = y;
@@ -385,39 +386,52 @@
             document.querySelector('.nebula').style.transform = `translate(${moveX}px, ${moveY}px)`;
         }
 
-        // Mouse Events
+        // --- Mouse Events (Desktop) ---
+        // Desktop: Click and hold triggers warp immediately (as requested before)
         document.addEventListener('mousemove', (e) => {
             updatePointer(e.clientX, e.clientY);
         });
+        document.addEventListener('mousedown', () => document.body.classList.add('warp-active'));
+        document.addEventListener('mouseup', () => document.body.classList.remove('warp-active'));
 
-        // Touch Events (For Mobile Swipe Support)
+
+        // --- Touch Events (Mobile) ---
+        // Mobile: Swiping (drawing) cancels warp. Hold Still triggers warp.
+
         document.addEventListener('touchstart', (e) => {
-            document.body.classList.add('warp-active');
             const touch = e.touches[0];
-            // IMPORTANT: Reset lastX/Y on new touch so lines don't connect across screen
             lastX = touch.clientX;
             lastY = touch.clientY;
             updatePointer(touch.clientX, touch.clientY);
+
+            // Start timer: If user holds still for 800ms, trigger warp
+            warpTimer = setTimeout(() => {
+                document.body.classList.add('warp-active');
+            }, 800);
+
         }, { passive: false });
 
         document.addEventListener('touchmove', (e) => {
-            // Prevent default scrolling to behave like a drawing app
+            // Cancel default scroll
             if (e.cancelable) e.preventDefault();
+            
+            // Movement detected: Cancel Warp Speed timer!
+            clearTimeout(warpTimer);
+            document.body.classList.remove('warp-active'); // Ensure it turns off if they start moving
+
             const touch = e.touches[0];
             updatePointer(touch.clientX, touch.clientY);
         }, { passive: false });
 
         document.addEventListener('touchend', () => {
+            clearTimeout(warpTimer);
             document.body.classList.remove('warp-active');
         });
-
-        // Mouse Warp Speed triggers
-        document.addEventListener('mousedown', () => document.body.classList.add('warp-active'));
-        document.addEventListener('mouseup', () => document.body.classList.remove('warp-active'));
 
 
         // --- 3. Render Scribble Loop ---
         function renderScribble() {
+            // Use destination-out to fade trails to transparent (showing stars underneath)
             ctx.save();
             ctx.globalCompositeOperation = 'destination-out';
             ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'; 
