@@ -31,12 +31,38 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             transition: background-color 0.2s ease;
             
-            /* Disable Selection & Highlights */
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
+        }
+
+        /* --- Toggle Button --- */
+        #langToggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: rgba(255, 255, 255, 0.8);
+            padding: 8px 16px;
+            font-size: 14px;
+            border-radius: 20px;
+            cursor: pointer; /* Falls back to 'none' due to body style, but clickable */
+            z-index: 1000; /* On top of everything */
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+            font-family: 'Major Mono Display', monospace;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        #langToggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #0ef;
+            color: #0ef;
+            box-shadow: 0 0 10px rgba(0, 238, 255, 0.3);
         }
 
         /* --- Background Layers --- */
@@ -223,6 +249,7 @@
 
         .ticker-item {
             flex-shrink: 0;
+            /* Default Font: English */
             font-family: 'Chonburi', serif;
             font-size: 10vw; 
             color: #ffffff;
@@ -297,7 +324,9 @@
             margin-right: 8px;
         }
 
-        .telugu-signature {
+        /* This class will be toggled between fonts */
+        .signature-text {
+            /* Default Footer: Telugu */
             font-family: 'Sirivennela', sans-serif;
             font-size: 18px;
         }
@@ -316,6 +345,8 @@
         <div class="stars3"></div>
     </div>
 
+    <button id="langToggle" title="Switch Language">English / తెలుగు</button>
+
     <canvas id="scribbleCanvas"></canvas>
 
     <div id="ufo" class="ufo-container">🛸</div>
@@ -325,8 +356,8 @@
     <div class="main-content">
         <div class="ticker-wrap">
             <div class="ticker-move">
-                <div class="ticker-item">Mani Krishna Chandra Teja Chedalla</div>
-                <div class="ticker-item">Mani Krishna Chandra Teja Chedalla</div>
+                <div class="ticker-item main-text">Mani Krishna Chandra Teja Chedalla</div>
+                <div class="ticker-item main-text">Mani Krishna Chandra Teja Chedalla</div>
             </div>
         </div>
 
@@ -347,11 +378,54 @@
         <div class="beaming-line"></div>
         <div class="footer-text">
             <span class="copyright-year">&copy; 2026</span>
-            <span class="telugu-signature">మణి కృష్ణ చంద్ర తేజ చెదళ్ళ</span>
+            <span class="signature-text" id="footerSignature">మణి కృష్ణ చంద్ర తేజ చెదళ్ళ</span>
         </div>
     </div>
 
     <script>
+        // --- 0. Language Toggle Logic ---
+        const langToggle = document.getElementById('langToggle');
+        const mainTexts = document.querySelectorAll('.main-text'); // Selects both ticker items
+        const footerSignature = document.getElementById('footerSignature');
+        
+        // Define Content
+        const enName = "Mani Krishna Chandra Teja Chedalla";
+        const teName = "మణి కృష్ణ చంద్ర తేజ చెదళ్ళ";
+        
+        // Define Fonts
+        const enFont = "'Chonburi', serif";
+        const teFont = "'Sirivennela', sans-serif";
+
+        let isEnglish = true; // State tracker
+
+        langToggle.addEventListener('click', (e) => {
+            // Stop propagation so clicking button doesn't trigger Warp Speed
+            e.stopPropagation(); 
+
+            isEnglish = !isEnglish; // Toggle state
+
+            if (isEnglish) {
+                // English Mode: Main in English, Footer in Telugu
+                mainTexts.forEach(el => {
+                    el.innerText = enName;
+                    el.style.fontFamily = enFont;
+                });
+                footerSignature.innerText = teName;
+                footerSignature.style.fontFamily = teFont;
+                //langToggle.innerText = "English / తెలుగు";
+            } else {
+                // Telugu Mode: Main in Telugu, Footer in English
+                mainTexts.forEach(el => {
+                    el.innerText = teName;
+                    el.style.fontFamily = teFont;
+                });
+                footerSignature.innerText = enName;
+                footerSignature.style.fontFamily = enFont;
+                //langToggle.innerText = "తెలుగు / English";
+            }
+        });
+
+
         // --- 1. Canvas Setup ---
         const cursorStar = document.getElementById('cursorStar');
         const canvas = document.getElementById('scribbleCanvas');
@@ -387,18 +461,21 @@
         }
 
         // --- Mouse Events (Desktop) ---
-        // Desktop: Click and hold triggers warp immediately (as requested before)
         document.addEventListener('mousemove', (e) => {
             updatePointer(e.clientX, e.clientY);
         });
-        document.addEventListener('mousedown', () => document.body.classList.add('warp-active'));
+        document.addEventListener('mousedown', (e) => {
+            // Prevent warp if clicking the toggle button
+            if(e.target === langToggle) return;
+            document.body.classList.add('warp-active');
+        });
         document.addEventListener('mouseup', () => document.body.classList.remove('warp-active'));
 
 
         // --- Touch Events (Mobile) ---
-        // Mobile: Swiping (drawing) cancels warp. Hold Still triggers warp.
-
         document.addEventListener('touchstart', (e) => {
+            if(e.target === langToggle) return;
+
             const touch = e.touches[0];
             lastX = touch.clientX;
             lastY = touch.clientY;
@@ -412,12 +489,10 @@
         }, { passive: false });
 
         document.addEventListener('touchmove', (e) => {
-            // Cancel default scroll
             if (e.cancelable) e.preventDefault();
             
-            // Movement detected: Cancel Warp Speed timer!
             clearTimeout(warpTimer);
-            document.body.classList.remove('warp-active'); // Ensure it turns off if they start moving
+            document.body.classList.remove('warp-active'); 
 
             const touch = e.touches[0];
             updatePointer(touch.clientX, touch.clientY);
@@ -431,7 +506,6 @@
 
         // --- 3. Render Scribble Loop ---
         function renderScribble() {
-            // Use destination-out to fade trails to transparent (showing stars underneath)
             ctx.save();
             ctx.globalCompositeOperation = 'destination-out';
             ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'; 
