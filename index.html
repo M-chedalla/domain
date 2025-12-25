@@ -9,7 +9,7 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Chonburi&family=Major+Mono+Display&family=Sirivennela&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Major+Mono+Display&family=Sirivennela&display=swap" rel="stylesheet">
 
     <style>
         :root {
@@ -31,6 +31,7 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             transition: background-color 0.2s ease;
             
+            /* Disable Selection & Highlights */
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
@@ -38,32 +39,74 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* --- Toggle Button --- */
-        #langToggle {
+        /* --- "Chill/Sport" Style Toggle Switch --- */
+        .toggle-container {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: rgba(255, 255, 255, 0.8);
-            padding: 8px 16px;
-            font-size: 14px;
-            border-radius: 20px;
-            cursor: pointer; /* Falls back to 'none' due to body style, but clickable */
-            z-index: 1000; /* On top of everything */
-            transition: all 0.3s ease;
-            backdrop-filter: blur(4px);
-            font-family: 'Major Mono Display', monospace;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            top: 25px;
+            right: 25px;
+            width: 100px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2); /* Glassy Grey Background */
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 5px;
+            cursor: pointer; /* Falls back to none due to body, handled via JS */
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
-        #langToggle:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: #0ef;
-            color: #0ef;
-            box-shadow: 0 0 10px rgba(0, 238, 255, 0.3);
+        /* The sliding white pill */
+        .toggle-slider {
+            position: absolute;
+            left: 5px;
+            width: 45px;
+            height: 32px;
+            background-color: #ffffff;
+            border-radius: 30px;
+            transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            z-index: 1;
         }
+
+        /* The text labels (EN / తె) */
+        .toggle-label {
+            position: relative;
+            z-index: 2;
+            flex: 1;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 700;
+            transition: color 0.3s ease;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 40px; /* Vertically center */
+        }
+
+        .label-te {
+            font-family: 'Sirivennela', sans-serif;
+            font-size: 12px;
+            padding-top: 2px;
+        }
+
+        /* --- Toggle States --- */
+        
+        /* State: English (Default) */
+        .toggle-container.state-en .toggle-slider {
+            transform: translateX(0px);
+        }
+        .toggle-container.state-en .label-en { color: #000; } /* Active Text Black */
+        .toggle-container.state-en .label-te { color: rgba(255,255,255,0.6); } /* Inactive Text Grey */
+
+        /* State: Telugu */
+        .toggle-container.state-te .toggle-slider {
+            transform: translateX(45px); /* Slide Right */
+        }
+        .toggle-container.state-te .label-en { color: rgba(255,255,255,0.6); }
+        .toggle-container.state-te .label-te { color: #000; }
+
 
         /* --- Background Layers --- */
         .stars-container {
@@ -249,12 +292,14 @@
 
         .ticker-item {
             flex-shrink: 0;
-            /* Default Font: English */
-            font-family: 'Chonburi', serif;
+            /* NEW FONT: Playfair Display */
+            font-family: 'Playfair Display', serif;
             font-size: 10vw; 
             color: #ffffff;
             padding-right: 100px; 
             text-shadow: 0 0 10px rgba(0,0,0,0.5);
+            font-weight: 600;
+            letter-spacing: -1px;
             
             -webkit-user-select: none;
             -moz-user-select: none;
@@ -324,7 +369,6 @@
             margin-right: 8px;
         }
 
-        /* This class will be toggled between fonts */
         .signature-text {
             /* Default Footer: Telugu */
             font-family: 'Sirivennela', sans-serif;
@@ -345,7 +389,11 @@
         <div class="stars3"></div>
     </div>
 
-    <button id="langToggle" title="Switch Language">English / తెలుగు</button>
+    <div class="toggle-container state-en" id="langToggle">
+        <div class="toggle-slider"></div>
+        <div class="toggle-label label-en">EN</div>
+        <div class="toggle-label label-te">తె</div>
+    </div>
 
     <canvas id="scribbleCanvas"></canvas>
 
@@ -385,43 +433,44 @@
     <script>
         // --- 0. Language Toggle Logic ---
         const langToggle = document.getElementById('langToggle');
-        const mainTexts = document.querySelectorAll('.main-text'); // Selects both ticker items
+        const mainTexts = document.querySelectorAll('.main-text'); 
         const footerSignature = document.getElementById('footerSignature');
         
-        // Define Content
         const enName = "Mani Krishna Chandra Teja Chedalla";
         const teName = "మణి కృష్ణ చంద్ర తేజ చెదళ్ళ";
         
-        // Define Fonts
-        const enFont = "'Chonburi', serif";
+        const enFont = "'Playfair Display', serif"; // Updated Font
         const teFont = "'Sirivennela', sans-serif";
 
-        let isEnglish = true; // State tracker
+        let isEnglish = true; 
 
         langToggle.addEventListener('click', (e) => {
-            // Stop propagation so clicking button doesn't trigger Warp Speed
-            e.stopPropagation(); 
+            e.stopPropagation(); // Stop click from triggering warp
 
-            isEnglish = !isEnglish; // Toggle state
+            isEnglish = !isEnglish; 
 
             if (isEnglish) {
-                // English Mode: Main in English, Footer in Telugu
+                // Set State to English
+                langToggle.classList.remove('state-te');
+                langToggle.classList.add('state-en');
+
                 mainTexts.forEach(el => {
                     el.innerText = enName;
                     el.style.fontFamily = enFont;
                 });
                 footerSignature.innerText = teName;
                 footerSignature.style.fontFamily = teFont;
-                //langToggle.innerText = "English / తెలుగు";
             } else {
-                // Telugu Mode: Main in Telugu, Footer in English
+                // Set State to Telugu
+                langToggle.classList.remove('state-en');
+                langToggle.classList.add('state-te');
+
                 mainTexts.forEach(el => {
                     el.innerText = teName;
                     el.style.fontFamily = teFont;
                 });
                 footerSignature.innerText = enName;
                 footerSignature.style.fontFamily = enFont;
-                //langToggle.innerText = "తెలుగు / English";
             }
         });
 
@@ -448,7 +497,6 @@
         let lastY = mouseY;
         let warpTimer;
 
-        // Helper to update visual position
         function updatePointer(x, y) {
             mouseX = x;
             mouseY = y;
@@ -460,28 +508,26 @@
             document.querySelector('.nebula').style.transform = `translate(${moveX}px, ${moveY}px)`;
         }
 
-        // --- Mouse Events (Desktop) ---
+        // Mouse Events
         document.addEventListener('mousemove', (e) => {
             updatePointer(e.clientX, e.clientY);
         });
         document.addEventListener('mousedown', (e) => {
-            // Prevent warp if clicking the toggle button
-            if(e.target === langToggle) return;
+            if(langToggle.contains(e.target)) return; // Don't warp if clicking toggle
             document.body.classList.add('warp-active');
         });
         document.addEventListener('mouseup', () => document.body.classList.remove('warp-active'));
 
 
-        // --- Touch Events (Mobile) ---
+        // Touch Events
         document.addEventListener('touchstart', (e) => {
-            if(e.target === langToggle) return;
+            if(langToggle.contains(e.target)) return;
 
             const touch = e.touches[0];
             lastX = touch.clientX;
             lastY = touch.clientY;
             updatePointer(touch.clientX, touch.clientY);
 
-            // Start timer: If user holds still for 800ms, trigger warp
             warpTimer = setTimeout(() => {
                 document.body.classList.add('warp-active');
             }, 800);
