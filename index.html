@@ -1,0 +1,435 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2685.2">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times; -webkit-text-stroke: #1200e9}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times; -webkit-text-stroke: #1200e9; min-height: 14.0px}
+    span.s1 {text-decoration: underline ; font-kerning: none}
+  </style>
+</head>
+<body>
+<p class="p1"><span class="s1">&lt;!DOCTYPE html&gt;</span></p>
+<p class="p1"><span class="s1">&lt;html lang="en"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;head&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;title&gt;Mani Krishna Chandra Teja Chedalla&lt;/title&gt;</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"&gt;</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;link rel="preconnect" href="https://fonts.googleapis.com"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;link rel="preconnect" href="https://fonts.gstatic.com" crossorigin&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;link href="https://fonts.googleapis.com/css2?family=Chonburi&amp;family=Major+Mono+Display&amp;family=Sirivennela&amp;display=swap" rel="stylesheet"&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;style&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>:root {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>/* Base speeds */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>--star-speed: 100s;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>--ticker-speed: 20s;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>body {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>margin: 0;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>padding: 0;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background-color: #050505;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>color: #fff;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>height: 100vh;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>display: flex;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>flex-direction: column;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>justify-content: center;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>overflow: hidden;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>cursor: none;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>transition: background-color 0.2s ease;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>/* --- Realistic Space Background Layers --- */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.stars-container {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>position: fixed;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>top: 0;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>left: 0;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>width: 100%;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>height: 100%;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>z-index: 0;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>pointer-events: none;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.stars, .stars2, .stars3 {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>position: absolute;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>top: 0;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>left: 0;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>right: 0;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>bottom: 0;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>width: 100%;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>height: 100%;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>display: block;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background: transparent;<span class="Apple-converted-space"> </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>/* Small distant stars */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.stars {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background-image: radial-gradient(white 1px, transparent 1.5px);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background-size: 50px 50px;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>opacity: 0.3;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>animation: space-drift var(--star-speed) linear infinite;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>/* Medium stars */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.stars2 {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background-image: radial-gradient(white 1.5px, transparent 2px);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background-size: 100px 100px;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background-position: 20px 30px;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>opacity: 0.5;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>animation: space-drift calc(var(--star-speed) * 0.8) linear infinite;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>/* Large bright stars with twinkling */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.stars3 {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background-image: radial-gradient(#fff 2px, transparent 3px);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background-size: 200px 200px;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background-position: 50px 80px;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>opacity: 0.8;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>animation: space-drift calc(var(--star-speed) * 0.6) linear infinite, twinkle 4s ease-in-out infinite;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.nebula {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>position: fixed;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>top: 0;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>left: 0;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>width: 100%;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>height: 100%;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background: radial-gradient(circle at 50% 50%, rgba(20, 20, 40, 0.4), transparent 80%);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>z-index: -1;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>pointer-events: none;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>/* --- Falling (Shooting) Star Styling --- */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.falling-star {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>position: fixed;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>height: 2px;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background: linear-gradient(45deg, rgba(255,255,255,1), transparent);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>border-radius: 999px;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>filter: drop-shadow(0 0 6px rgba(255,255,255,1));</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>z-index: 1; /* Behind text but above BG */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>pointer-events: none;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>opacity: 0;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>transform: rotate(-45deg);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>@keyframes shoot {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>0% {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>transform: translate(0, 0) rotate(-45deg);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>opacity: 1;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>100% {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>transform: translate(-300px, 300px) rotate(-45deg); /* Moves Left and Down */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>opacity: 0;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>/* --- UFO Styling --- */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.ufo-container {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>position: fixed;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>left: -150px; /* Start off-screen */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>z-index: 5; /* Behind text, in front of stars */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-size: 3rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>filter: drop-shadow(0 0 10px rgba(0, 255, 0, 0.5));</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>pointer-events: none;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">        </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.ufo-fly-anim {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>animation: ufo-fly linear forwards;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>@keyframes ufo-fly {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>0% { transform: translateX(0) rotate(-5deg); }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>100% { transform: translateX(calc(100vw + 300px)) rotate(5deg); }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>/* --- Animations --- */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>@keyframes space-drift {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>0% { background-position: 0 0; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>100% { background-position: 0 1000px; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>@keyframes twinkle {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>0%, 100% { opacity: 0.8; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>50% { opacity: 0.4; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>/* --- WARP SPEED STATE --- */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>body.warp-active {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background-color: #000510; /* Slight blue tint */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>/* Streaking effect for stars */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>body.warp-active .stars,<span class="Apple-converted-space"> </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>body.warp-active .stars2,<span class="Apple-converted-space"> </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>body.warp-active .stars3 {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>animation-duration: 0.2s;<span class="Apple-converted-space"> </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>opacity: 0.6;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>filter: blur(1px);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>transform: scaleY(1.5);<span class="Apple-converted-space"> </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">        </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>/* Speed up text */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>body.warp-active .ticker-move {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>animation-duration: 2s; /* Very fast */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>filter: blur(2px); /* Motion blur on text */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>/* --- Cursor Star Follower --- */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.cursor-star {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>position: fixed;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>top: 0;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>left: 0;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>width: 15px;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>height: 15px;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background: radial-gradient(circle, #ffffff 10%, transparent 70%);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0.8);<span class="Apple-converted-space"> </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>border-radius: 50%;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>pointer-events: none;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>z-index: 9999;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>transform: translate(-50%, -50%);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>will-change: left, top;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>transition: width 0.2s, height 0.2s, box-shadow 0.2s;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>body.warp-active .cursor-star {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>width: 30px;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>height: 30px;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>box-shadow: 0 0 40px 15px rgba(0, 238, 255, 1);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background: radial-gradient(circle, #0ef 20%, transparent 70%);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>/* --- Main Content Area --- */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.main-content {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>flex-grow: 1;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>display: flex;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>flex-direction: column;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>justify-content: center;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>align-items: center;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>width: 100%;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>z-index: 10;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>/* --- Seamless Stock Ticker --- */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.ticker-wrap {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>width: 100%;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>overflow: hidden;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>white-space: nowrap;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>display: flex;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.ticker-move {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>display: flex;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>animation: ticker-seamless var(--ticker-speed) linear infinite;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.ticker-item {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>flex-shrink: 0;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-family: 'Chonburi', serif;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-size: 10vw;<span class="Apple-converted-space"> </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>color: #ffffff;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>padding-right: 100px;<span class="Apple-converted-space"> </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>text-shadow: 0 0 10px rgba(0,0,0,0.5);<span class="Apple-converted-space"> </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>@keyframes ticker-seamless {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>0% { transform: translateX(0); }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>100% { transform: translateX(-50%); }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>/* --- Social Icons --- */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.social-icons-container {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>margin-top: 50px;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>display: flex;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>gap: 40px;<span class="Apple-converted-space"> </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>z-index: 10;<span class="Apple-converted-space"> </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.social-icon {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-size: 2.5rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>color: #fff;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>text-decoration: none;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>transition: transform 0.3s ease, color 0.3s ease, text-shadow 0.3s ease;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>cursor: none;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.social-icon:hover {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>transform: scale(1.2);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>color: #0ef; /* Electric Cyan */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>text-shadow: 0 0 20px rgba(0, 238, 255, 0.8), 0 0 40px rgba(0, 238, 255, 0.4);<span class="Apple-converted-space"> </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>/* --- Footer Section --- */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.footer-container {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>width: 100%;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>padding-bottom: 20px;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>text-align: center;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>position: relative;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>z-index: 10;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.beaming-line {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>height: 1px;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>width: 100%;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background: linear-gradient(90deg, transparent, #fff, transparent);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background-size: 50% 100%;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background-repeat: no-repeat;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>opacity: 0.7;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>animation: beam 3s infinite linear;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>margin-bottom: 15px;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>@keyframes beam {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>0% { background-position: -50% 0; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>100% { background-position: 150% 0; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.footer-text {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>color: #888;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-size: 14px;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.copyright-year {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-family: 'Major Mono Display', monospace;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-weight: bold;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>letter-spacing: 1px;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>margin-right: 8px;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.telugu-signature {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-family: 'Sirivennela', sans-serif;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-size: 18px;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">        </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>@media (max-width: 600px) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>.ticker-item { font-size: 15vw; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/head&gt;</span></p>
+<p class="p1"><span class="s1">&lt;body&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div class="nebula"&gt;&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div class="stars-container"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="stars"&gt;&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="stars2"&gt;&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="stars3"&gt;&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div id="ufo" class="ufo-container"&gt;🛸&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div class="cursor-star" id="cursorStar"&gt;&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div class="main-content"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="ticker-wrap"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="ticker-move"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div class="ticker-item"&gt;Mani Krishna Chandra Teja Chedalla&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div class="ticker-item"&gt;Mani Krishna Chandra Teja Chedalla&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="social-icons-container"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;a href="mailto:hello@chedalla.in” class="social-icon" title="Email"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;i class="fas fa-envelope"&gt;&lt;/i&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/a&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;a href="https://www.linkedin.com/in/chedalla" class="social-icon" title="LinkedIn"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;i class="fab fa-linkedin"&gt;&lt;/i&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/a&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;a href="https://www.instagram.com/t4teja" class="social-icon" title="Instagram"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;i class="fab fa-instagram"&gt;&lt;/i&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/a&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div class="footer-container"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="beaming-line"&gt;&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="footer-text"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;span class="copyright-year"&gt;&amp;copy; 2026&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;span class="telugu-signature"&gt;మణి కృష్ణ చంద్ర తేజ చెదళ్ళ&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;script&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// --- Cursor Logic ---</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>const cursorStar = document.getElementById('cursorStar');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>document.addEventListener('mousemove', (e) =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>cursorStar.style.left = e.clientX + 'px';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>cursorStar.style.top = e.clientY + 'px';</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>// Subtle parallax on nebula</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const moveX = (e.clientX * -0.01);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const moveY = (e.clientY * -0.01);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>document.querySelector('.nebula').style.transform = `translate(${moveX}px, ${moveY}px)`;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>});</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// --- Warp Speed Easter Egg ---</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>document.addEventListener('mousedown', () =&gt; document.body.classList.add('warp-active'));</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>document.addEventListener('mouseup', () =&gt; document.body.classList.remove('warp-active'));</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>document.addEventListener('touchstart', () =&gt; document.body.classList.add('warp-active'));</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>document.addEventListener('touchend', () =&gt; document.body.classList.remove('warp-active'));</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// --- UFO Flyby Logic ---</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>const ufo = document.getElementById('ufo');</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>function triggerUFO() {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const randomTop = Math.floor(Math.random() * 70) + 10;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const randomDuration = Math.random() * 4 + 3;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>ufo.style.top = randomTop + '%';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>ufo.style.animationDuration = randomDuration + 's';</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>ufo.classList.remove('ufo-fly-anim');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>void ufo.offsetWidth;<span class="Apple-converted-space"> </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>ufo.classList.add('ufo-fly-anim');</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const nextFlightIn = Math.random() * 15000 + 10000;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>setTimeout(triggerUFO, nextFlightIn);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>setTimeout(triggerUFO, 2000);</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// --- NEW: Falling Stars Logic ---</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>function createFallingStar() {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const star = document.createElement('div');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>star.classList.add('falling-star');</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>// Random width between 100px and 200px (length of tail)</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const length = Math.random() * 100 + 100;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>star.style.width = length + 'px';</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>// Random position: Start anywhere from top -20% to 50% height, and anywhere horizontal</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>// We ensure it starts slightly off screen or high up so it falls IN view</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>star.style.left = Math.random() * 100 + 'vw';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>star.style.top = Math.random() * 50 - 20 + 'vh';<span class="Apple-converted-space"> </span></span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>// Random duration for the fall</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const duration = Math.random() * 1 + 1; // 1 to 2 seconds</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>star.style.animation = `shoot ${duration}s ease-out forwards`;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>document.body.appendChild(star);</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>// Clean up DOM after animation ends</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>setTimeout(() =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>star.remove();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>}, duration * 1000);</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>// Schedule next falling star (Random between 2s and 6s)</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const nextStarTime = Math.random() * 4000 + 2000;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>setTimeout(createFallingStar, nextStarTime);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// Initialize falling stars</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>createFallingStar();</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">&lt;/body&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/html&gt;</span></p>
+</body>
+</html>
