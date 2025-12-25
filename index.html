@@ -9,12 +9,13 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Major+Mono+Display&family=Sirivennela&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Major+Mono+Display&family=Sirivennela&family=Sree+Krushnadevaraya&display=swap" rel="stylesheet">
 
     <style>
         :root {
             --star-speed: 100s;
             --ticker-speed: 20s;
+            --neon-color: #0ef;
         }
 
         body {
@@ -39,73 +40,55 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* --- "Chill/Sport" Style Toggle Switch --- */
-        .toggle-container {
+        /* --- NEW DESIGN: Cyberpunk Tab Toggle --- */
+        .cyber-toggle {
             position: fixed;
-            top: 25px;
-            right: 25px;
-            width: 100px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.2); /* Glassy Grey Background */
-            border-radius: 40px;
+            top: 30px;
+            right: 30px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            padding: 0 5px;
-            cursor: pointer; /* Falls back to none due to body, handled via JS */
+            gap: 15px; /* Spacing around the line */
             z-index: 1000;
-            backdrop-filter: blur(5px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.1);
+            cursor: pointer;
         }
 
-        /* The sliding white pill */
-        .toggle-slider {
-            position: absolute;
-            left: 5px;
-            width: 45px;
-            height: 32px;
-            background-color: #ffffff;
-            border-radius: 30px;
-            transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            z-index: 1;
-        }
-
-        /* The text labels (EN / తె) */
-        .toggle-label {
+        /* Text Options */
+        .cyber-opt {
+            font-family: 'Sree Krushnadevaraya', serif;
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.3); /* Dimmed inactive */
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
-            z-index: 2;
-            flex: 1;
-            text-align: center;
-            font-size: 14px;
-            font-weight: 700;
-            transition: color 0.3s ease;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 40px; /* Vertically center */
+            padding: 5px; /* Touch target size */
         }
 
-        .label-te {
-            font-family: 'Sirivennela', sans-serif;
-            font-size: 12px;
-            padding-top: 2px;
+        .cyber-opt.opt-te {
+            font-size: 18px; /* Visual balance for Telugu */
+            margin-top: -2px;
         }
 
-        /* --- Toggle States --- */
-        
-        /* State: English (Default) */
-        .toggle-container.state-en .toggle-slider {
-            transform: translateX(0px);
+        /* The Neon Line */
+        .cyber-line {
+            width: 2px;
+            height: 24px;
+            background-color: var(--neon-color);
+            box-shadow: 0 0 10px var(--neon-color), 0 0 20px var(--neon-color);
+            border-radius: 2px;
+            transform: skew(-10deg); /* Slight sci-fi tilt */
         }
-        .toggle-container.state-en .label-en { color: #000; } /* Active Text Black */
-        .toggle-container.state-en .label-te { color: rgba(255,255,255,0.6); } /* Inactive Text Grey */
 
-        /* State: Telugu */
-        .toggle-container.state-te .toggle-slider {
-            transform: translateX(45px); /* Slide Right */
+        /* Active State Effects */
+        .cyber-opt.active {
+            color: #fff;
+            transform: scale(1.2);
+            text-shadow: 0 0 8px rgba(255,255,255,0.5);
+            font-weight: 600;
         }
-        .toggle-container.state-te .label-en { color: rgba(255,255,255,0.6); }
-        .toggle-container.state-te .label-te { color: #000; }
+
+        /* Hover Effect */
+        .cyber-toggle:hover .cyber-opt:not(.active) {
+            color: rgba(255, 255, 255, 0.7);
+        }
 
 
         /* --- Background Layers --- */
@@ -173,7 +156,7 @@
             width: 100%;
             height: 100%;
             pointer-events: none; 
-            z-index: 1; /* Behind text */
+            z-index: 1; 
         }
 
         /* --- Falling Star Styling --- */
@@ -280,9 +263,11 @@
 
         .ticker-wrap {
             width: 100%;
+            height: 16vw; 
             overflow: hidden;
             white-space: nowrap;
             display: flex;
+            align-items: center; 
         }
 
         .ticker-move {
@@ -292,7 +277,6 @@
 
         .ticker-item {
             flex-shrink: 0;
-            /* NEW FONT: Playfair Display */
             font-family: 'Playfair Display', serif;
             font-size: 10vw; 
             color: #ffffff;
@@ -313,7 +297,6 @@
         }
 
         .social-icons-container {
-            margin-top: 50px;
             display: flex;
             gap: 40px; 
             z-index: 10; 
@@ -370,13 +353,13 @@
         }
 
         .signature-text {
-            /* Default Footer: Telugu */
             font-family: 'Sirivennela', sans-serif;
             font-size: 18px;
         }
         
         @media (max-width: 600px) {
             .ticker-item { font-size: 15vw; }
+            .ticker-wrap { height: 24vw; }
         }
     </style>
 </head>
@@ -389,10 +372,10 @@
         <div class="stars3"></div>
     </div>
 
-    <div class="toggle-container state-en" id="langToggle">
-        <div class="toggle-slider"></div>
-        <div class="toggle-label label-en">EN</div>
-        <div class="toggle-label label-te">తె</div>
+    <div class="cyber-toggle" id="langToggle">
+        <span class="cyber-opt opt-en active" id="btnEn">EN</span>
+        <div class="cyber-line"></div>
+        <span class="cyber-opt opt-te" id="btnTe">తె</span>
     </div>
 
     <canvas id="scribbleCanvas"></canvas>
@@ -432,47 +415,55 @@
 
     <script>
         // --- 0. Language Toggle Logic ---
-        const langToggle = document.getElementById('langToggle');
+        const btnEn = document.getElementById('btnEn');
+        const btnTe = document.getElementById('btnTe');
         const mainTexts = document.querySelectorAll('.main-text'); 
         const footerSignature = document.getElementById('footerSignature');
+        const root = document.documentElement; 
         
         const enName = "Mani Krishna Chandra Teja Chedalla";
         const teName = "మణి కృష్ణ చంద్ర తేజ చెదళ్ళ";
         
-        const enFont = "'Playfair Display', serif"; // Updated Font
-        const teFont = "'Sirivennela', sans-serif";
+        const enFont = "'Playfair Display', serif"; 
+        const teFont = "'Sirivennela', sans-serif"; 
 
-        let isEnglish = true; 
+        // Function to set English
+        function setEnglish() {
+            btnEn.classList.add('active');
+            btnTe.classList.remove('active');
 
-        langToggle.addEventListener('click', (e) => {
-            e.stopPropagation(); // Stop click from triggering warp
+            mainTexts.forEach(el => {
+                el.innerText = enName;
+                el.style.fontFamily = enFont;
+            });
+            footerSignature.innerText = teName;
+            footerSignature.style.fontFamily = teFont;
+            footerSignature.style.fontSize = "22px"; 
+            
+            root.style.setProperty('--ticker-speed', '20s');
+        }
 
-            isEnglish = !isEnglish; 
+        // Function to set Telugu
+        function setTelugu() {
+            btnTe.classList.add('active');
+            btnEn.classList.remove('active');
 
-            if (isEnglish) {
-                // Set State to English
-                langToggle.classList.remove('state-te');
-                langToggle.classList.add('state-en');
+            mainTexts.forEach(el => {
+                el.innerText = teName;
+                el.style.fontFamily = teFont;
+            });
+            footerSignature.innerText = enName;
+            footerSignature.style.fontFamily = enFont;
+            footerSignature.style.fontSize = "18px"; 
 
-                mainTexts.forEach(el => {
-                    el.innerText = enName;
-                    el.style.fontFamily = enFont;
-                });
-                footerSignature.innerText = teName;
-                footerSignature.style.fontFamily = teFont;
-            } else {
-                // Set State to Telugu
-                langToggle.classList.remove('state-en');
-                langToggle.classList.add('state-te');
+            root.style.setProperty('--ticker-speed', '15s'); 
+        }
 
-                mainTexts.forEach(el => {
-                    el.innerText = teName;
-                    el.style.fontFamily = teFont;
-                });
-                footerSignature.innerText = enName;
-                footerSignature.style.fontFamily = enFont;
-            }
-        });
+        // Event Listeners
+        btnEn.addEventListener('mousedown', (e) => { e.stopPropagation(); setEnglish(); });
+        btnTe.addEventListener('mousedown', (e) => { e.stopPropagation(); setTelugu(); });
+        btnEn.addEventListener('touchstart', (e) => { e.stopPropagation(); setEnglish(); });
+        btnTe.addEventListener('touchstart', (e) => { e.stopPropagation(); setTelugu(); });
 
 
         // --- 1. Canvas Setup ---
@@ -508,20 +499,19 @@
             document.querySelector('.nebula').style.transform = `translate(${moveX}px, ${moveY}px)`;
         }
 
-        // Mouse Events
         document.addEventListener('mousemove', (e) => {
             updatePointer(e.clientX, e.clientY);
         });
         document.addEventListener('mousedown', (e) => {
-            if(langToggle.contains(e.target)) return; // Don't warp if clicking toggle
+            // Check if clicking inside toggle
+            if(e.target.closest('.cyber-toggle')) return; 
             document.body.classList.add('warp-active');
         });
         document.addEventListener('mouseup', () => document.body.classList.remove('warp-active'));
 
 
-        // Touch Events
         document.addEventListener('touchstart', (e) => {
-            if(langToggle.contains(e.target)) return;
+            if(e.target.closest('.cyber-toggle')) return;
 
             const touch = e.touches[0];
             lastX = touch.clientX;
@@ -536,10 +526,8 @@
 
         document.addEventListener('touchmove', (e) => {
             if (e.cancelable) e.preventDefault();
-            
             clearTimeout(warpTimer);
             document.body.classList.remove('warp-active'); 
-
             const touch = e.touches[0];
             updatePointer(touch.clientX, touch.clientY);
         }, { passive: false });
