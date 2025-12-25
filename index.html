@@ -14,7 +14,7 @@
     <style>
         :root {
             --star-speed: 100s;
-            --ticker-speed: 20s;
+            --ticker-speed: 40s; /* Slower default because we added more text items */
             --neon-color: #0ef;
         }
 
@@ -40,14 +40,14 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* --- NEW DESIGN: Cyberpunk Tab Toggle --- */
+        /* --- Cyberpunk Tab Toggle --- */
         .cyber-toggle {
             position: fixed;
             top: 30px;
             right: 30px;
             display: flex;
             align-items: center;
-            gap: 15px; /* Spacing around the line */
+            gap: 15px; 
             z-index: 1000;
             cursor: pointer;
         }
@@ -56,14 +56,14 @@
         .cyber-opt {
             font-family: 'Sree Krushnadevaraya', serif;
             font-size: 16px;
-            color: rgba(255, 255, 255, 0.3); /* Dimmed inactive */
+            color: rgba(255, 255, 255, 0.3); 
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
-            padding: 5px; /* Touch target size */
+            padding: 5px; 
         }
 
         .cyber-opt.opt-te {
-            font-size: 18px; /* Visual balance for Telugu */
+            font-size: 18px; 
             margin-top: -2px;
         }
 
@@ -74,7 +74,7 @@
             background-color: var(--neon-color);
             box-shadow: 0 0 10px var(--neon-color), 0 0 20px var(--neon-color);
             border-radius: 2px;
-            transform: skew(-10deg); /* Slight sci-fi tilt */
+            transform: skew(-10deg); 
         }
 
         /* Active State Effects */
@@ -389,6 +389,8 @@
             <div class="ticker-move">
                 <div class="ticker-item main-text">Mani Krishna Chandra Teja Chedalla</div>
                 <div class="ticker-item main-text">Mani Krishna Chandra Teja Chedalla</div>
+                <div class="ticker-item main-text">Mani Krishna Chandra Teja Chedalla</div>
+                <div class="ticker-item main-text">Mani Krishna Chandra Teja Chedalla</div>
             </div>
         </div>
 
@@ -440,7 +442,8 @@
             footerSignature.style.fontFamily = teFont;
             footerSignature.style.fontSize = "22px"; 
             
-            root.style.setProperty('--ticker-speed', '20s');
+            // Adjusted speed for 4 items
+            root.style.setProperty('--ticker-speed', '40s');
         }
 
         // Function to set Telugu
@@ -456,10 +459,11 @@
             footerSignature.style.fontFamily = enFont;
             footerSignature.style.fontSize = "18px"; 
 
-            root.style.setProperty('--ticker-speed', '15s'); 
+            // Adjusted speed for 4 items (shorter width = needs less time to flow)
+            root.style.setProperty('--ticker-speed', '30s'); 
         }
 
-        // Event Listeners
+        // Event Listeners (Prevent bubbling so Warp doesn't trigger)
         btnEn.addEventListener('mousedown', (e) => { e.stopPropagation(); setEnglish(); });
         btnTe.addEventListener('mousedown', (e) => { e.stopPropagation(); setTelugu(); });
         btnEn.addEventListener('touchstart', (e) => { e.stopPropagation(); setEnglish(); });
@@ -503,7 +507,6 @@
             updatePointer(e.clientX, e.clientY);
         });
         document.addEventListener('mousedown', (e) => {
-            // Check if clicking inside toggle
             if(e.target.closest('.cyber-toggle')) return; 
             document.body.classList.add('warp-active');
         });
