@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Mani Krishna Chandra Teja Chedalla</title>
     
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🪐</text></svg>">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,7 +16,7 @@
     <style>
         :root {
             --star-speed: 100s;
-            --ticker-speed: 40s; /* Slower default because we added more text items */
+            --ticker-speed: 40s; 
             --neon-color: #0ef;
         }
 
@@ -32,7 +34,6 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             transition: background-color 0.2s ease;
             
-            /* Disable Selection & Highlights */
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
@@ -52,7 +53,6 @@
             cursor: pointer;
         }
 
-        /* Text Options */
         .cyber-opt {
             font-family: 'Sree Krushnadevaraya', serif;
             font-size: 16px;
@@ -67,7 +67,6 @@
             margin-top: -2px;
         }
 
-        /* The Neon Line */
         .cyber-line {
             width: 2px;
             height: 24px;
@@ -77,7 +76,6 @@
             transform: skew(-10deg); 
         }
 
-        /* Active State Effects */
         .cyber-opt.active {
             color: #fff;
             transform: scale(1.2);
@@ -85,11 +83,9 @@
             font-weight: 600;
         }
 
-        /* Hover Effect */
         .cyber-toggle:hover .cyber-opt:not(.active) {
             color: rgba(255, 255, 255, 0.7);
         }
-
 
         /* --- Background Layers --- */
         .stars-container {
@@ -429,7 +425,9 @@
         const enFont = "'Playfair Display', serif"; 
         const teFont = "'Sirivennela', sans-serif"; 
 
-        // Function to set English
+        // Initial Title
+        const originalTitle = document.title;
+
         function setEnglish() {
             btnEn.classList.add('active');
             btnTe.classList.remove('active');
@@ -442,11 +440,9 @@
             footerSignature.style.fontFamily = teFont;
             footerSignature.style.fontSize = "22px"; 
             
-            // Adjusted speed for 4 items
             root.style.setProperty('--ticker-speed', '40s');
         }
 
-        // Function to set Telugu
         function setTelugu() {
             btnTe.classList.add('active');
             btnEn.classList.remove('active');
@@ -459,18 +455,27 @@
             footerSignature.style.fontFamily = enFont;
             footerSignature.style.fontSize = "18px"; 
 
-            // Adjusted speed for 4 items (shorter width = needs less time to flow)
             root.style.setProperty('--ticker-speed', '30s'); 
         }
 
-        // Event Listeners (Prevent bubbling so Warp doesn't trigger)
+        // Click Handling
         btnEn.addEventListener('mousedown', (e) => { e.stopPropagation(); setEnglish(); });
         btnTe.addEventListener('mousedown', (e) => { e.stopPropagation(); setTelugu(); });
         btnEn.addEventListener('touchstart', (e) => { e.stopPropagation(); setEnglish(); });
         btnTe.addEventListener('touchstart', (e) => { e.stopPropagation(); setTelugu(); });
 
 
-        // --- 1. Canvas Setup ---
+        // --- 1. Dynamic Title Change ---
+        document.addEventListener("visibilitychange", () => {
+            if (document.hidden) {
+                document.title = "🛸 Lost in Space?";
+            } else {
+                document.title = originalTitle;
+            }
+        });
+
+
+        // --- 2. Canvas Setup ---
         const cursorStar = document.getElementById('cursorStar');
         const canvas = document.getElementById('scribbleCanvas');
         const ctx = canvas.getContext('2d');
@@ -485,7 +490,7 @@
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
-        // --- 2. Pointer Tracking ---
+        // --- 3. Pointer Tracking ---
         let mouseX = width / 2;
         let mouseY = height / 2;
         let lastX = mouseX;
@@ -541,7 +546,7 @@
         });
 
 
-        // --- 3. Render Scribble Loop ---
+        // --- 4. Render Scribble Loop ---
         function renderScribble() {
             ctx.save();
             ctx.globalCompositeOperation = 'destination-out';
@@ -569,7 +574,7 @@
         renderScribble(); 
 
 
-        // --- 4. UFO Flyby Logic ---
+        // --- 5. UFO Flyby Logic ---
         const ufo = document.getElementById('ufo');
 
         function triggerUFO() {
@@ -588,7 +593,7 @@
         }
         setTimeout(triggerUFO, 2000);
 
-        // --- 5. Falling Stars Logic ---
+        // --- 6. Falling Stars Logic ---
         function createFallingStar() {
             const star = document.createElement('div');
             star.classList.add('falling-star');
@@ -605,7 +610,7 @@
         }
         createFallingStar();
 
-        // --- 6. Disable Right Click ---
+        // --- 7. Disable Right Click ---
         document.addEventListener('contextmenu', (e) => {
             e.preventDefault();
         });
