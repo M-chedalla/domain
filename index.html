@@ -17,8 +17,8 @@
         :root {
             --star-speed: 100s;
             --ticker-speed: 40s; 
-            --neon-color: #0ef; /* Cyan */
-            --chakra-color: #FFD700; /* Gold */
+            --neon-color: #0ef; /* Default Cyan */
+            --hanuman-saffron: #FF9933; /* Divine Saffron */
         }
 
         body {
@@ -31,7 +31,7 @@
             flex-direction: column;
             justify-content: center;
             overflow: hidden; 
-            cursor: none; /* Hide default cursor */
+            cursor: none;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             transition: background-color 0.2s ease;
             -webkit-user-select: none;
@@ -129,26 +129,9 @@
             background: transparent; 
         }
 
-        .stars {
-            background-image: radial-gradient(white 1px, transparent 1.5px);
-            background-size: 50px 50px;
-            opacity: 0.3;
-            animation: space-drift var(--star-speed) linear infinite;
-        }
-        .stars2 {
-            background-image: radial-gradient(white 1.5px, transparent 2px);
-            background-size: 100px 100px;
-            background-position: 20px 30px;
-            opacity: 0.5;
-            animation: space-drift calc(var(--star-speed) * 0.8) linear infinite;
-        }
-        .stars3 {
-            background-image: radial-gradient(#fff 2px, transparent 3px);
-            background-size: 200px 200px;
-            background-position: 50px 80px;
-            opacity: 0.8;
-            animation: space-drift calc(var(--star-speed) * 0.6) linear infinite, twinkle 4s ease-in-out infinite;
-        }
+        .stars { background-image: radial-gradient(white 1px, transparent 1.5px); background-size: 50px 50px; opacity: 0.3; animation: space-drift var(--star-speed) linear infinite; }
+        .stars2 { background-image: radial-gradient(white 1.5px, transparent 2px); background-size: 100px 100px; background-position: 20px 30px; opacity: 0.5; animation: space-drift calc(var(--star-speed) * 0.8) linear infinite; }
+        .stars3 { background-image: radial-gradient(#fff 2px, transparent 3px); background-size: 200px 200px; background-position: 50px 80px; opacity: 0.8; animation: space-drift calc(var(--star-speed) * 0.6) linear infinite, twinkle 4s ease-in-out infinite; }
 
         /* --- Matrix Rain Canvas --- */
         #matrixCanvas {
@@ -193,21 +176,25 @@
             100% { transform: translate(-300px, 300px) rotate(-45deg); opacity: 0; }
         }
 
-        /* --- UFO Styling --- */
+        /* --- FLYING MOUNTAIN (Sanjeevani) --- */
         .ufo-container {
             position: fixed;
             left: -150px; 
             z-index: 5; 
-            font-size: 3rem;
-            filter: drop-shadow(0 0 10px rgba(0, 255, 0, 0.5));
+            font-size: 4rem; /* Larger for mountain */
+            /* Saffron Glow for Hanuman Energy */
+            filter: drop-shadow(0 0 15px var(--hanuman-saffron)); 
             pointer-events: none;
             transition: opacity 0.5s ease;
         }
         
         .ufo-fly-anim { animation: ufo-fly linear forwards; }
+        
+        /* Mountain flies straight, no rotation needed */
         @keyframes ufo-fly {
-            0% { transform: translateX(0) rotate(-5deg); }
-            100% { transform: translateX(calc(100vw + 300px)) rotate(5deg); }
+            0% { transform: translateX(0) translateY(0); }
+            50% { transform: translateX(50vw) translateY(-20px); }
+            100% { transform: translateX(calc(100vw + 300px)) translateY(0); }
         }
 
         /* --- Animations --- */
@@ -222,7 +209,7 @@
             animation-duration: 0.2s; opacity: 0.6; filter: blur(1px); transform: scaleY(1.5); 
         }
         
-        /* --- SUDARSHANA CHAKRA CURSOR (Hindu Mythology) --- */
+        /* --- SUDARSHANA CHAKRA CURSOR --- */
         .cursor-star {
             position: fixed;
             top: 0;
@@ -230,26 +217,24 @@
             width: 25px;
             height: 25px;
             border-radius: 50%;
-            border: 2px dashed #ffffff; /* Default White Ring */
+            border: 2px dashed #ffffff; 
             box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); 
             pointer-events: none;
             z-index: 9999;
             transform: translate(-50%, -50%);
             will-change: left, top, transform;
-            animation: spin 4s linear infinite; /* Slow Spin */
+            animation: spin 4s linear infinite; 
             transition: width 0.2s, height 0.2s, border-color 0.3s;
         }
 
-        /* Spin Animation */
         @keyframes spin { 100% { transform: translate(-50%, -50%) rotate(360deg); } }
 
-        /* Warp Speed = Furious Spin & Glow */
         body.warp-active .cursor-star {
             width: 50px;
             height: 50px;
             border-color: var(--neon-color);
             box-shadow: 0 0 20px var(--neon-color), inset 0 0 10px var(--neon-color);
-            animation: spin 0.5s linear infinite; /* Fast Spin */
+            animation: spin 0.5s linear infinite; 
         }
 
         /* --- Main Content Area --- */
@@ -286,7 +271,6 @@
             text-shadow: 0 0 10px rgba(0,0,0,0.5);
             font-weight: 600;
             letter-spacing: -1px;
-            
             -webkit-user-select: none;
             user-select: none;
         }
@@ -324,6 +308,13 @@
         .copyright-year { font-family: 'Major Mono Display', monospace; font-weight: bold; letter-spacing: 1px; margin-right: 8px; }
         .signature-text { font-family: 'Sirivennela', sans-serif; font-size: 18px; }
         
+        .flag-icon {
+            font-size: 14px;
+            margin-left: 8px;
+            vertical-align: middle;
+            filter: drop-shadow(0 0 5px var(--hanuman-saffron));
+        }
+
         @media (max-width: 600px) {
             .ticker-item { font-size: 15vw; }
             .ticker-wrap { height: 24vw; }
@@ -349,7 +340,7 @@
 
     <canvas id="scribbleCanvas"></canvas>
 
-    <div id="ufo" class="ufo-container">🛸</div>
+    <div id="ufo" class="ufo-container">⛰️</div>
 
     <div class="cursor-star" id="cursorStar"></div>
 
@@ -381,6 +372,7 @@
         <div class="footer-text">
             <span class="copyright-year">&copy; 2026</span>
             <span class="signature-text" id="footerSignature">మణి కృష్ణ చంద్ర తేజ చెదళ్ళ</span>
+            <span class="flag-icon">🚩</span>
         </div>
     </div>
 
@@ -442,7 +434,7 @@
             if (document.hidden) {
                 document.title = isHackerMode ? "⚠️ SYSTEM OVERRIDE" : "🛸 Lost in Space?";
             } else {
-                document.title = isHackerMode ? "MATRIX PROTOCOL ACTIVE" : originalTitle;
+                document.title = isHackerMode ? "MAYA PROTOCOL ACTIVE" : originalTitle;
             }
         });
 
@@ -548,14 +540,14 @@
         }, 100);
 
 
-        // --- 5. UFO Flyby Logic ---
+        // --- 5. FLYING MOUNTAIN Logic (Replaces UFO) ---
         const ufo = document.getElementById('ufo');
 
         function triggerUFO() {
             if(isHackerMode) return; 
 
             const randomTop = Math.floor(Math.random() * 70) + 10;
-            const randomDuration = Math.random() * 4 + 3;
+            const randomDuration = Math.random() * 4 + 6; // Slower, majestic flight
 
             ufo.style.top = randomTop + '%';
             ufo.style.animationDuration = randomDuration + 's';
@@ -595,7 +587,7 @@
         // --- 7. Disable Right Click ---
         document.addEventListener('contextmenu', (e) => { e.preventDefault(); });
         
-        // --- 8. Easter Egg: Konami Code (SANSKRIT MATRIX MODE) ---
+        // --- 8. Easter Egg: Konami Code (SAFFRON MAYA MODE) ---
         const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
         let konamiPosition = 0;
 
@@ -615,9 +607,9 @@
         const matrixCanvas = document.getElementById('matrixCanvas');
         const mCtx = matrixCanvas.getContext('2d');
         
-        // SANSKRIT CHARACTERS + NUMBERS
+        // Sanskrit Script
         const letters = 'ॐअआइईउऊऋएऐओऔकखगघङचछजझञटठडढणतथदधनपफबभमयरलवशषसह१२३४५६७८९०';
-        const fontSize = 18; // Slightly larger for readability
+        const fontSize = 18; 
         let columns;
         let drops = [];
 
@@ -633,8 +625,8 @@
             mCtx.fillStyle = 'rgba(0, 0, 0, 0.05)'; 
             mCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
 
-            // Change Text Color to SAFFRON/GOLD for a divine tech feel
-            mCtx.fillStyle = '#FFD700'; 
+            // Saffron/Orange Text for Hanuman Theme
+            mCtx.fillStyle = '#FF9933'; 
             mCtx.font = fontSize + 'px monospace';
 
             for(let i = 0; i < drops.length; i++) {
@@ -652,10 +644,10 @@
             if(isHackerMode) return; 
             isHackerMode = true;
 
-            // 1. Visual Changes - Change Neon to GOLD/SAFFRON
-            root.style.setProperty('--neon-color', '#FFD700'); 
-            currentTrailColor = '#FFD700';
-            document.title = "ॐ MAYA PROTOCOL ACTIVE"; 
+            // 1. Visual Changes - Saffron Theme
+            root.style.setProperty('--neon-color', '#FF9933'); 
+            currentTrailColor = '#FF9933';
+            document.title = "MAYA PROTOCOL ACTIVE"; 
             
             // 2. Hide Space Elements
             document.getElementById('starsLayer').style.opacity = '0';
@@ -669,7 +661,7 @@
             drawMatrix();
 
             // 4. Flash Effect
-            document.body.style.backgroundColor = '#110d00'; // Dark Gold Flash
+            document.body.style.backgroundColor = '#2a1200'; // Dark Saffron Flash
             setTimeout(() => {
                 document.body.style.backgroundColor = '#050505';
             }, 200);
