@@ -232,7 +232,7 @@
 
         @keyframes spin { 100% { transform: translate(-50%, -50%) rotate(360deg); } }
 
-        /* Warp Mode: Fast Spin + Glow + Sparks */
+        /* Warp Mode: Fast Spin + Glow */
         body.warp-active .cursor-star {
             width: 50px;
             height: 50px;
@@ -241,8 +241,7 @@
             animation: spin 0.3s linear infinite; /* Furious spin */
         }
 
-        /* --- NEW: CURSOR SPARKS EFFECT --- */
-        /* These pseudo-elements act as the sparks */
+        /* --- SPARKS EFFECT (Restored) --- */
         .cursor-star::before,
         .cursor-star::after {
             content: '';
@@ -252,7 +251,7 @@
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            /* Dotted border creates jagged spark look */
+            /* Uses the neon-color variable, so it will be Saffron in Maya mode */
             border: 3px dotted var(--neon-color); 
             transform: translate(-50%, -50%) scale(0.5);
             opacity: 0;
@@ -267,11 +266,9 @@
         }
 
         body.warp-active .cursor-star::after {
-            /* Delay the second burst for continuous effect */
             animation: spark-burst-2 0.4s ease-out infinite 0.2s; 
         }
 
-        /* Animation: Burst outwards, rotate, and fade */
         @keyframes spark-burst-1 {
             0% { transform: translate(-50%, -50%) scale(0.8) rotate(0deg); opacity: 1; }
             100% { transform: translate(-50%, -50%) scale(2.2) rotate(180deg); opacity: 0; }
@@ -386,7 +383,7 @@
 
     <canvas id="scribbleCanvas"></canvas>
 
-    <img id="ufo" class="ufo-container" src="images/hanuman.png" alt="Hanuman Carrying Sanjeevani">
+    <img id="ufo" class="ufo-container" src="images/hanuman.png" alt="Hanuman Lifting Mountain">
 
     <div class="cursor-star" id="cursorStar"></div>
 
@@ -586,7 +583,7 @@
         }, 100);
 
 
-        // --- 5. FLYING HANUMAN Logic (Replaces UFO) ---
+        // --- 5. FLYING HANUMAN Logic ---
         const ufo = document.getElementById('ufo');
 
         function triggerUFO() {
@@ -594,14 +591,12 @@
 
             // Random starting height
             const randomTop = Math.floor(Math.random() * 60) + 20; 
-            // Slower duration for image
             const randomDuration = Math.random() * 5 + 8; 
 
             ufo.style.top = randomTop + '%';
             ufo.style.animationDuration = randomDuration + 's';
             
             ufo.classList.remove('ufo-fly-anim');
-            // Trigger reflow
             void ufo.offsetWidth; 
             ufo.classList.add('ufo-fly-anim');
 
