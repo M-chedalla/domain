@@ -17,7 +17,7 @@
         :root {
             --star-speed: 100s;
             --ticker-speed: 40s; 
-            --neon-color: #0ef;
+            --neon-color: #0ef; /* Default Cyan Theme */
         }
 
         body {
@@ -70,10 +70,11 @@
         .cyber-line {
             width: 2px;
             height: 24px;
-            background-color: var(--neon-color);
+            background-color: var(--neon-color); /* Dynamic Theme Color */
             box-shadow: 0 0 10px var(--neon-color), 0 0 20px var(--neon-color);
             border-radius: 2px;
             transform: skew(-10deg); 
+            transition: background-color 0.5s ease, box-shadow 0.5s ease;
         }
 
         .cyber-opt.active {
@@ -242,8 +243,8 @@
         body.warp-active .cursor-star {
             width: 30px;
             height: 30px;
-            box-shadow: 0 0 40px 15px rgba(0, 238, 255, 1);
-            background: radial-gradient(circle, #0ef 20%, transparent 70%);
+            box-shadow: 0 0 40px 15px var(--neon-color); /* Dynamic Glow */
+            background: radial-gradient(circle, var(--neon-color) 20%, transparent 70%);
         }
 
         /* --- Main Content Area --- */
@@ -308,8 +309,8 @@
 
         .social-icon:hover {
             transform: scale(1.2);
-            color: #0ef; 
-            text-shadow: 0 0 20px rgba(0, 238, 255, 0.8), 0 0 40px rgba(0, 238, 255, 0.4); 
+            color: var(--neon-color); /* Dynamic Theme Color */
+            text-shadow: 0 0 20px var(--neon-color), 0 0 40px var(--neon-color); 
         }
 
         .footer-container {
@@ -412,12 +413,13 @@
     </div>
 
     <script>
+        const root = document.documentElement; 
+        
         // --- 0. Language Toggle Logic ---
         const btnEn = document.getElementById('btnEn');
         const btnTe = document.getElementById('btnTe');
         const mainTexts = document.querySelectorAll('.main-text'); 
         const footerSignature = document.getElementById('footerSignature');
-        const root = document.documentElement; 
         
         const enName = "Mani Krishna Chandra Teja Chedalla";
         const teName = "మణి కృష్ణ చంద్ర తేజ చెదళ్ళ";
@@ -479,6 +481,9 @@
         const cursorStar = document.getElementById('cursorStar');
         const canvas = document.getElementById('scribbleCanvas');
         const ctx = canvas.getContext('2d');
+        
+        // Variable for current Trail Color
+        let currentTrailColor = '#0ef';
 
         let width, height;
         function resizeCanvas() {
@@ -555,10 +560,10 @@
             ctx.restore();
 
             ctx.beginPath();
-            ctx.strokeStyle = '#0ef'; 
+            ctx.strokeStyle = currentTrailColor; 
             ctx.lineWidth = 2;
             ctx.shadowBlur = 10;
-            ctx.shadowColor = '#0ef';
+            ctx.shadowColor = currentTrailColor;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
             
@@ -614,6 +619,39 @@
         document.addEventListener('contextmenu', (e) => {
             e.preventDefault();
         });
+        
+        // --- 8. Easter Egg: Konami Code (Hacker Mode) ---
+        const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+        let konamiPosition = 0;
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === konamiCode[konamiPosition]) {
+                konamiPosition++;
+                if (konamiPosition === konamiCode.length) {
+                    activateHackerMode();
+                    konamiPosition = 0; 
+                }
+            } else {
+                konamiPosition = 0; 
+            }
+        });
+
+        function activateHackerMode() {
+            // Change Theme to Matrix Green
+            root.style.setProperty('--neon-color', '#0f0'); 
+            currentTrailColor = '#0f0'; // Update drawing trail variable
+            
+            // Change Title
+            document.title = "SYSTEM HACKED // ACCESS GRANTED";
+            
+            // Flash effect
+            document.body.style.backgroundColor = '#001100';
+            setTimeout(() => {
+                document.body.style.backgroundColor = '#050505';
+            }, 200);
+
+            alert("🕵️‍♂️ SYSTEM UNLOCKED: HACKER MODE ACTIVATED");
+        }
 
     </script>
 
