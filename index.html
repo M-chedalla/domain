@@ -424,7 +424,7 @@
 
     <script>
         const root = document.documentElement; 
-        let isHackerMode = false; // Flag to track mode
+        let isHackerMode = false; 
         
         // --- 0. Language Toggle Logic ---
         const btnEn = document.getElementById('btnEn');
@@ -479,9 +479,10 @@
         // --- 1. Dynamic Title Change ---
         document.addEventListener("visibilitychange", () => {
             if (document.hidden) {
-                document.title = isHackerMode ? "⚠️ SYSTEM BREACHED" : "🛸 Lost in Space?";
+                // If Matrix mode is on, keep the "System Override" title even when hidden
+                document.title = isHackerMode ? "⚠️ SYSTEM OVERRIDE" : "🛸 Lost in Space?";
             } else {
-                document.title = isHackerMode ? "SYSTEM HACKED // ACCESS GRANTED" : originalTitle;
+                document.title = isHackerMode ? "MATRIX PROTOCOL ACTIVE" : originalTitle;
             }
         });
 
@@ -589,8 +590,7 @@
             requestAnimationFrame(renderScribble);
         }
         
-        // Initial Resize Call to set everything up
-        // Need to wait for DOM elements
+        // Initial Resize Call
         setTimeout(() => {
             resizeCanvas();
             renderScribble();
@@ -601,7 +601,6 @@
         const ufo = document.getElementById('ufo');
 
         function triggerUFO() {
-            // Stop if Hacker Mode is on
             if(isHackerMode) return; 
 
             const randomTop = Math.floor(Math.random() * 70) + 10;
@@ -621,9 +620,7 @@
 
         // --- 6. Falling Stars Logic ---
         function createFallingStar() {
-            // Stop if Hacker Mode is on
             if(isHackerMode) {
-                // Check again in 5 seconds in case mode switches back (optional)
                 setTimeout(createFallingStar, 5000);
                 return;
             }
@@ -649,7 +646,7 @@
             e.preventDefault();
         });
         
-        // --- 8. Easter Egg: Konami Code (Hacker Mode) ---
+        // --- 8. Easter Egg: Konami Code (System Override) ---
         const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
         let konamiPosition = 0;
 
@@ -657,7 +654,7 @@
             if (e.key === konamiCode[konamiPosition]) {
                 konamiPosition++;
                 if (konamiPosition === konamiCode.length) {
-                    activateHackerMode();
+                    activateMatrixMode();
                     konamiPosition = 0; 
                 }
             } else {
@@ -680,12 +677,12 @@
         }
 
         function drawMatrix() {
-            if(!isHackerMode) return; // Stop drawing if not in mode
+            if(!isHackerMode) return; 
 
-            mCtx.fillStyle = 'rgba(0, 0, 0, 0.05)'; // Fade trail
+            mCtx.fillStyle = 'rgba(0, 0, 0, 0.05)'; 
             mCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
 
-            mCtx.fillStyle = '#0F0'; // Green Text
+            mCtx.fillStyle = '#0F0'; 
             mCtx.font = fontSize + 'px monospace';
 
             for(let i = 0; i < drops.length; i++) {
@@ -699,20 +696,20 @@
             requestAnimationFrame(drawMatrix);
         }
 
-        function activateHackerMode() {
+        function activateMatrixMode() {
+            if(isHackerMode) return; // Prevent double activation
             isHackerMode = true;
 
             // 1. Visual Changes
             root.style.setProperty('--neon-color', '#0f0'); 
             currentTrailColor = '#0f0';
-            document.title = "SYSTEM HACKED // ACCESS GRANTED";
+            document.title = "MATRIX PROTOCOL ACTIVE"; // Neutral Wording
             
             // 2. Hide Space Elements
             document.getElementById('starsLayer').style.opacity = '0';
             document.getElementById('nebulaLayer').style.opacity = '0';
-            ufo.style.opacity = '0'; // Immediately hide UFO
+            ufo.style.opacity = '0'; 
             
-            // Remove existing falling stars immediately
             document.querySelectorAll('.falling-star').forEach(el => el.remove());
 
             // 3. Show Matrix Layer
@@ -725,8 +722,9 @@
             setTimeout(() => {
                 document.body.style.backgroundColor = '#050505';
             }, 200);
-
-            alert("🕵️‍♂️ SYSTEM UNLOCKED: HACKER MODE ACTIVATED");
+            
+            // No alert popup, just visual change
+            console.log("System Override: Authorized");
         }
 
     </script>
