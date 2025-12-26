@@ -17,7 +17,8 @@
         :root {
             --star-speed: 100s;
             --ticker-speed: 40s; 
-            --neon-color: #0ef; /* Default Cyan Theme */
+            --neon-color: #0ef; /* Cyan */
+            --chakra-color: #FFD700; /* Gold */
         }
 
         body {
@@ -30,13 +31,10 @@
             flex-direction: column;
             justify-content: center;
             overflow: hidden; 
-            cursor: none;
+            cursor: none; /* Hide default cursor */
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             transition: background-color 0.2s ease;
-            
             -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
@@ -62,10 +60,7 @@
             padding: 5px; 
         }
 
-        .cyber-opt.opt-te {
-            font-size: 18px; 
-            margin-top: -2px;
-        }
+        .cyber-opt.opt-te { font-size: 18px; margin-top: -2px; }
 
         .cyber-line {
             width: 2px;
@@ -84,12 +79,31 @@
             font-weight: 600;
         }
 
-        .cyber-toggle:hover .cyber-opt:not(.active) {
-            color: rgba(255, 255, 255, 0.7);
+        .cyber-toggle:hover .cyber-opt:not(.active) { color: rgba(255, 255, 255, 0.7); }
+
+        /* --- Social Icons --- */
+        .social-icons-container {
+            display: flex;
+            gap: 40px; 
+            z-index: 10; 
+        }
+
+        .social-icon {
+            font-size: 2.5rem;
+            color: #fff;
+            text-decoration: none;
+            transition: transform 0.3s ease, color 0.3s ease, text-shadow 0.3s ease;
+            cursor: none;
+            position: relative;
+        }
+
+        .social-icon:hover {
+            transform: scale(1.2);
+            color: var(--neon-color); 
+            text-shadow: 0 0 20px var(--neon-color), 0 0 40px var(--neon-color); 
         }
 
         /* --- Background Layers --- */
-        /* Added transition to fade these out in Hacker Mode */
         .stars-container, .nebula {
             position: fixed;
             top: 0;
@@ -121,7 +135,6 @@
             opacity: 0.3;
             animation: space-drift var(--star-speed) linear infinite;
         }
-
         .stars2 {
             background-image: radial-gradient(white 1.5px, transparent 2px);
             background-size: 100px 100px;
@@ -129,7 +142,6 @@
             opacity: 0.5;
             animation: space-drift calc(var(--star-speed) * 0.8) linear infinite;
         }
-
         .stars3 {
             background-image: radial-gradient(#fff 2px, transparent 3px);
             background-size: 200px 200px;
@@ -145,8 +157,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 0; /* Sits where stars used to be */
-            opacity: 0;  /* Hidden by default */
+            z-index: 0; 
+            opacity: 0;  
             transition: opacity 2s ease;
             pointer-events: none;
         }
@@ -192,10 +204,7 @@
             transition: opacity 0.5s ease;
         }
         
-        .ufo-fly-anim {
-            animation: ufo-fly linear forwards;
-        }
-
+        .ufo-fly-anim { animation: ufo-fly linear forwards; }
         @keyframes ufo-fly {
             0% { transform: translateX(0) rotate(-5deg); }
             100% { transform: translateX(calc(100vw + 300px)) rotate(5deg); }
@@ -207,52 +216,40 @@
             100% { background-position: 0 1000px; }
         }
 
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.8; }
-            50% { opacity: 0.4; }
-        }
-
         /* --- WARP SPEED STATE --- */
-        body.warp-active {
-            background-color: #000510; 
-        }
-
-        body.warp-active .stars, 
-        body.warp-active .stars2, 
-        body.warp-active .stars3 {
-            animation-duration: 0.2s; 
-            opacity: 0.6;
-            filter: blur(1px);
-            transform: scaleY(1.5); 
+        body.warp-active { background-color: #000510; }
+        body.warp-active .stars, body.warp-active .stars2, body.warp-active .stars3 {
+            animation-duration: 0.2s; opacity: 0.6; filter: blur(1px); transform: scaleY(1.5); 
         }
         
-        body.warp-active .ticker-move {
-            animation-duration: 2s; 
-            filter: blur(2px); 
-        }
-
-        /* --- Cursor Star Follower --- */
+        /* --- SUDARSHANA CHAKRA CURSOR (Hindu Mythology) --- */
         .cursor-star {
             position: fixed;
             top: 0;
             left: 0;
-            width: 15px;
-            height: 15px;
-            background: radial-gradient(circle, #ffffff 10%, transparent 70%);
-            box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0.8); 
+            width: 25px;
+            height: 25px;
             border-radius: 50%;
+            border: 2px dashed #ffffff; /* Default White Ring */
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); 
             pointer-events: none;
             z-index: 9999;
             transform: translate(-50%, -50%);
-            will-change: left, top;
-            transition: width 0.2s, height 0.2s, box-shadow 0.2s;
+            will-change: left, top, transform;
+            animation: spin 4s linear infinite; /* Slow Spin */
+            transition: width 0.2s, height 0.2s, border-color 0.3s;
         }
 
+        /* Spin Animation */
+        @keyframes spin { 100% { transform: translate(-50%, -50%) rotate(360deg); } }
+
+        /* Warp Speed = Furious Spin & Glow */
         body.warp-active .cursor-star {
-            width: 30px;
-            height: 30px;
-            box-shadow: 0 0 40px 15px var(--neon-color); /* Dynamic Glow */
-            background: radial-gradient(circle, var(--neon-color) 20%, transparent 70%);
+            width: 50px;
+            height: 50px;
+            border-color: var(--neon-color);
+            box-shadow: 0 0 20px var(--neon-color), inset 0 0 10px var(--neon-color);
+            animation: spin 0.5s linear infinite; /* Fast Spin */
         }
 
         /* --- Main Content Area --- */
@@ -291,34 +288,12 @@
             letter-spacing: -1px;
             
             -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
             user-select: none;
         }
 
         @keyframes ticker-seamless {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
-        }
-
-        .social-icons-container {
-            display: flex;
-            gap: 40px; 
-            z-index: 10; 
-        }
-
-        .social-icon {
-            font-size: 2.5rem;
-            color: #fff;
-            text-decoration: none;
-            transition: transform 0.3s ease, color 0.3s ease, text-shadow 0.3s ease;
-            cursor: none;
-        }
-
-        .social-icon:hover {
-            transform: scale(1.2);
-            color: var(--neon-color); /* Dynamic Theme Color */
-            text-shadow: 0 0 20px var(--neon-color), 0 0 40px var(--neon-color); 
         }
 
         .footer-container {
@@ -345,22 +320,9 @@
             100% { background-position: 150% 0; }
         }
 
-        .footer-text {
-            color: #888;
-            font-size: 14px;
-        }
-
-        .copyright-year {
-            font-family: 'Major Mono Display', monospace;
-            font-weight: bold;
-            letter-spacing: 1px;
-            margin-right: 8px;
-        }
-
-        .signature-text {
-            font-family: 'Sirivennela', sans-serif;
-            font-size: 18px;
-        }
+        .footer-text { color: #888; font-size: 14px; }
+        .copyright-year { font-family: 'Major Mono Display', monospace; font-weight: bold; letter-spacing: 1px; margin-right: 8px; }
+        .signature-text { font-family: 'Sirivennela', sans-serif; font-size: 18px; }
         
         @media (max-width: 600px) {
             .ticker-item { font-size: 15vw; }
@@ -475,19 +437,16 @@
         btnEn.addEventListener('touchstart', (e) => { e.stopPropagation(); setEnglish(); });
         btnTe.addEventListener('touchstart', (e) => { e.stopPropagation(); setTelugu(); });
 
-
         // --- 1. Dynamic Title Change ---
         document.addEventListener("visibilitychange", () => {
             if (document.hidden) {
-                // If Matrix mode is on, keep the "System Override" title even when hidden
                 document.title = isHackerMode ? "⚠️ SYSTEM OVERRIDE" : "🛸 Lost in Space?";
             } else {
                 document.title = isHackerMode ? "MATRIX PROTOCOL ACTIVE" : originalTitle;
             }
         });
 
-
-        // --- 2. Canvas Setup (Scribble) ---
+        // --- 2. Canvas Setup ---
         const cursorStar = document.getElementById('cursorStar');
         const canvas = document.getElementById('scribbleCanvas');
         const ctx = canvas.getContext('2d');
@@ -501,13 +460,11 @@
             canvas.width = width;
             canvas.height = height;
             
-            // Resize Matrix Canvas
             matrixCanvas.width = width;
             matrixCanvas.height = height;
         }
         window.addEventListener('resize', resizeCanvas);
         
-
         // --- 3. Pointer Tracking ---
         let mouseX = width / 2;
         let mouseY = height / 2;
@@ -535,19 +492,15 @@
         });
         document.addEventListener('mouseup', () => document.body.classList.remove('warp-active'));
 
-
         document.addEventListener('touchstart', (e) => {
             if(e.target.closest('.cyber-toggle')) return;
-
             const touch = e.touches[0];
             lastX = touch.clientX;
             lastY = touch.clientY;
             updatePointer(touch.clientX, touch.clientY);
-
             warpTimer = setTimeout(() => {
                 document.body.classList.add('warp-active');
             }, 800);
-
         }, { passive: false });
 
         document.addEventListener('touchmove', (e) => {
@@ -562,7 +515,6 @@
             clearTimeout(warpTimer);
             document.body.classList.remove('warp-active');
         });
-
 
         // --- 4. Render Scribble Loop ---
         function renderScribble() {
@@ -590,7 +542,6 @@
             requestAnimationFrame(renderScribble);
         }
         
-        // Initial Resize Call
         setTimeout(() => {
             resizeCanvas();
             renderScribble();
@@ -642,11 +593,9 @@
         createFallingStar();
 
         // --- 7. Disable Right Click ---
-        document.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-        });
+        document.addEventListener('contextmenu', (e) => { e.preventDefault(); });
         
-        // --- 8. Easter Egg: Konami Code (System Override) ---
+        // --- 8. Easter Egg: Konami Code (SANSKRIT MATRIX MODE) ---
         const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
         let konamiPosition = 0;
 
@@ -662,11 +611,13 @@
             }
         });
 
-        // --- MATRIX RAIN LOGIC ---
+        // --- SANSKRIT MATRIX RAIN LOGIC ---
         const matrixCanvas = document.getElementById('matrixCanvas');
         const mCtx = matrixCanvas.getContext('2d');
-        const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%';
-        const fontSize = 16;
+        
+        // SANSKRIT CHARACTERS + NUMBERS
+        const letters = 'ॐअआइईउऊऋएऐओऔकखगघङचछजझञटठडढणतथदधनपफबभमयरलवशषसह१२३४५६७८९०';
+        const fontSize = 18; // Slightly larger for readability
         let columns;
         let drops = [];
 
@@ -682,7 +633,8 @@
             mCtx.fillStyle = 'rgba(0, 0, 0, 0.05)'; 
             mCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
 
-            mCtx.fillStyle = '#0F0'; 
+            // Change Text Color to SAFFRON/GOLD for a divine tech feel
+            mCtx.fillStyle = '#FFD700'; 
             mCtx.font = fontSize + 'px monospace';
 
             for(let i = 0; i < drops.length; i++) {
@@ -697,19 +649,18 @@
         }
 
         function activateMatrixMode() {
-            if(isHackerMode) return; // Prevent double activation
+            if(isHackerMode) return; 
             isHackerMode = true;
 
-            // 1. Visual Changes
-            root.style.setProperty('--neon-color', '#0f0'); 
-            currentTrailColor = '#0f0';
-            document.title = "MATRIX PROTOCOL ACTIVE"; // Neutral Wording
+            // 1. Visual Changes - Change Neon to GOLD/SAFFRON
+            root.style.setProperty('--neon-color', '#FFD700'); 
+            currentTrailColor = '#FFD700';
+            document.title = "ॐ MAYA PROTOCOL ACTIVE"; 
             
             // 2. Hide Space Elements
             document.getElementById('starsLayer').style.opacity = '0';
             document.getElementById('nebulaLayer').style.opacity = '0';
             ufo.style.opacity = '0'; 
-            
             document.querySelectorAll('.falling-star').forEach(el => el.remove());
 
             // 3. Show Matrix Layer
@@ -718,16 +669,14 @@
             drawMatrix();
 
             // 4. Flash Effect
-            document.body.style.backgroundColor = '#001100';
+            document.body.style.backgroundColor = '#110d00'; // Dark Gold Flash
             setTimeout(() => {
                 document.body.style.backgroundColor = '#050505';
             }, 200);
             
-            // No alert popup, just visual change
-            console.log("System Override: Authorized");
+            console.log("Maya Protocol Initiated");
         }
 
     </script>
-
 </body>
 </html>
