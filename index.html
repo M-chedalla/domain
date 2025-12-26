@@ -176,25 +176,29 @@
             100% { transform: translate(-300px, 300px) rotate(-45deg); opacity: 0; }
         }
 
-        /* --- FLYING MOUNTAIN (Sanjeevani) --- */
+        /* --- UPDATED: FLYING HANUMAN IMAGE --- */
         .ufo-container {
             position: fixed;
-            left: -150px; 
-            z-index: 5; 
-            font-size: 4rem; /* Larger for mountain */
-            /* Saffron Glow for Hanuman Energy */
-            filter: drop-shadow(0 0 15px var(--hanuman-saffron)); 
+            left: -300px; /* Start further back so image doesn't pop in */
+            z-index: 5;
+            /* Set size for the image */
+            width: 180px; 
+            height: auto;
+            /* Saffron Glow applied to the image transparency */
+            filter: drop-shadow(0 0 20px var(--hanuman-saffron)); 
             pointer-events: none;
             transition: opacity 0.5s ease;
         }
         
         .ufo-fly-anim { animation: ufo-fly linear forwards; }
         
-        /* Mountain flies straight, no rotation needed */
+        /* Flight path tailored for the image */
         @keyframes ufo-fly {
-            0% { transform: translateX(0) translateY(0); }
-            50% { transform: translateX(50vw) translateY(-20px); }
-            100% { transform: translateX(calc(100vw + 300px)) translateY(0); }
+            0% { transform: translateX(0) translateY(100px) scale(0.8); opacity: 0; }
+            10% { opacity: 1; }
+            50% { transform: translateX(50vw) translateY(0px) scale(1); }
+            90% { opacity: 1; }
+            100% { transform: translateX(calc(100vw + 300px)) translateY(-100px) scale(0.8); opacity: 0; }
         }
 
         /* --- Animations --- */
@@ -340,7 +344,7 @@
 
     <canvas id="scribbleCanvas"></canvas>
 
-    <div id="ufo" class="ufo-container">⛰️</div>
+    <img id="ufo" class="ufo-container" src="https://i.imgur.com/8QZ8QzY.png" alt="Hanuman Lifting Mountain">
 
     <div class="cursor-star" id="cursorStar"></div>
 
@@ -355,13 +359,13 @@
         </div>
 
         <div class="social-icons-container">
-            <a href="mailto:hello@chedalla.in" class="social-icon" title="Email" data-tooltip="CONTACT">
+            <a href="mailto:hello@chedalla.in" class="social-icon" title="Email">
                 <i class="fas fa-envelope"></i>
             </a>
-            <a href="https://www.linkedin.com/in/chedalla" class="social-icon" title="LinkedIn" data-tooltip="CONNECT">
+            <a href="https://www.linkedin.com/in/chedalla" class="social-icon" title="LinkedIn">
                 <i class="fab fa-linkedin"></i>
             </a>
-            <a href="https://www.instagram.com/t4teja" class="social-icon" title="Instagram" data-tooltip="FOLLOW">
+            <a href="https://www.instagram.com/t4teja" class="social-icon" title="Instagram">
                 <i class="fab fa-instagram"></i>
             </a>
         </div>
@@ -540,26 +544,33 @@
         }, 100);
 
 
-        // --- 5. FLYING MOUNTAIN Logic (Replaces UFO) ---
+        // --- 5. FLYING HANUMAN Logic (Replaces UFO) ---
         const ufo = document.getElementById('ufo');
 
         function triggerUFO() {
             if(isHackerMode) return; 
 
-            const randomTop = Math.floor(Math.random() * 70) + 10;
-            const randomDuration = Math.random() * 4 + 6; // Slower, majestic flight
+            // Random starting height
+            const randomTop = Math.floor(Math.random() * 60) + 20; 
+            // Slower duration for image
+            const randomDuration = Math.random() * 5 + 8; 
 
             ufo.style.top = randomTop + '%';
             ufo.style.animationDuration = randomDuration + 's';
             
             ufo.classList.remove('ufo-fly-anim');
+            // Trigger reflow
             void ufo.offsetWidth; 
             ufo.classList.add('ufo-fly-anim');
 
-            const nextFlightIn = Math.random() * 15000 + 10000;
+            const nextFlightIn = Math.random() * 15000 + 12000;
             setTimeout(triggerUFO, nextFlightIn);
         }
-        setTimeout(triggerUFO, 2000);
+        // Start a bit later to ensure image loads
+        window.addEventListener('load', () => {
+             setTimeout(triggerUFO, 3000);
+        });
+       
 
         // --- 6. Falling Stars Logic ---
         function createFallingStar() {
@@ -649,7 +660,7 @@
             currentTrailColor = '#FF9933';
             document.title = "MAYA PROTOCOL ACTIVE"; 
             
-            // 2. Hide Space Elements
+            // 2. Hide Space Elements & Hanuman Image
             document.getElementById('starsLayer').style.opacity = '0';
             document.getElementById('nebulaLayer').style.opacity = '0';
             ufo.style.opacity = '0'; 
