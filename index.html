@@ -31,7 +31,7 @@
             flex-direction: column;
             justify-content: center;
             overflow: hidden; 
-            cursor: none; /* Hide default cursor */
+            cursor: none;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             transition: background-color 0.2s ease;
             -webkit-user-select: none;
@@ -179,13 +179,13 @@
         /* --- FLYING HANUMAN IMAGE --- */
         .ufo-container {
             position: fixed;
-            left: -300px; /* Start hidden */
+            left: -300px; 
             z-index: 5;
             width: 180px; 
             height: auto;
             /* Saffron Glow for Hanuman Energy */
             filter: drop-shadow(0 0 20px var(--hanuman-saffron)); 
-            pointer-events: none; 
+            pointer-events: none;
             transition: opacity 0.5s ease;
         }
         
@@ -241,7 +241,7 @@
             animation: spin 0.3s linear infinite; /* Furious spin */
         }
 
-        /* --- SPARKS EFFECT --- */
+        /* --- SPARKS EFFECT (Restored) --- */
         .cursor-star::before,
         .cursor-star::after {
             content: '';
@@ -251,6 +251,7 @@
             width: 100%;
             height: 100%;
             border-radius: 50%;
+            /* Uses the neon-color variable, so it will be Saffron in Maya mode */
             border: 3px dotted var(--neon-color); 
             transform: translate(-50%, -50%) scale(0.5);
             opacity: 0;
@@ -259,6 +260,7 @@
             transition: border-color 0.3s ease;
         }
 
+        /* Trigger Spark Animations on Warp Active */
         body.warp-active .cursor-star::before {
             animation: spark-burst-1 0.4s ease-out infinite;
         }
@@ -276,6 +278,7 @@
             0% { transform: translate(-50%, -50%) scale(0.8) rotate(90deg); opacity: 1; }
             100% { transform: translate(-50%, -50%) scale(2.5) rotate(270deg); opacity: 0; }
         }
+
 
         /* --- Main Content Area --- */
         .main-content {
@@ -417,30 +420,23 @@
     </div>
 
     <script>
-        // --- DEFINE GLOBAL VARIABLES FIRST TO PREVENT CRASHES ---
         const root = document.documentElement; 
         let isHackerMode = false; 
-
-        // DOM Elements
+        
+        // --- 0. Language Toggle Logic ---
         const btnEn = document.getElementById('btnEn');
         const btnTe = document.getElementById('btnTe');
         const mainTexts = document.querySelectorAll('.main-text'); 
         const footerSignature = document.getElementById('footerSignature');
-        const ufo = document.getElementById('ufo');
-        const cursorStar = document.getElementById('cursorStar');
-        const canvas = document.getElementById('scribbleCanvas');
-        const ctx = canvas.getContext('2d');
-        const matrixCanvas = document.getElementById('matrixCanvas');
-        const mCtx = matrixCanvas.getContext('2d');
         
-        // Data
         const enName = "Mani Krishna Chandra Teja Chedalla";
         const teName = "మణి కృష్ణ చంద్ర తేజ చెదళ్ళ";
+        
         const enFont = "'Playfair Display', serif"; 
         const teFont = "'Sirivennela', sans-serif"; 
+
         const originalTitle = document.title;
 
-        // --- 0. Language Toggle Logic ---
         function setEnglish() {
             btnEn.classList.add('active');
             btnTe.classList.remove('active');
@@ -485,27 +481,32 @@
             }
         });
 
-        // --- 2. Canvas & Pointer Vars ---
+        // --- 2. Canvas Setup ---
+        const cursorStar = document.getElementById('cursorStar');
+        const canvas = document.getElementById('scribbleCanvas');
+        const ctx = canvas.getContext('2d');
+        
         let currentTrailColor = '#0ef';
         let width, height;
-        let mouseX = width / 2;
-        let mouseY = height / 2;
-        let lastX = mouseX;
-        let lastY = mouseY;
-        let warpTimer;
-        let isHanumanCaptured = false;
 
         function resizeCanvas() {
             width = window.innerWidth;
             height = window.innerHeight;
             canvas.width = width;
             canvas.height = height;
+            
             matrixCanvas.width = width;
             matrixCanvas.height = height;
         }
         window.addEventListener('resize', resizeCanvas);
         
-        // --- 3. Pointer Tracking & Hanuman Interaction ---
+        // --- 3. Pointer Tracking ---
+        let mouseX = width / 2;
+        let mouseY = height / 2;
+        let lastX = mouseX;
+        let lastY = mouseY;
+        let warpTimer;
+
         function updatePointer(x, y) {
             mouseX = x;
             mouseY = y;
@@ -519,34 +520,7 @@
 
         document.addEventListener('mousemove', (e) => {
             updatePointer(e.clientX, e.clientY);
-
-            // Hanuman Follow Logic
-            if (!isHackerMode) { 
-                if (ufo.classList.contains('ufo-fly-anim')) {
-                    isHanumanCaptured = true;
-                    ufo.classList.remove('ufo-fly-anim');
-                    ufo.style.transition = 'left 0.1s linear, top 0.1s linear'; 
-                    ufo.style.opacity = '1';
-                    ufo.style.transform = 'none'; 
-                }
-
-                if (isHanumanCaptured) {
-                    const offsetX = ufo.offsetWidth / 2;
-                    const offsetY = ufo.offsetHeight / 2;
-                    ufo.style.left = (e.clientX - offsetX) + 'px';
-                    ufo.style.top = (e.clientY - offsetY) + 'px';
-
-                    clearTimeout(ufo.releaseTimeout);
-                    ufo.releaseTimeout = setTimeout(() => {
-                        isHanumanCaptured = false;
-                        ufo.style.transition = 'left 1s ease-in, opacity 1s ease-in';
-                        ufo.style.left = '110vw'; 
-                        ufo.style.opacity = '0';
-                    }, 2000); 
-                }
-            }
         });
-
         document.addEventListener('mousedown', (e) => {
             if(e.target.closest('.cyber-toggle')) return; 
             document.body.classList.add('warp-active');
@@ -603,7 +577,6 @@
             requestAnimationFrame(renderScribble);
         }
         
-        // Initialize
         setTimeout(() => {
             resizeCanvas();
             renderScribble();
@@ -611,14 +584,12 @@
 
 
         // --- 5. FLYING HANUMAN Logic ---
+        const ufo = document.getElementById('ufo');
+
         function triggerUFO() {
             if(isHackerMode) return; 
 
-            ufo.style.transition = '';
-            ufo.style.left = '-300px'; 
-            ufo.style.transform = ''; 
-            ufo.style.opacity = '';
-
+            // Random starting height
             const randomTop = Math.floor(Math.random() * 60) + 20; 
             const randomDuration = Math.random() * 5 + 8; 
 
@@ -632,6 +603,7 @@
             const nextFlightIn = Math.random() * 15000 + 12000;
             setTimeout(triggerUFO, nextFlightIn);
         }
+        // Start a bit later to ensure image loads
         window.addEventListener('load', () => {
              setTimeout(triggerUFO, 3000);
         });
@@ -663,7 +635,7 @@
         // --- 7. Disable Right Click ---
         document.addEventListener('contextmenu', (e) => { e.preventDefault(); });
         
-        // --- 8. Easter Egg: Konami Code ---
+        // --- 8. Easter Egg: Konami Code (SAFFRON MAYA MODE) ---
         const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
         let konamiPosition = 0;
 
@@ -680,6 +652,10 @@
         });
 
         // --- SANSKRIT MATRIX RAIN LOGIC ---
+        const matrixCanvas = document.getElementById('matrixCanvas');
+        const mCtx = matrixCanvas.getContext('2d');
+        
+        // Sanskrit Script
         const letters = 'ॐअआइईउऊऋएऐओऔकखगघङचछजझञटठडढणतथदधनपफबभमयरलवशषसह१२३४५६७८९०';
         const fontSize = 18; 
         let columns;
@@ -697,6 +673,7 @@
             mCtx.fillStyle = 'rgba(0, 0, 0, 0.05)'; 
             mCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
 
+            // Saffron/Orange Text for Hanuman Theme
             mCtx.fillStyle = '#FF9933'; 
             mCtx.font = fontSize + 'px monospace';
 
