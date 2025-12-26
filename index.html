@@ -70,7 +70,7 @@
         .cyber-line {
             width: 2px;
             height: 24px;
-            background-color: var(--neon-color); /* Dynamic Theme Color */
+            background-color: var(--neon-color);
             box-shadow: 0 0 10px var(--neon-color), 0 0 20px var(--neon-color);
             border-radius: 2px;
             transform: skew(-10deg); 
@@ -89,15 +89,19 @@
         }
 
         /* --- Background Layers --- */
-        .stars-container {
+        /* Added transition to fade these out in Hacker Mode */
+        .stars-container, .nebula {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 0;
             pointer-events: none;
+            transition: opacity 1s ease; 
         }
+
+        .stars-container { z-index: 0; }
+        .nebula { z-index: -1; background: radial-gradient(circle at 50% 50%, rgba(20, 20, 40, 0.4), transparent 80%); }
 
         .stars, .stars2, .stars3 {
             position: absolute;
@@ -134,14 +138,16 @@
             animation: space-drift calc(var(--star-speed) * 0.6) linear infinite, twinkle 4s ease-in-out infinite;
         }
 
-        .nebula {
+        /* --- Matrix Rain Canvas --- */
+        #matrixCanvas {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at 50% 50%, rgba(20, 20, 40, 0.4), transparent 80%);
-            z-index: -1; 
+            z-index: 0; /* Sits where stars used to be */
+            opacity: 0;  /* Hidden by default */
+            transition: opacity 2s ease;
             pointer-events: none;
         }
 
@@ -167,6 +173,7 @@
             pointer-events: none;
             opacity: 0;
             transform: rotate(-45deg);
+            transition: opacity 0.5s ease;
         }
 
         @keyframes shoot {
@@ -182,6 +189,7 @@
             font-size: 3rem;
             filter: drop-shadow(0 0 10px rgba(0, 255, 0, 0.5));
             pointer-events: none;
+            transition: opacity 0.5s ease;
         }
         
         .ufo-fly-anim {
@@ -362,12 +370,14 @@
 </head>
 <body>
 
-    <div class="nebula"></div>
-    <div class="stars-container">
+    <div class="nebula" id="nebulaLayer"></div>
+    <div class="stars-container" id="starsLayer">
         <div class="stars"></div>
         <div class="stars2"></div>
         <div class="stars3"></div>
     </div>
+
+    <canvas id="matrixCanvas"></canvas>
 
     <div class="cyber-toggle" id="langToggle">
         <span class="cyber-opt opt-en active" id="btnEn">EN</span>
@@ -392,13 +402,13 @@
         </div>
 
         <div class="social-icons-container">
-            <a href="mailto:hello@chedalla.in" class="social-icon" title="Email">
+            <a href="mailto:hello@chedalla.in" class="social-icon" title="Email" data-tooltip="CONTACT">
                 <i class="fas fa-envelope"></i>
             </a>
-            <a href="https://www.linkedin.com/in/chedalla" class="social-icon" title="LinkedIn">
+            <a href="https://www.linkedin.com/in/chedalla" class="social-icon" title="LinkedIn" data-tooltip="CONNECT">
                 <i class="fab fa-linkedin"></i>
             </a>
-            <a href="https://www.instagram.com/t4teja" class="social-icon" title="Instagram">
+            <a href="https://www.instagram.com/t4teja" class="social-icon" title="Instagram" data-tooltip="FOLLOW">
                 <i class="fab fa-instagram"></i>
             </a>
         </div>
@@ -414,6 +424,7 @@
 
     <script>
         const root = document.documentElement; 
+        let isHackerMode = false; // Flag to track mode
         
         // --- 0. Language Toggle Logic ---
         const btnEn = document.getElementById('btnEn');
@@ -427,7 +438,6 @@
         const enFont = "'Playfair Display', serif"; 
         const teFont = "'Sirivennela', sans-serif"; 
 
-        // Initial Title
         const originalTitle = document.title;
 
         function setEnglish() {
@@ -460,7 +470,6 @@
             root.style.setProperty('--ticker-speed', '30s'); 
         }
 
-        // Click Handling
         btnEn.addEventListener('mousedown', (e) => { e.stopPropagation(); setEnglish(); });
         btnTe.addEventListener('mousedown', (e) => { e.stopPropagation(); setTelugu(); });
         btnEn.addEventListener('touchstart', (e) => { e.stopPropagation(); setEnglish(); });
@@ -470,30 +479,33 @@
         // --- 1. Dynamic Title Change ---
         document.addEventListener("visibilitychange", () => {
             if (document.hidden) {
-                document.title = "🛸 Lost in Space?";
+                document.title = isHackerMode ? "⚠️ SYSTEM BREACHED" : "🛸 Lost in Space?";
             } else {
-                document.title = originalTitle;
+                document.title = isHackerMode ? "SYSTEM HACKED // ACCESS GRANTED" : originalTitle;
             }
         });
 
 
-        // --- 2. Canvas Setup ---
+        // --- 2. Canvas Setup (Scribble) ---
         const cursorStar = document.getElementById('cursorStar');
         const canvas = document.getElementById('scribbleCanvas');
         const ctx = canvas.getContext('2d');
         
-        // Variable for current Trail Color
         let currentTrailColor = '#0ef';
-
         let width, height;
+
         function resizeCanvas() {
             width = window.innerWidth;
             height = window.innerHeight;
             canvas.width = width;
             canvas.height = height;
+            
+            // Resize Matrix Canvas
+            matrixCanvas.width = width;
+            matrixCanvas.height = height;
         }
         window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
+        
 
         // --- 3. Pointer Tracking ---
         let mouseX = width / 2;
@@ -576,13 +588,22 @@
 
             requestAnimationFrame(renderScribble);
         }
-        renderScribble(); 
+        
+        // Initial Resize Call to set everything up
+        // Need to wait for DOM elements
+        setTimeout(() => {
+            resizeCanvas();
+            renderScribble();
+        }, 100);
 
 
         // --- 5. UFO Flyby Logic ---
         const ufo = document.getElementById('ufo');
 
         function triggerUFO() {
+            // Stop if Hacker Mode is on
+            if(isHackerMode) return; 
+
             const randomTop = Math.floor(Math.random() * 70) + 10;
             const randomDuration = Math.random() * 4 + 3;
 
@@ -600,6 +621,13 @@
 
         // --- 6. Falling Stars Logic ---
         function createFallingStar() {
+            // Stop if Hacker Mode is on
+            if(isHackerMode) {
+                // Check again in 5 seconds in case mode switches back (optional)
+                setTimeout(createFallingStar, 5000);
+                return;
+            }
+
             const star = document.createElement('div');
             star.classList.add('falling-star');
             const length = Math.random() * 100 + 100;
@@ -610,6 +638,7 @@
             star.style.animation = `shoot ${duration}s ease-out forwards`;
             document.body.appendChild(star);
             setTimeout(() => { star.remove(); }, duration * 1000);
+            
             const nextStarTime = Math.random() * 4000 + 2000;
             setTimeout(createFallingStar, nextStarTime);
         }
@@ -636,15 +665,62 @@
             }
         });
 
+        // --- MATRIX RAIN LOGIC ---
+        const matrixCanvas = document.getElementById('matrixCanvas');
+        const mCtx = matrixCanvas.getContext('2d');
+        const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%';
+        const fontSize = 16;
+        let columns;
+        let drops = [];
+
+        function initMatrix() {
+            columns = matrixCanvas.width / fontSize;
+            drops = [];
+            for(let x = 0; x < columns; x++) drops[x] = 1;
+        }
+
+        function drawMatrix() {
+            if(!isHackerMode) return; // Stop drawing if not in mode
+
+            mCtx.fillStyle = 'rgba(0, 0, 0, 0.05)'; // Fade trail
+            mCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+
+            mCtx.fillStyle = '#0F0'; // Green Text
+            mCtx.font = fontSize + 'px monospace';
+
+            for(let i = 0; i < drops.length; i++) {
+                const text = letters.charAt(Math.floor(Math.random() * letters.length));
+                mCtx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if(drops[i] * fontSize > matrixCanvas.height && Math.random() > 0.975)
+                    drops[i] = 0;
+                drops[i]++;
+            }
+            requestAnimationFrame(drawMatrix);
+        }
+
         function activateHackerMode() {
-            // Change Theme to Matrix Green
+            isHackerMode = true;
+
+            // 1. Visual Changes
             root.style.setProperty('--neon-color', '#0f0'); 
-            currentTrailColor = '#0f0'; // Update drawing trail variable
-            
-            // Change Title
+            currentTrailColor = '#0f0';
             document.title = "SYSTEM HACKED // ACCESS GRANTED";
             
-            // Flash effect
+            // 2. Hide Space Elements
+            document.getElementById('starsLayer').style.opacity = '0';
+            document.getElementById('nebulaLayer').style.opacity = '0';
+            ufo.style.opacity = '0'; // Immediately hide UFO
+            
+            // Remove existing falling stars immediately
+            document.querySelectorAll('.falling-star').forEach(el => el.remove());
+
+            // 3. Show Matrix Layer
+            initMatrix();
+            matrixCanvas.style.opacity = '1';
+            drawMatrix();
+
+            // 4. Flash Effect
             document.body.style.backgroundColor = '#001100';
             setTimeout(() => {
                 document.body.style.backgroundColor = '#050505';
