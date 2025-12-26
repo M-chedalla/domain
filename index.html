@@ -31,7 +31,7 @@
             flex-direction: column;
             justify-content: center;
             overflow: hidden; 
-            cursor: none;
+            cursor: none; /* Hide default cursor */
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             transition: background-color 0.2s ease;
             -webkit-user-select: none;
@@ -185,11 +185,10 @@
             height: auto;
             /* Saffron Glow for Hanuman Energy */
             filter: drop-shadow(0 0 20px var(--hanuman-saffron)); 
-            pointer-events: none; /* Initially none, but JS might manage interaction */
+            pointer-events: none; 
             transition: opacity 0.5s ease;
         }
         
-        /* The automatic flight class */
         .ufo-fly-anim { animation: ufo-fly linear forwards; }
         
         @keyframes ufo-fly {
@@ -242,7 +241,7 @@
             animation: spin 0.3s linear infinite; /* Furious spin */
         }
 
-        /* --- SPARKS EFFECT (Restored) --- */
+        /* --- SPARKS EFFECT --- */
         .cursor-star::before,
         .cursor-star::after {
             content: '';
@@ -252,7 +251,6 @@
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            /* Uses the neon-color variable, so it will be Saffron in Maya mode */
             border: 3px dotted var(--neon-color); 
             transform: translate(-50%, -50%) scale(0.5);
             opacity: 0;
@@ -261,7 +259,6 @@
             transition: border-color 0.3s ease;
         }
 
-        /* Trigger Spark Animations on Warp Active */
         body.warp-active .cursor-star::before {
             animation: spark-burst-1 0.4s ease-out infinite;
         }
@@ -279,7 +276,6 @@
             0% { transform: translate(-50%, -50%) scale(0.8) rotate(90deg); opacity: 1; }
             100% { transform: translate(-50%, -50%) scale(2.5) rotate(270deg); opacity: 0; }
         }
-
 
         /* --- Main Content Area --- */
         .main-content {
@@ -416,5 +412,334 @@
         <div class="footer-text">
             <span class="copyright-year">&copy; 2026</span>
             <span class="signature-text" id="footerSignature">మణి కృష్ణ చంద్ర తేజ చెదళ్ళ</span>
+            <span class="flag-icon">🚩</span>
         </div>
     </div>
+
+    <script>
+        // --- DEFINE GLOBAL VARIABLES FIRST TO PREVENT CRASHES ---
+        const root = document.documentElement; 
+        let isHackerMode = false; 
+
+        // DOM Elements
+        const btnEn = document.getElementById('btnEn');
+        const btnTe = document.getElementById('btnTe');
+        const mainTexts = document.querySelectorAll('.main-text'); 
+        const footerSignature = document.getElementById('footerSignature');
+        const ufo = document.getElementById('ufo');
+        const cursorStar = document.getElementById('cursorStar');
+        const canvas = document.getElementById('scribbleCanvas');
+        const ctx = canvas.getContext('2d');
+        const matrixCanvas = document.getElementById('matrixCanvas');
+        const mCtx = matrixCanvas.getContext('2d');
+        
+        // Data
+        const enName = "Mani Krishna Chandra Teja Chedalla";
+        const teName = "మణి కృష్ణ చంద్ర తేజ చెదళ్ళ";
+        const enFont = "'Playfair Display', serif"; 
+        const teFont = "'Sirivennela', sans-serif"; 
+        const originalTitle = document.title;
+
+        // --- 0. Language Toggle Logic ---
+        function setEnglish() {
+            btnEn.classList.add('active');
+            btnTe.classList.remove('active');
+
+            mainTexts.forEach(el => {
+                el.innerText = enName;
+                el.style.fontFamily = enFont;
+            });
+            footerSignature.innerText = teName;
+            footerSignature.style.fontFamily = teFont;
+            footerSignature.style.fontSize = "22px"; 
+            
+            root.style.setProperty('--ticker-speed', '40s');
+        }
+
+        function setTelugu() {
+            btnTe.classList.add('active');
+            btnEn.classList.remove('active');
+
+            mainTexts.forEach(el => {
+                el.innerText = teName;
+                el.style.fontFamily = teFont;
+            });
+            footerSignature.innerText = enName;
+            footerSignature.style.fontFamily = enFont;
+            footerSignature.style.fontSize = "18px"; 
+
+            root.style.setProperty('--ticker-speed', '30s'); 
+        }
+
+        btnEn.addEventListener('mousedown', (e) => { e.stopPropagation(); setEnglish(); });
+        btnTe.addEventListener('mousedown', (e) => { e.stopPropagation(); setTelugu(); });
+        btnEn.addEventListener('touchstart', (e) => { e.stopPropagation(); setEnglish(); });
+        btnTe.addEventListener('touchstart', (e) => { e.stopPropagation(); setTelugu(); });
+
+        // --- 1. Dynamic Title Change ---
+        document.addEventListener("visibilitychange", () => {
+            if (document.hidden) {
+                document.title = isHackerMode ? "⚠️ SYSTEM OVERRIDE" : "🛸 Lost in Space?";
+            } else {
+                document.title = isHackerMode ? "MAYA PROTOCOL ACTIVE" : originalTitle;
+            }
+        });
+
+        // --- 2. Canvas & Pointer Vars ---
+        let currentTrailColor = '#0ef';
+        let width, height;
+        let mouseX = width / 2;
+        let mouseY = height / 2;
+        let lastX = mouseX;
+        let lastY = mouseY;
+        let warpTimer;
+        let isHanumanCaptured = false;
+
+        function resizeCanvas() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+            matrixCanvas.width = width;
+            matrixCanvas.height = height;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        
+        // --- 3. Pointer Tracking & Hanuman Interaction ---
+        function updatePointer(x, y) {
+            mouseX = x;
+            mouseY = y;
+            cursorStar.style.left = x + 'px';
+            cursorStar.style.top = y + 'px';
+            
+            const moveX = (x * -0.01);
+            const moveY = (y * -0.01);
+            document.querySelector('.nebula').style.transform = `translate(${moveX}px, ${moveY}px)`;
+        }
+
+        document.addEventListener('mousemove', (e) => {
+            updatePointer(e.clientX, e.clientY);
+
+            // Hanuman Follow Logic
+            if (!isHackerMode) { 
+                if (ufo.classList.contains('ufo-fly-anim')) {
+                    isHanumanCaptured = true;
+                    ufo.classList.remove('ufo-fly-anim');
+                    ufo.style.transition = 'left 0.1s linear, top 0.1s linear'; 
+                    ufo.style.opacity = '1';
+                    ufo.style.transform = 'none'; 
+                }
+
+                if (isHanumanCaptured) {
+                    const offsetX = ufo.offsetWidth / 2;
+                    const offsetY = ufo.offsetHeight / 2;
+                    ufo.style.left = (e.clientX - offsetX) + 'px';
+                    ufo.style.top = (e.clientY - offsetY) + 'px';
+
+                    clearTimeout(ufo.releaseTimeout);
+                    ufo.releaseTimeout = setTimeout(() => {
+                        isHanumanCaptured = false;
+                        ufo.style.transition = 'left 1s ease-in, opacity 1s ease-in';
+                        ufo.style.left = '110vw'; 
+                        ufo.style.opacity = '0';
+                    }, 2000); 
+                }
+            }
+        });
+
+        document.addEventListener('mousedown', (e) => {
+            if(e.target.closest('.cyber-toggle')) return; 
+            document.body.classList.add('warp-active');
+        });
+        document.addEventListener('mouseup', () => document.body.classList.remove('warp-active'));
+
+        document.addEventListener('touchstart', (e) => {
+            if(e.target.closest('.cyber-toggle')) return;
+            const touch = e.touches[0];
+            lastX = touch.clientX;
+            lastY = touch.clientY;
+            updatePointer(touch.clientX, touch.clientY);
+            warpTimer = setTimeout(() => {
+                document.body.classList.add('warp-active');
+            }, 800);
+        }, { passive: false });
+
+        document.addEventListener('touchmove', (e) => {
+            if (e.cancelable) e.preventDefault();
+            clearTimeout(warpTimer);
+            document.body.classList.remove('warp-active'); 
+            const touch = e.touches[0];
+            updatePointer(touch.clientX, touch.clientY);
+        }, { passive: false });
+
+        document.addEventListener('touchend', () => {
+            clearTimeout(warpTimer);
+            document.body.classList.remove('warp-active');
+        });
+
+        // --- 4. Render Scribble Loop ---
+        function renderScribble() {
+            ctx.save();
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'; 
+            ctx.fillRect(0, 0, width, height);
+            ctx.restore();
+
+            ctx.beginPath();
+            ctx.strokeStyle = currentTrailColor; 
+            ctx.lineWidth = 2;
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = currentTrailColor;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(mouseX, mouseY);
+            ctx.stroke();
+
+            lastX = mouseX;
+            lastY = mouseY;
+
+            requestAnimationFrame(renderScribble);
+        }
+        
+        // Initialize
+        setTimeout(() => {
+            resizeCanvas();
+            renderScribble();
+        }, 100);
+
+
+        // --- 5. FLYING HANUMAN Logic ---
+        function triggerUFO() {
+            if(isHackerMode) return; 
+
+            ufo.style.transition = '';
+            ufo.style.left = '-300px'; 
+            ufo.style.transform = ''; 
+            ufo.style.opacity = '';
+
+            const randomTop = Math.floor(Math.random() * 60) + 20; 
+            const randomDuration = Math.random() * 5 + 8; 
+
+            ufo.style.top = randomTop + '%';
+            ufo.style.animationDuration = randomDuration + 's';
+            
+            ufo.classList.remove('ufo-fly-anim');
+            void ufo.offsetWidth; 
+            ufo.classList.add('ufo-fly-anim');
+
+            const nextFlightIn = Math.random() * 15000 + 12000;
+            setTimeout(triggerUFO, nextFlightIn);
+        }
+        window.addEventListener('load', () => {
+             setTimeout(triggerUFO, 3000);
+        });
+       
+
+        // --- 6. Falling Stars Logic ---
+        function createFallingStar() {
+            if(isHackerMode) {
+                setTimeout(createFallingStar, 5000);
+                return;
+            }
+
+            const star = document.createElement('div');
+            star.classList.add('falling-star');
+            const length = Math.random() * 100 + 100;
+            star.style.width = length + 'px';
+            star.style.left = Math.random() * 100 + 'vw';
+            star.style.top = Math.random() * 50 - 20 + 'vh'; 
+            const duration = Math.random() * 1 + 1;
+            star.style.animation = `shoot ${duration}s ease-out forwards`;
+            document.body.appendChild(star);
+            setTimeout(() => { star.remove(); }, duration * 1000);
+            
+            const nextStarTime = Math.random() * 4000 + 2000;
+            setTimeout(createFallingStar, nextStarTime);
+        }
+        createFallingStar();
+
+        // --- 7. Disable Right Click ---
+        document.addEventListener('contextmenu', (e) => { e.preventDefault(); });
+        
+        // --- 8. Easter Egg: Konami Code ---
+        const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+        let konamiPosition = 0;
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === konamiCode[konamiPosition]) {
+                konamiPosition++;
+                if (konamiPosition === konamiCode.length) {
+                    activateMatrixMode();
+                    konamiPosition = 0; 
+                }
+            } else {
+                konamiPosition = 0; 
+            }
+        });
+
+        // --- SANSKRIT MATRIX RAIN LOGIC ---
+        const letters = 'ॐअआइईउऊऋएऐओऔकखगघङचछजझञटठडढणतथदधनपफबभमयरलवशषसह१२३४५६७८९०';
+        const fontSize = 18; 
+        let columns;
+        let drops = [];
+
+        function initMatrix() {
+            columns = matrixCanvas.width / fontSize;
+            drops = [];
+            for(let x = 0; x < columns; x++) drops[x] = 1;
+        }
+
+        function drawMatrix() {
+            if(!isHackerMode) return; 
+
+            mCtx.fillStyle = 'rgba(0, 0, 0, 0.05)'; 
+            mCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+
+            mCtx.fillStyle = '#FF9933'; 
+            mCtx.font = fontSize + 'px monospace';
+
+            for(let i = 0; i < drops.length; i++) {
+                const text = letters.charAt(Math.floor(Math.random() * letters.length));
+                mCtx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if(drops[i] * fontSize > matrixCanvas.height && Math.random() > 0.975)
+                    drops[i] = 0;
+                drops[i]++;
+            }
+            requestAnimationFrame(drawMatrix);
+        }
+
+        function activateMatrixMode() {
+            if(isHackerMode) return; 
+            isHackerMode = true;
+
+            // 1. Visual Changes - Saffron Theme
+            root.style.setProperty('--neon-color', '#FF9933'); 
+            currentTrailColor = '#FF9933';
+            document.title = "MAYA PROTOCOL ACTIVE"; 
+            
+            // 2. Hide Space Elements & Hanuman Image
+            document.getElementById('starsLayer').style.opacity = '0';
+            document.getElementById('nebulaLayer').style.opacity = '0';
+            ufo.style.opacity = '0'; 
+            document.querySelectorAll('.falling-star').forEach(el => el.remove());
+
+            // 3. Show Matrix Layer
+            initMatrix();
+            matrixCanvas.style.opacity = '1';
+            drawMatrix();
+
+            // 4. Flash Effect
+            document.body.style.backgroundColor = '#2a1200'; // Dark Saffron Flash
+            setTimeout(() => {
+                document.body.style.backgroundColor = '#050505';
+            }, 200);
+            
+            console.log("Maya Protocol Initiated");
+        }
+
+    </script>
+</body>
+</html>
