@@ -176,15 +176,14 @@
             100% { transform: translate(-300px, 300px) rotate(-45deg); opacity: 0; }
         }
 
-        /* --- UPDATED: FLYING HANUMAN IMAGE --- */
+        /* --- FLYING HANUMAN IMAGE --- */
         .ufo-container {
             position: fixed;
-            left: -300px; /* Start further back so image doesn't pop in */
+            left: -300px; 
             z-index: 5;
-            /* Set size for the image */
             width: 180px; 
             height: auto;
-            /* Saffron Glow applied to the image transparency */
+            /* Saffron Glow for Hanuman Energy */
             filter: drop-shadow(0 0 20px var(--hanuman-saffron)); 
             pointer-events: none;
             transition: opacity 0.5s ease;
@@ -192,7 +191,6 @@
         
         .ufo-fly-anim { animation: ufo-fly linear forwards; }
         
-        /* Flight path tailored for the image */
         @keyframes ufo-fly {
             0% { transform: translateX(0) translateY(100px) scale(0.8); opacity: 0; }
             10% { opacity: 1; }
@@ -221,25 +219,69 @@
             width: 25px;
             height: 25px;
             border-radius: 50%;
+            /* Dashed border looks like a spinning chakra */
             border: 2px dashed #ffffff; 
             box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); 
             pointer-events: none;
             z-index: 9999;
             transform: translate(-50%, -50%);
             will-change: left, top, transform;
-            animation: spin 4s linear infinite; 
+            animation: spin 4s linear infinite; /* Slow normal spin */
             transition: width 0.2s, height 0.2s, border-color 0.3s;
         }
 
         @keyframes spin { 100% { transform: translate(-50%, -50%) rotate(360deg); } }
 
+        /* Warp Mode: Fast Spin + Glow + Sparks */
         body.warp-active .cursor-star {
             width: 50px;
             height: 50px;
             border-color: var(--neon-color);
             box-shadow: 0 0 20px var(--neon-color), inset 0 0 10px var(--neon-color);
-            animation: spin 0.5s linear infinite; 
+            animation: spin 0.3s linear infinite; /* Furious spin */
         }
+
+        /* --- NEW: CURSOR SPARKS EFFECT --- */
+        /* These pseudo-elements act as the sparks */
+        .cursor-star::before,
+        .cursor-star::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            /* Dotted border creates jagged spark look */
+            border: 3px dotted var(--neon-color); 
+            transform: translate(-50%, -50%) scale(0.5);
+            opacity: 0;
+            pointer-events: none;
+            filter: blur(1px);
+            transition: border-color 0.3s ease;
+        }
+
+        /* Trigger Spark Animations on Warp Active */
+        body.warp-active .cursor-star::before {
+            animation: spark-burst-1 0.4s ease-out infinite;
+        }
+
+        body.warp-active .cursor-star::after {
+            /* Delay the second burst for continuous effect */
+            animation: spark-burst-2 0.4s ease-out infinite 0.2s; 
+        }
+
+        /* Animation: Burst outwards, rotate, and fade */
+        @keyframes spark-burst-1 {
+            0% { transform: translate(-50%, -50%) scale(0.8) rotate(0deg); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(2.2) rotate(180deg); opacity: 0; }
+        }
+
+        @keyframes spark-burst-2 {
+            0% { transform: translate(-50%, -50%) scale(0.8) rotate(90deg); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(2.5) rotate(270deg); opacity: 0; }
+        }
+
 
         /* --- Main Content Area --- */
         .main-content {
@@ -344,7 +386,7 @@
 
     <canvas id="scribbleCanvas"></canvas>
 
-    <img id="ufo" class="ufo-container" src="images/hanuman.png" alt="Hanuman Lifting Mountain">
+    <img id="ufo" class="ufo-container" src="images/hanuman.png" alt="Hanuman Carrying Sanjeevani">
 
     <div class="cursor-star" id="cursorStar"></div>
 
@@ -682,5 +724,4 @@
 
     </script>
 </body>
-
 </html>
