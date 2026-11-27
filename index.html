@@ -248,6 +248,10 @@
             animation-duration: 0.2s; opacity: 0.6; scale: 1 2; /* no blur filter here: blurring these huge layers every frame made Hanuman stutter */ 
         }
         
+        /* Hanuman steps out of frame while warp is held (the streaking stars
+           made him look jittery) and glides back in on release. */
+        body.warp-active .ufo-container { opacity: 0; transition-duration: 0.25s; }
+
         /* --- SUDARSHANA CHAKRA CURSOR --- */
         /* The native cursor is only hidden on mouse/trackpad devices, and it
            comes back over links and buttons so it's always clear what is
