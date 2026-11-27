@@ -26,11 +26,11 @@
             padding: 0;
             background-color: #050505;
             color: #fff;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            overflow: hidden; 
+            overflow-x: hidden;
             cursor: none;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             transition: background-color 0.2s ease;
@@ -286,16 +286,124 @@
             justify-content: center;
             align-items: center;
             width: 100%;
+            position: relative;
             z-index: 10; 
+            padding-bottom: 40px;
         }
 
+        /* The scrolling name is now a faded backdrop; the readable name lives in .hero-name */
         .ticker-wrap {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
             width: 100%;
             height: 16vw; 
             overflow: hidden;
             white-space: nowrap;
             display: flex;
             align-items: center; 
+            opacity: 0.1;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* --- Hero: name, tagline, about, work links --- */
+        .hero {
+            position: relative;
+            z-index: 1;
+            box-sizing: border-box;
+            width: 100%;
+            max-width: 780px;
+            padding: 96px 24px 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+            text-align: center;
+            -webkit-user-select: text;
+            user-select: text;
+        }
+
+        .hero-name {
+            margin: 0;
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.25rem, 6vw, 4.75rem);
+            font-weight: 600;
+            line-height: 1.08;
+            letter-spacing: -1px;
+            text-wrap: balance;
+            text-shadow: 0 0 24px rgba(255, 255, 255, 0.15);
+        }
+
+        .hero-tagline {
+            margin: 0;
+            font-size: clamp(1rem, 2.2vw, 1.25rem);
+            color: var(--neon-color);
+            letter-spacing: 0.04em;
+            text-shadow: 0 0 12px var(--neon-color);
+            transition: color 0.5s ease, text-shadow 0.5s ease;
+        }
+
+        .hero-about {
+            margin: 0;
+            max-width: 60ch;
+            font-size: 1rem;
+            line-height: 1.65;
+            color: rgba(255, 255, 255, 0.75);
+        }
+
+        .work-links {
+            list-style: none;
+            margin: 10px 0 0;
+            padding: 0;
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 14px;
+        }
+
+        .work-link {
+            display: block;
+            height: 100%;
+            box-sizing: border-box;
+            padding: 16px 18px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            background: rgba(10, 10, 28, 0.6);
+            -webkit-backdrop-filter: blur(6px);
+            backdrop-filter: blur(6px);
+            color: #fff;
+            text-decoration: none;
+            text-align: left;
+            cursor: none;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+        }
+
+        .work-link:hover,
+        .work-link:focus-visible {
+            border-color: var(--neon-color);
+            box-shadow: 0 0 22px -6px var(--neon-color);
+            transform: translateY(-3px);
+            outline: none;
+        }
+
+        .work-link__label {
+            display: block;
+            margin-bottom: 6px;
+            font-family: 'Major Mono Display', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.08em;
+            color: var(--neon-color);
+        }
+
+        .work-link__title { display: block; font-size: 1.05rem; font-weight: 600; }
+        .work-link__desc { display: block; margin-top: 4px; font-size: 0.875rem; line-height: 1.45; color: rgba(255, 255, 255, 0.6); }
+
+        .social-icon:focus-visible {
+            outline: 2px solid var(--neon-color);
+            outline-offset: 6px;
+            border-radius: 4px;
         }
 
         .ticker-move {
@@ -359,6 +467,14 @@
         @media (max-width: 600px) {
             .ticker-item { font-size: 15vw; }
             .ticker-wrap { height: 24vw; }
+            .hero { padding-top: 88px; }
+            .social-icons-container { gap: 32px; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .ticker-move { animation: none; }
+            .work-link { transition: none; }
+            .work-link:hover, .work-link:focus-visible { transform: none; }
         }
     </style>
 </head>
@@ -386,7 +502,7 @@
     <div class="cursor-star" id="cursorStar"></div>
 
     <div class="main-content">
-        <div class="ticker-wrap">
+        <div class="ticker-wrap" aria-hidden="true">
             <div class="ticker-move">
                 <div class="ticker-item main-text">Mani Krishna Chandra Teja Chedalla</div>
                 <div class="ticker-item main-text">Mani Krishna Chandra Teja Chedalla</div>
@@ -395,15 +511,54 @@
             </div>
         </div>
 
+        <section class="hero" aria-labelledby="heroName">
+            <h1 class="hero-name" id="heroName">Mani Krishna Chandra Teja Chedalla</h1>
+
+            <!-- PLACEHOLDER (guess): replace with Teja's real tagline -->
+            <p class="hero-tagline">Charting my own orbit through code, craft and curiosity.</p>
+
+            <!-- PLACEHOLDER (guess): replace with Teja's real about copy -->
+            <p class="hero-about">
+                I'm Teja, a builder who likes turning ideas into things people can use.
+                I spend my days making software and my nights exploring design, culture and the stories behind them.
+                This corner of space is where I share what I'm working on.
+            </p>
+
+            <!-- PLACEHOLDER (guess): 2 to 3 work links. Replace titles, descriptions and hrefs. Delete an <li> to show only two. -->
+            <ul class="work-links" aria-label="Selected work">
+                <li>
+                    <a class="work-link" href="#">
+                        <span class="work-link__label">mission 01</span>
+                        <span class="work-link__title">Project one</span>
+                        <span class="work-link__desc">One line on what it is and why it matters.</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="work-link" href="#">
+                        <span class="work-link__label">mission 02</span>
+                        <span class="work-link__title">Project two</span>
+                        <span class="work-link__desc">One line on what it is and why it matters.</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="work-link" href="#">
+                        <span class="work-link__label">mission 03</span>
+                        <span class="work-link__title">Project three</span>
+                        <span class="work-link__desc">One line on what it is and why it matters.</span>
+                    </a>
+                </li>
+            </ul>
+        </section>
+
         <div class="social-icons-container">
-            <a href="mailto:hello@chedalla.in" class="social-icon" title="Email">
-                <i class="fas fa-envelope"></i>
+            <a href="mailto:hello@chedalla.in" class="social-icon" title="Email" aria-label="Email">
+                <i class="fas fa-envelope" aria-hidden="true"></i>
             </a>
-            <a href="https://www.linkedin.com/in/chedalla" class="social-icon" title="LinkedIn">
-                <i class="fab fa-linkedin"></i>
+            <a href="https://www.linkedin.com/in/chedalla" class="social-icon" title="LinkedIn" aria-label="LinkedIn">
+                <i class="fab fa-linkedin" aria-hidden="true"></i>
             </a>
-            <a href="https://www.instagram.com/t4teja" class="social-icon" title="Instagram">
-                <i class="fab fa-instagram"></i>
+            <a href="https://www.instagram.com/t4teja" class="social-icon" title="Instagram" aria-label="Instagram">
+                <i class="fab fa-instagram" aria-hidden="true"></i>
             </a>
         </div>
     </div>
@@ -425,6 +580,7 @@
         const btnTe = document.getElementById('btnTe');
         const mainTexts = document.querySelectorAll('.main-text'); 
         const footerSignature = document.getElementById('footerSignature');
+        const heroName = document.getElementById('heroName');
         
         const enName = "Mani Krishna Chandra Teja Chedalla";
         const teName = "మణి కృష్ణ చంద్ర తేజ చెదళ్ళ";
@@ -442,6 +598,9 @@
                 el.innerText = enName;
                 el.style.fontFamily = enFont;
             });
+            heroName.innerText = enName;
+            heroName.style.fontFamily = enFont;
+            heroName.lang = 'en';
             footerSignature.innerText = teName;
             footerSignature.style.fontFamily = teFont;
             footerSignature.style.fontSize = "25px"; 
@@ -457,6 +616,9 @@
                 el.innerText = teName;
                 el.style.fontFamily = teFont;
             });
+            heroName.innerText = teName;
+            heroName.style.fontFamily = teFont;
+            heroName.lang = 'te';
             footerSignature.innerText = enName;
             footerSignature.style.fontFamily = enFont;
             footerSignature.style.fontSize = "16px"; 
@@ -536,7 +698,6 @@
         }, { passive: false });
 
         document.addEventListener('touchmove', (e) => {
-            if (e.cancelable) e.preventDefault();
             clearTimeout(warpTimer);
             document.body.classList.remove('warp-active'); 
             const touch = e.touches[0];
