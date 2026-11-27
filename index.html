@@ -166,6 +166,19 @@
         .stars2 { background-image: radial-gradient(white 1.5px, transparent 2px); background-size: 100px 100px; background-position: 20px 30px; opacity: 0.5; animation: space-drift calc(var(--star-speed) * 0.8) linear infinite; }
         .stars3 { background-image: radial-gradient(#fff 2px, transparent 3px); background-size: 200px 200px; background-position: 50px 80px; opacity: 0.8; animation: space-drift calc(var(--star-speed) * 0.6) linear infinite, twinkle 4s ease-in-out infinite; }
 
+        /* --- Matrix Rain Canvas --- */
+        #matrixCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0; 
+            opacity: 0;  
+            transition: opacity 2s ease;
+            pointer-events: none;
+        }
+
         /* --- Scribble Trail Canvas --- */
         #scribbleCanvas {
             position: fixed;
@@ -281,6 +294,7 @@
             width: 100%;
             height: 100%;
             border-radius: 50%;
+            /* Uses the neon-color variable, so it will be Saffron in Maya mode */
             border: 3px dotted var(--neon-color); 
             transform: translate(-50%, -50%) scale(0.5);
             opacity: 0;
@@ -428,6 +442,8 @@
         <div class="stars3"></div>
     </div>
 
+    <canvas id="matrixCanvas"></canvas>
+
     <div class="cyber-toggle" id="langToggle" role="group" aria-label="Language">
         <button type="button" class="cyber-opt opt-en active" id="btnEn" lang="en" aria-pressed="true" aria-label="English">EN</button>
         <div class="cyber-line" aria-hidden="true"></div>
@@ -487,7 +503,9 @@
 
     <script>
         const root = document.documentElement; 
+        let isMayaMode = false; 
         const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+        const matrixCanvas = document.getElementById('matrixCanvas');
         
         // --- 0. Language Toggle Logic ---
         const btnEn = document.getElementById('btnEn');
@@ -528,6 +546,7 @@
             footerSignature.style.fontSize = "25px"; 
             
             root.style.setProperty('--ticker-speed', '40s');
+            exitMayaMode();
         }
 
         function setTelugu() {
@@ -546,6 +565,7 @@
             footerSignature.style.fontSize = "16px"; 
 
             root.style.setProperty('--ticker-speed', '30s'); 
+            enterMayaMode();
         }
 
         // 'click' covers mouse, touch, and keyboard (Enter / Space)
@@ -555,9 +575,9 @@
         // --- 1. Dynamic Title Change ---
         document.addEventListener("visibilitychange", () => {
             if (document.hidden) {
-                document.title = "🛸 Lost in Space?";
+                document.title = isMayaMode ? "⚠️ SYSTEM OVERRIDE" : "🛸 Lost in Space?";
             } else {
-                document.title = originalTitle;
+                document.title = isMayaMode ? "MAYA PROTOCOL ACTIVE" : originalTitle;
             }
         });
 
@@ -567,7 +587,7 @@
         const canvas = document.getElementById('scribbleCanvas');
         const ctx = canvas.getContext('2d');
         
-        const trailColor = '#0ef';
+        let currentTrailColor = '#0ef';
         let width = window.innerWidth;
         let height = window.innerHeight;
 
@@ -576,6 +596,10 @@
             height = window.innerHeight;
             canvas.width = width;
             canvas.height = height;
+            
+            matrixCanvas.width = width;
+            matrixCanvas.height = height;
+            if (isMayaMode) initMatrix(); // new column count for the new width
         }
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
@@ -669,10 +693,10 @@
 
             if (lastX !== mouseX || lastY !== mouseY) {
                 ctx.beginPath();
-                ctx.strokeStyle = trailColor; 
+                ctx.strokeStyle = currentTrailColor; 
                 ctx.lineWidth = 2;
                 ctx.shadowBlur = 10;
-                ctx.shadowColor = trailColor;
+                ctx.shadowColor = currentTrailColor;
                 ctx.lineCap = 'round';
                 ctx.lineJoin = 'round';
                 
@@ -700,7 +724,7 @@
         const ufo = document.getElementById('ufo');
 
         function triggerUFO() {
-            if(reducedMotion.matches) { setTimeout(triggerUFO, 15000); return; }
+            if(isMayaMode || reducedMotion.matches) { setTimeout(triggerUFO, 15000); return; }
 
             // Random starting height
             const randomTop = Math.floor(Math.random() * 60) + 20; 
@@ -724,7 +748,7 @@
 
         // --- 6. Falling Stars Logic ---
         function createFallingStar() {
-            if(reducedMotion.matches) {
+            if(isMayaMode || reducedMotion.matches) {
                 setTimeout(createFallingStar, 5000);
                 return;
             }
@@ -747,6 +771,96 @@
 
         // --- 7. Disable Right Click ---
         document.addEventListener('contextmenu', (e) => { e.preventDefault(); });
+        
+        // --- 8. MAYA MODE (switched on by the Telugu toggle) ---
+        // Telugu: saffron theme + Sanskrit matrix rain, space layers hidden.
+        // English: back to the space theme.
+        // --- SANSKRIT MATRIX RAIN LOGIC ---
+        const mCtx = matrixCanvas.getContext('2d');
+        
+        // Sanskrit Script
+        const letters = 'ॐअआइईउऊऋएऐओऔकखगघङचछजझञटठडढणतथदधनपफबभमयरलवशषसह१२३४५६७८९०';
+        const fontSize = 18; 
+        let columns;
+        let drops = [];
+
+        function initMatrix() {
+            columns = matrixCanvas.width / fontSize;
+            drops = [];
+            for(let x = 0; x < columns; x++) drops[x] = 1;
+        }
+
+        let matrixRunning = false;
+
+        function drawMatrix() {
+            if(!isMayaMode || reducedMotion.matches) { matrixRunning = false; return; }
+            matrixRunning = true;
+
+            mCtx.fillStyle = 'rgba(0, 0, 0, 0.05)'; 
+            mCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+
+            // Saffron/Orange Text for Hanuman Theme
+            mCtx.fillStyle = '#FF9933'; 
+            mCtx.font = fontSize + 'px monospace';
+
+            for(let i = 0; i < drops.length; i++) {
+                const text = letters.charAt(Math.floor(Math.random() * letters.length));
+                mCtx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if(drops[i] * fontSize > matrixCanvas.height && Math.random() > 0.975)
+                    drops[i] = 0;
+                drops[i]++;
+            }
+            requestAnimationFrame(drawMatrix);
+        }
+
+        function enterMayaMode() {
+            if(isMayaMode) return; 
+            isMayaMode = true;
+
+            // 1. Visual Changes - Saffron Theme
+            root.style.setProperty('--neon-color', '#FF9933'); 
+            currentTrailColor = '#FF9933';
+            document.title = "MAYA PROTOCOL ACTIVE"; 
+            
+            // 2. Hide Space Elements & Hanuman Image
+            document.getElementById('starsLayer').style.opacity = '0';
+            document.getElementById('nebulaLayer').style.opacity = '0';
+            ufo.style.opacity = '0'; 
+            document.querySelectorAll('.falling-star').forEach(el => el.remove());
+
+            // 3. Show Matrix Layer (skipped for people who prefer reduced motion)
+            initMatrix();
+            matrixCanvas.style.opacity = '1';
+            if (!matrixRunning) drawMatrix();
+
+            // 4. Flash Effect (no flashing for reduced motion)
+            if (!reducedMotion.matches) {
+                document.body.style.backgroundColor = '#2a1200'; // Dark Saffron Flash
+                setTimeout(() => {
+                    document.body.style.backgroundColor = '';
+                }, 200);
+            }
+        }
+
+        function exitMayaMode() {
+            if(!isMayaMode) return;
+            isMayaMode = false; // drawMatrix stops on its next frame
+
+            root.style.setProperty('--neon-color', '#0ef');
+            currentTrailColor = '#0ef';
+            document.title = originalTitle;
+
+            document.getElementById('starsLayer').style.opacity = '';
+            document.getElementById('nebulaLayer').style.opacity = '';
+            ufo.style.opacity = '';
+
+            // Fade the rain out (2s CSS transition), then wipe it
+            matrixCanvas.style.opacity = '0';
+            setTimeout(() => {
+                if (!isMayaMode) mCtx.clearRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+            }, 2000);
+        }
 
     </script>
 </body>
