@@ -773,19 +773,20 @@
         document.addEventListener('contextmenu', (e) => { e.preventDefault(); });
         
         // --- 8. MAYA MODE (switched on by the Telugu toggle) ---
-        // Telugu: saffron theme + Sanskrit matrix rain, space layers hidden.
+        // Telugu: saffron theme + Telugu matrix rain, space layers hidden.
         // English: back to the space theme.
-        // --- SANSKRIT MATRIX RAIN LOGIC ---
+        // --- TELUGU MATRIX RAIN LOGIC ---
         const mCtx = matrixCanvas.getContext('2d');
         
-        // Sanskrit Script
-        const letters = 'ॐअआइईउऊऋएऐओऔकखगघङचछजझञटठडढणतथदधनपफबभमयरलवशषसह१२३४५६७८९०';
+        // Telugu script: vowels, consonants and Telugu digits
+        const letters = Array.from('అఆఇఈఉఊఋఎఏఐఒఓఔకఖగఘఙచఛజఝఞటఠడఢణతథదధనపఫబభమయరలవశషసహళఱ౦౧౨౩౪౫౬౭౮౯');
         const fontSize = 18; 
+        const colWidth = 24; // Telugu letters are wider than Latin, so space the columns out
         let columns;
         let drops = [];
 
         function initMatrix() {
-            columns = matrixCanvas.width / fontSize;
+            columns = matrixCanvas.width / colWidth;
             drops = [];
             for(let x = 0; x < columns; x++) drops[x] = 1;
         }
@@ -804,8 +805,8 @@
             mCtx.font = fontSize + 'px monospace';
 
             for(let i = 0; i < drops.length; i++) {
-                const text = letters.charAt(Math.floor(Math.random() * letters.length));
-                mCtx.fillText(text, i * fontSize, drops[i] * fontSize);
+                const text = letters[Math.floor(Math.random() * letters.length)];
+                mCtx.fillText(text, i * colWidth, drops[i] * fontSize);
 
                 if(drops[i] * fontSize > matrixCanvas.height && Math.random() > 0.975)
                     drops[i] = 0;
