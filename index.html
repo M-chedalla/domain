@@ -181,7 +181,7 @@
             opacity: 0;  
             transition: opacity 2s ease;
             pointer-events: none;
-            filter: blur(1.5px); /* soft-focus rain so the name stays the hero */
+            filter: blur(0.75px); /* soft-focus rain so the name stays the hero */
         }
 
         /* --- Scribble Trail Canvas --- */
@@ -245,7 +245,7 @@
         /* --- WARP SPEED STATE --- */
         body.warp-active { background-color: #000510; }
         body.warp-active .stars, body.warp-active .stars2, body.warp-active .stars3 {
-            animation-duration: 0.2s; opacity: 0.6; filter: blur(1px); scale: 1 1.5; 
+            animation-duration: 0.2s; opacity: 0.6; scale: 1 2; /* no blur filter here: blurring these huge layers every frame made Hanuman stutter */ 
         }
         
         /* --- SUDARSHANA CHAKRA CURSOR --- */
