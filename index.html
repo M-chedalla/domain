@@ -150,16 +150,20 @@
         .stars-container { z-index: 0; }
         .nebula { z-index: -1; background: radial-gradient(circle at 50% 50%, rgba(20, 20, 40, 0.4), transparent 80%); }
 
+        /* The star layers are 1000px taller than the screen and drift by moving
+           (transform) rather than repainting background-position every frame.
+           That keeps the drift on the GPU, so warp speed doesn't steal frames
+           from the flying Hanuman. 1000px is a multiple of every tile size
+           (50/100/200px), so the loop is seamless. */
         .stars, .stars2, .stars3 {
             position: absolute;
-            top: 0;
+            top: -1000px;
             left: 0;
-            right: 0;
-            bottom: 0;
             width: 100%;
-            height: 100%;
+            height: calc(100% + 1000px);
             display: block;
             background: transparent; 
+            will-change: transform;
         }
 
         .stars { background-image: radial-gradient(white 1px, transparent 1.5px); background-size: 50px 50px; opacity: 0.3; animation: space-drift var(--star-speed) linear infinite; }
@@ -177,6 +181,7 @@
             opacity: 0;  
             transition: opacity 2s ease;
             pointer-events: none;
+            filter: blur(1.5px); /* soft-focus rain so the name stays the hero */
         }
 
         /* --- Scribble Trail Canvas --- */
@@ -220,6 +225,7 @@
             filter: drop-shadow(0 0 20px var(--hanuman-saffron)); 
             pointer-events: none;
             transition: opacity 0.5s ease;
+            will-change: transform; /* own GPU layer, so it glides smoothly */
         }
         
         .ufo-fly-anim { animation: ufo-fly linear forwards; }
@@ -232,14 +238,14 @@
 
         /* --- Animations --- */
         @keyframes space-drift {
-            0% { background-position: 0 0; }
-            100% { background-position: 0 1000px; }
+            0% { transform: translateY(0); }
+            100% { transform: translateY(1000px); }
         }
 
         /* --- WARP SPEED STATE --- */
         body.warp-active { background-color: #000510; }
         body.warp-active .stars, body.warp-active .stars2, body.warp-active .stars3 {
-            animation-duration: 0.2s; opacity: 0.6; filter: blur(1px); transform: scaleY(1.5); 
+            animation-duration: 0.2s; opacity: 0.6; filter: blur(1px); scale: 1 1.5; 
         }
         
         /* --- SUDARSHANA CHAKRA CURSOR --- */
@@ -423,7 +429,7 @@
             .ticker-item { flex-shrink: 1; padding: 20px; white-space: normal; text-align: center; font-size: 8vw; }
             .ticker-item + .ticker-item { display: none; }
 
-            body.warp-active .stars, body.warp-active .stars2, body.warp-active .stars3 { transform: none; }
+            body.warp-active .stars, body.warp-active .stars2, body.warp-active .stars3 { scale: none; }
         }
 
         /* Windows High Contrast etc.: use the system cursor */
