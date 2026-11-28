@@ -27,12 +27,10 @@
             padding: 0;
             background-color: #050505;
             color: #fff;
-            height: 100vh;
-            height: 100dvh; /* avoids the jump when mobile browser bars show/hide */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            overflow: hidden; 
+            /* The page now scrolls through sections (Hanuman leaps between them) */
+            position: relative;
+            min-height: 100vh;
+            overflow-x: hidden;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             transition: background-color 0.2s ease;
             -webkit-user-select: none;
@@ -214,27 +212,271 @@
             100% { transform: translate(-300px, 300px) rotate(-45deg); opacity: 0; }
         }
 
-        /* --- FLYING HANUMAN IMAGE --- */
+        /* --- HANUMAN'S LEAP ---
+           Hanuman sits on a "landing pad" in each section and leaps in an
+           arc to the next one as you scroll, like his leap to Lanka.
+           Position is set from JS with transform only. */
         .ufo-container {
             position: fixed;
-            left: -300px; 
-            z-index: 5;
-            width: 180px; 
+            top: 0;
+            left: 0;
+            z-index: 20;
+            width: var(--leaper-width, 150px);
             height: auto;
             /* Saffron Glow for Hanuman Energy */
-            filter: drop-shadow(0 0 20px var(--hanuman-saffron)); 
+            filter: drop-shadow(0 0 16px var(--hanuman-saffron));
             pointer-events: none;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.35s ease;
             will-change: transform; /* own GPU layer, so it glides smoothly */
+            opacity: 0; /* shown once JS has placed him */
         }
-        
-        .ufo-fly-anim { animation: ufo-fly linear forwards; }
-        
-        @keyframes ufo-fly {
-            0% { transform: translateX(0) translateY(100px) scale(0.8); }
-            50% { transform: translateX(50vw) translateY(0px) scale(0.65); }
-            100% { transform: translateX(calc(100vw + 300px)) translateY(-100px) scale(0.5); }
+        .ufo-container.is-placed { opacity: 1; }
+
+        .landing-pad {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            pointer-events: none;
+            top: 27%;
         }
+        .landing-pad--left { left: 16%; }
+        .landing-pad--right { right: 16%; }
+        /* Saffron ring when he lands */
+        .landing-pad::after {
+            content: '';
+            position: absolute;
+            left: -60px;
+            top: 30px;
+            width: 120px;
+            height: 26px;
+            border-radius: 50%;
+            border: 2px solid var(--hanuman-saffron);
+            box-shadow: 0 0 18px var(--hanuman-saffron);
+            opacity: 0;
+            transform: scale(0.3);
+        }
+        .landing-pad.just-landed::after { animation: land-ring 0.7s ease-out; }
+        @keyframes land-ring {
+            0% { opacity: 0.9; transform: scale(0.3); }
+            100% { opacity: 0; transform: scale(1.6); }
+        }
+
+        /* --- Sections Hanuman lands on --- */
+        .leap-section {
+            position: relative;
+            min-height: 100vh;
+            min-height: 100dvh;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 14vh max(16px, 6vw);
+            /* Let hovers reach the nakshatra sky behind the text;
+               links and buttons opt back in below. */
+            pointer-events: none;
+            z-index: 10;
+        }
+        .leap-section a,
+        .leap-section button { pointer-events: auto; }
+
+        .leap-card {
+            max-width: 34rem;
+            width: 100%;
+            padding: 28px 30px;
+            border-radius: 14px;
+            background: rgba(6, 8, 18, 0.72);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            line-height: 1.6;
+            color: #d9dbe6;
+        }
+        .leap-eyebrow {
+            font-size: 15px;
+            letter-spacing: 0.02em;
+            color: var(--hanuman-saffron);
+        }
+        .leap-card h2 {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-weight: 600;
+            font-size: clamp(28px, 4vw, 40px);
+            margin: 4px 0 12px;
+            color: #fff;
+            text-wrap: balance;
+        }
+        .leap-card p { margin: 0 0 12px; }
+        .leap-card a { color: #fff; }
+        .leap-card a:focus-visible {
+            outline: 2px solid var(--neon-color);
+            outline-offset: 3px;
+            border-radius: 4px;
+        }
+        .placeholder-note {
+            font-size: 12px;
+            color: #8a8ea3;
+            margin-top: 14px;
+        }
+        .work-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+        .work-list a {
+            display: block;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-decoration: none;
+            transition: border-color 0.2s ease;
+        }
+        .work-list a:hover { border-color: var(--neon-color); }
+        .work-list strong { display: block; color: #fff; }
+        .work-list span { font-size: 14px; color: #a9adbf; }
+
+        /* --- Section dots: the four landing spots, also keyboard nav --- */
+        .leap-nav {
+            position: fixed;
+            right: max(14px, env(safe-area-inset-right, 0px));
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1000;
+        }
+        .leap-nav ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+        .leap-nav a {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+            color: #fff;
+            text-decoration: none;
+            font-size: 13px;
+            padding: 4px;
+        }
+        .leap-nav .dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(255, 255, 255, 0.55);
+            transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+        }
+        .leap-nav .label { opacity: 0; transform: translateX(6px); transition: opacity 0.2s ease, transform 0.2s ease; }
+        .leap-nav a:hover .label,
+        .leap-nav a:focus-visible .label { opacity: 1; transform: none; }
+        .leap-nav a[aria-current="true"] .dot {
+            background: var(--hanuman-saffron);
+            border-color: var(--hanuman-saffron);
+            transform: scale(1.3);
+            box-shadow: 0 0 8px var(--hanuman-saffron);
+        }
+        .leap-nav a:focus-visible { outline: 2px solid var(--neon-color); outline-offset: 2px; border-radius: 6px; }
+
+        /* --- NAKSHATRA SKY ---
+           27 lunar mansions drawn from real star positions, spread down
+           the whole page from Ashwini (top) to Revati (bottom). */
+        .nak-sky {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            pointer-events: none;
+            transition: opacity 1s ease;
+        }
+        .nak {
+            position: absolute;
+            padding: 0;
+            margin: 0;
+            border: 0;
+            background: none;
+            cursor: pointer;
+            pointer-events: auto;
+            color: rgba(255, 255, 255, 0.85);
+            border-radius: 12px;
+        }
+        .nak svg { display: block; overflow: visible; }
+        .nak .lines { stroke: rgba(255, 255, 255, 0.16); stroke-width: 1; fill: none; transition: stroke 0.25s ease; }
+        .nak .star { fill: currentColor; transition: fill 0.25s ease; }
+        .nak .ring { fill: none; stroke: rgba(255, 255, 255, 0.14); stroke-dasharray: 2 4; }
+        .nak:hover .lines, .nak:focus-visible .lines, .nak.is-open .lines { stroke: var(--neon-color); stroke-width: 1.3; }
+        .nak:hover .star, .nak:focus-visible .star, .nak.is-open .star { fill: #fff; filter: drop-shadow(0 0 4px var(--neon-color)); }
+        .nak:focus-visible { outline: 2px solid var(--neon-color); outline-offset: 6px; }
+        /* Tonight's Moon is in this one */
+        .nak.is-today .lines { stroke: var(--hanuman-saffron); stroke-opacity: 0.8; }
+        .nak.is-today .star { fill: #ffd9a8; animation: today-glow 3s ease-in-out infinite; }
+        @keyframes today-glow { 50% { filter: drop-shadow(0 0 6px var(--hanuman-saffron)); } }
+
+        .nak-tip {
+            position: absolute;
+            z-index: 3;
+            min-width: 150px;
+            max-width: 220px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            background: rgba(8, 10, 22, 0.94);
+            border: 1px solid var(--neon-color);
+            color: #cfd2e0;
+            font-size: 13px;
+            line-height: 1.45;
+            pointer-events: none;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
+        }
+        .nak-tip .te { display: block; font-size: 22px; color: #fff; line-height: 1.3; }
+        .nak-tip .en { display: block; color: #fff; font-weight: 600; }
+        .nak-tip .num { font-size: 11px; letter-spacing: 0.08em; color: #8a8ea3; text-transform: uppercase; }
+        .nak-tip .today { display: block; margin-top: 4px; color: var(--hanuman-saffron); }
+
+        /* --- PANCHANGAM BADGE --- */
+        .panch {
+            position: fixed;
+            left: max(16px, env(safe-area-inset-left, 0px));
+            bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+            z-index: 1000;
+            font-size: 13px;
+        }
+        .panch-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 14px 8px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 153, 51, 0.45);
+            background: rgba(8, 8, 16, 0.82);
+            color: #fff;
+            font: inherit;
+            text-align: left;
+            cursor: pointer;
+            transition: border-color 0.2s ease;
+        }
+        .panch-badge:hover { border-color: var(--hanuman-saffron); }
+        .panch-badge:focus-visible { outline: 2px solid var(--neon-color); outline-offset: 3px; }
+        .panch-badge svg { flex: none; }
+        .panch-line1 { display: block; font-weight: 600; font-size: 14px; }
+        .panch-line2 { display: block; color: #a9adbf; font-size: 12px; }
+        .panch-panel {
+            position: absolute;
+            left: 0;
+            bottom: calc(100% + 10px);
+            width: min(320px, calc(100vw - 32px));
+            box-sizing: border-box;
+            padding: 16px 18px;
+            border-radius: 14px;
+            background: rgba(8, 10, 22, 0.96);
+            border: 1px solid rgba(255, 153, 51, 0.45);
+            color: #cfd2e0;
+            line-height: 1.45;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+        }
+        .panch-panel h2 { margin: 0 0 10px; font-size: 15px; color: #fff; }
+        .panch-panel dl { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; margin: 0; }
+        .panch-panel dt { color: #8a8ea3; }
+        .panch-panel dd { margin: 0; color: #fff; }
+        .panch-panel dd small { display: block; color: #a9adbf; font-size: 12px; }
+        .panch-panel .panch-note { margin: 12px 0 0; font-size: 11.5px; color: #8a8ea3; }
+        .panch-panel button {
+            margin-top: 10px;
+            font: inherit;
+            font-size: 12.5px;
+            color: #fff;
+            background: none;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 999px;
+            padding: 5px 12px;
+            cursor: pointer;
+        }
+        .panch-panel button:focus-visible { outline: 2px solid var(--neon-color); outline-offset: 2px; }
 
         /* --- Animations --- */
         @keyframes space-drift {
@@ -414,7 +656,15 @@
         @media (max-width: 600px) {
             .ticker-item { font-size: 15vw; }
             .ticker-wrap { height: 24vw; }
+            :root { --leaper-width: 104px; }
+            .leap-section { justify-content: flex-end; padding-top: 30vh; padding-bottom: 10vh; }
+            .leap-card { padding: 22px 20px; }
+            .leap-nav { right: 4px; }
+            .leap-nav .label { display: none; }
+            .panch-line2 { display: none; }
         }
+
+        html { scroll-behavior: smooth; }
 
         /* --- Reduced motion: keep the look, drop the movement --- */
         @media (prefers-reduced-motion: reduce) {
@@ -425,7 +675,11 @@
             .cursor-star::after {
                 animation: none !important;
             }
-            .falling-star, .ufo-container { display: none; }
+            .falling-star { display: none; }
+            html { scroll-behavior: auto; }
+            /* Hanuman doesn't fly: he fades from one landing spot to the next */
+            .landing-pad.just-landed::after,
+            .nak.is-today .star { animation: none; }
 
             /* Show the name once, centred, instead of scrolling */
             .ticker-wrap { height: auto; white-space: normal; justify-content: center; }
@@ -462,45 +716,95 @@
 
     <canvas id="scribbleCanvas"></canvas>
 
-    <!-- Decorative fly-by, so it's hidden from screen readers -->
+    <!-- Nakshatra sky: filled in by JS from the NAKSHATRAS data below.
+         One tab stop; arrow keys move between the 27 nakshatras. -->
+    <div class="nak-sky" id="nakSky" role="group" aria-label="Nakshatra sky, 27 lunar mansions. Use the arrow keys to move between them."></div>
+
+    <!-- Decorative: Hanuman leaps between the sections' landing pads -->
     <img id="ufo" class="ufo-container" src="images/hanuman.webp" alt="" aria-hidden="true" width="400" height="199" decoding="async">
 
     <div class="cursor-star" id="cursorStar" aria-hidden="true"></div>
 
-    <main class="main-content">
-        <!-- The ticker repeats the name 4 times; screen readers get it once -->
-        <h1 class="visually-hidden" id="srName">Mani Krishna Chandra Teja Chedalla</h1>
-        <div class="ticker-wrap" aria-hidden="true">
-            <div class="ticker-move">
-                <div class="ticker-item main-text">Mani Krishna Chandra Teja Chedalla</div>
-                <div class="ticker-item main-text">Mani Krishna Chandra Teja Chedalla</div>
-                <div class="ticker-item main-text">Mani Krishna Chandra Teja Chedalla</div>
-                <div class="ticker-item main-text">Mani Krishna Chandra Teja Chedalla</div>
-            </div>
-        </div>
+    <nav class="leap-nav" aria-label="Sections">
+        <ol>
+            <li><a href="#home"><span class="label">Home</span><span class="dot" aria-hidden="true"></span></a></li>
+            <li><a href="#about"><span class="label">About</span><span class="dot" aria-hidden="true"></span></a></li>
+            <li><a href="#work"><span class="label">Work</span><span class="dot" aria-hidden="true"></span></a></li>
+            <li><a href="#contact"><span class="label">Say hello</span><span class="dot" aria-hidden="true"></span></a></li>
+        </ol>
+    </nav>
 
-        <nav class="social-icons-container" aria-label="Contact and social links">
-            <a href="mailto:hello@chedalla.in" class="social-icon" aria-label="Email" title="Email">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                    <rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/>
-                    <path d="m3.5 6.5 8.5 6.5 8.5-6.5"/>
-                </svg>
-            </a>
-            <a href="https://www.linkedin.com/in/chedalla" class="social-icon" aria-label="LinkedIn" title="LinkedIn">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                    <rect x="2.5" y="2.5" width="19" height="19" rx="3"/>
-                    <path d="M7.5 10.5v6M11.5 16.5v-6M11.5 13a2.5 2.5 0 0 1 5 0v3.5"/>
-                    <circle cx="7.5" cy="7.2" r="0.6" fill="currentColor"/>
-                </svg>
-            </a>
-            <a href="https://www.instagram.com/t4teja" class="social-icon" aria-label="Instagram" title="Instagram">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                    <rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/>
-                    <circle cx="12" cy="12" r="4.2"/>
-                    <circle cx="17.4" cy="6.6" r="0.6" fill="currentColor"/>
-                </svg>
-            </a>
-        </nav>
+    <main>
+        <section class="leap-section main-content" id="home" aria-labelledby="srName">
+            <span class="landing-pad landing-pad--left" aria-hidden="true"></span>
+            <!-- The ticker repeats the name 4 times; screen readers get it once -->
+            <h1 class="visually-hidden" id="srName">Mani Krishna Chandra Teja Chedalla</h1>
+            <div class="ticker-wrap" aria-hidden="true">
+                <div class="ticker-move">
+                    <div class="ticker-item main-text">Mani Krishna Chandra Teja Chedalla</div>
+                    <div class="ticker-item main-text">Mani Krishna Chandra Teja Chedalla</div>
+                    <div class="ticker-item main-text">Mani Krishna Chandra Teja Chedalla</div>
+                    <div class="ticker-item main-text">Mani Krishna Chandra Teja Chedalla</div>
+                </div>
+            </div>
+
+            <nav class="social-icons-container" aria-label="Contact and social links">
+                <a href="mailto:hello@chedalla.in" class="social-icon" aria-label="Email" title="Email">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/>
+                        <path d="m3.5 6.5 8.5 6.5 8.5-6.5"/>
+                    </svg>
+                </a>
+                <a href="https://www.linkedin.com/in/chedalla" class="social-icon" aria-label="LinkedIn" title="LinkedIn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <rect x="2.5" y="2.5" width="19" height="19" rx="3"/>
+                        <path d="M7.5 10.5v6M11.5 16.5v-6M11.5 13a2.5 2.5 0 0 1 5 0v3.5"/>
+                        <circle cx="7.5" cy="7.2" r="0.6" fill="currentColor"/>
+                    </svg>
+                </a>
+                <a href="https://www.instagram.com/t4teja" class="social-icon" aria-label="Instagram" title="Instagram">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/>
+                        <circle cx="12" cy="12" r="4.2"/>
+                        <circle cx="17.4" cy="6.6" r="0.6" fill="currentColor"/>
+                    </svg>
+                </a>
+            </nav>
+        </section>
+
+        <!-- PREVIEW: section copy below is placeholder until Teja sends real text -->
+        <section class="leap-section" id="about" aria-labelledby="aboutTitle">
+            <span class="landing-pad landing-pad--right" aria-hidden="true"></span>
+            <div class="leap-card">
+                <div class="leap-eyebrow" lang="te">నా గురించి</div>
+                <h2 id="aboutTitle">About</h2>
+                <p>I'm Teja, a builder who likes turning ideas into things people can use. I spend my days making software and my nights exploring design, culture and the stories behind them.</p>
+                <p class="placeholder-note">Placeholder copy for the preview.</p>
+            </div>
+        </section>
+
+        <section class="leap-section" id="work" aria-labelledby="workTitle">
+            <span class="landing-pad landing-pad--left" aria-hidden="true"></span>
+            <div class="leap-card">
+                <div class="leap-eyebrow" lang="te">నా పని</div>
+                <h2 id="workTitle">Work</h2>
+                <ul class="work-list">
+                    <li><a href="#work"><strong>Project one</strong><span>One line on what it is and why it matters.</span></a></li>
+                    <li><a href="#work"><strong>Project two</strong><span>One line on what it is and why it matters.</span></a></li>
+                    <li><a href="#work"><strong>Project three</strong><span>One line on what it is and why it matters.</span></a></li>
+                </ul>
+                <p class="placeholder-note">Placeholder projects for the preview.</p>
+            </div>
+        </section>
+
+        <section class="leap-section" id="contact" aria-labelledby="contactTitle">
+            <span class="landing-pad landing-pad--right" aria-hidden="true"></span>
+            <div class="leap-card">
+                <div class="leap-eyebrow" lang="te">పలకరించండి</div>
+                <h2 id="contactTitle">Say hello</h2>
+                <p>The quickest way to reach me is email: <a href="mailto:hello@chedalla.in">hello@chedalla.in</a></p>
+            </div>
+        </section>
     </main>
 
     <footer class="footer-container">
@@ -510,6 +814,18 @@
             <span class="signature-text" id="footerSignature" lang="te">మణి కృష్ణ చంద్ర తేజ చెదళ్ళ</span>
         </div>
     </footer>
+
+    <!-- Panchangam: today's tithi, computed in the browser -->
+    <div class="panch" id="panch">
+        <div class="panch-panel" id="panchPanel" role="region" aria-labelledby="panchTitle" hidden></div>
+        <button type="button" class="panch-badge" id="panchBadge" aria-expanded="false" aria-controls="panchPanel">
+            <span id="panchMoon" aria-hidden="true"></span>
+            <span>
+                <span class="panch-line1" id="panchLine1"></span>
+                <span class="panch-line2" id="panchLine2"></span>
+            </span>
+        </button>
+    </div>
 
     <script>
         const root = document.documentElement; 
@@ -555,6 +871,7 @@
             
             root.style.setProperty('--ticker-speed', '40s');
             exitMayaMode();
+            if (window.Chedalla) Chedalla.setLang('en');
         }
 
         function setTelugu() {
@@ -574,6 +891,7 @@
 
             root.style.setProperty('--ticker-speed', '30s'); 
             enterMayaMode();
+            if (window.Chedalla) Chedalla.setLang('te');
         }
 
         // 'click' covers mouse, touch, and keyboard (Enter / Space)
@@ -631,7 +949,8 @@
             document.body.classList.remove('has-pointer');
         });
         document.addEventListener('mousedown', (e) => {
-            if(e.target.closest('.cyber-toggle')) return; 
+            // No warp when clicking a control (toggle, badge, nakshatra, links)
+            if(e.target.closest('.cyber-toggle, .panch, .nak, .leap-nav, a, button')) return; 
             document.body.classList.add('warp-active');
         });
         document.addEventListener('mouseup', () => document.body.classList.remove('warp-active'));
@@ -658,7 +977,7 @@
             document.body.classList.remove('warp-active'); 
             // Leave pinch-zoom and zoomed-in panning to the browser
             if (e.touches.length > 1 || isZoomed()) return;
-            if (e.cancelable) e.preventDefault();
+            // No preventDefault: the page scrolls now, so touch must pan it
             const touch = e.touches[0];
             updatePointer(touch.clientX, touch.clientY);
         }, { passive: false });
@@ -719,31 +1038,8 @@
         }
 
 
-        // --- 5. FLYING HANUMAN Logic ---
+        // --- 5. HANUMAN'S LEAP: see leap.js section at the end ---
         const ufo = document.getElementById('ufo');
-
-        function triggerUFO() {
-            if(isMayaMode || reducedMotion.matches) { setTimeout(triggerUFO, 15000); return; }
-
-            // Random starting height
-            const randomTop = Math.floor(Math.random() * 60) + 20; 
-            const randomDuration = Math.random() * 5 + 8; 
-
-            ufo.style.top = randomTop + '%';
-            ufo.style.animationDuration = randomDuration + 's';
-            
-            ufo.classList.remove('ufo-fly-anim');
-            void ufo.offsetWidth; 
-            ufo.classList.add('ufo-fly-anim');
-
-            const nextFlightIn = Math.random() * 15000 + 12000;
-            setTimeout(triggerUFO, nextFlightIn);
-        }
-        // Start a bit later to ensure image loads
-        window.addEventListener('load', () => {
-             setTimeout(triggerUFO, 3000);
-        });
-       
 
         // --- 6. Falling Stars Logic ---
         function createFallingStar() {
@@ -825,7 +1121,6 @@
             // 2. Hide Space Elements & Hanuman Image
             document.getElementById('starsLayer').style.opacity = '0';
             document.getElementById('nebulaLayer').style.opacity = '0';
-            ufo.style.opacity = '0'; 
             document.querySelectorAll('.falling-star').forEach(el => el.remove());
 
             // 3. Show Matrix Layer (skipped for people who prefer reduced motion)
@@ -851,7 +1146,6 @@
 
             document.getElementById('starsLayer').style.opacity = '';
             document.getElementById('nebulaLayer').style.opacity = '';
-            ufo.style.opacity = '';
 
             // Fade the rain out (2s CSS transition), then wipe it
             matrixCanvas.style.opacity = '0';
@@ -860,6 +1154,458 @@
             }, 2000);
         }
 
+    </script>
+    <script>
+    /* Hanuman's leap, nakshatra sky and panchangam badge.
+       Everything is namespaced under window.Chedalla. */
+    (function () {
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+        let lang = 'en';
+
+        /* ============ 1. HANUMAN'S LEAP ============ */
+        const leaper = document.getElementById('ufo');
+        const pads = Array.from(document.querySelectorAll('.landing-pad'));
+        const navLinks = Array.from(document.querySelectorAll('.leap-nav a'));
+        let landedAt = -1, activeIdx = -1, facing = 1, rmShown = -1, ticking = false;
+
+        const smooth = x => x <= 0 ? 0 : x >= 1 ? 1 : x * x * (3 - 2 * x);
+
+        function padCentre(i) {
+            const r = pads[i].getBoundingClientRect();
+            return { x: r.left, y: r.top };
+        }
+
+        function updateLeap() {
+            ticking = false;
+            const vh = window.innerHeight;
+            // A pad counts as "landed" when it sits at 28% of the screen, which
+            // is where the pads are when a section is scrolled to its top.
+            const anchor = vh * 0.28;
+            const tops = pads.map(p => p.getBoundingClientRect().top);
+            // Which gap are we in, and how far through it (0..1)?
+            let i = 0;
+            while (i < pads.length - 2 && tops[i + 1] <= anchor) i++;
+            const gap = tops[i + 1] - tops[i];
+            const t = Math.min(1, Math.max(0, (anchor - tops[i]) / gap));
+            // Ride along with the pad for the first and last 15% of the gap,
+            // leap in between
+            const T0 = 0.15, T1 = 0.85;
+            const e = smooth((t - T0) / (T1 - T0));
+            const nearest = e < 0.5 ? i : i + 1;
+
+            if (nearest !== activeIdx) {
+                activeIdx = nearest;
+                navLinks.forEach((a, k) => a.setAttribute('aria-current', k === nearest ? 'true' : 'false'));
+            }
+
+            const w = leaper.offsetWidth, h = leaper.offsetHeight;
+            let x, y, rot = 0, scale = 1;
+
+            if (reduce.matches) {
+                // No flight: fade out, move to the nearest pad, fade in
+                const p = padCentre(nearest);
+                x = p.x; y = p.y;
+                if (rmShown !== nearest) {
+                    rmShown = nearest;
+                    leaper.classList.remove('is-placed');
+                    setTimeout(() => leaper.classList.add('is-placed'), 200);
+                }
+            } else {
+                // Take-off and touch-down points in screen space: where the two
+                // pads are at the start and end of the leap, so the arc
+                // joins the ride-along parts smoothly.
+                const a = padCentre(i), b = padCentre(i + 1);
+                const sy = a.y + (t - T0) * gap, ey = b.y - (T1 - t) * gap;
+                const lift = Math.min(vh * 0.16, 150);
+                const pos = k => ({
+                    x: a.x + (b.x - a.x) * k,
+                    y: sy + (ey - sy) * k - Math.sin(Math.PI * k) * lift
+                });
+                const p = e <= 0 ? a : e >= 1 ? b : pos(e);
+                x = p.x; y = p.y;
+                if (e > 0 && e < 1) {
+                    facing = b.x >= a.x ? 1 : -1;
+                    const q = pos(Math.min(1, e + 0.03));
+                    const ang = Math.atan2(q.y - p.y, Math.abs(q.x - p.x) || 0.001) * 180 / Math.PI;
+                    rot = Math.max(-35, Math.min(35, ang));
+                    scale = 1 + 0.3 * Math.sin(Math.PI * e);
+                }
+                // Landing ring when he touches down on a pad
+                const landed = e <= 0 ? i : e >= 1 ? i + 1 : -1;
+                if (landed !== -1 && landed !== landedAt) {
+                    if (landedAt !== -1 || landed !== 0) {
+                        pads[landed].classList.remove('just-landed');
+                        void pads[landed].offsetWidth;
+                        pads[landed].classList.add('just-landed');
+                    }
+                }
+                if (landed !== -1) landedAt = landed;
+                leaper.classList.add('is-placed');
+            }
+
+            leaper.style.transform =
+                `translate(${x - w / 2}px, ${y - h / 2}px) rotate(${rot * facing}deg) scale(${scale * facing}, ${scale})`;
+        }
+
+        function requestLeap() {
+            if (!ticking) { ticking = true; requestAnimationFrame(updateLeap); }
+        }
+        window.addEventListener('scroll', requestLeap, { passive: true });
+        window.addEventListener('resize', requestLeap);
+        if (leaper.complete) requestLeap(); else leaper.addEventListener('load', requestLeap);
+
+
+        /* ============ 2. NAKSHATRA SKY ============ */
+        // Star positions: RA in hours, Dec in degrees, visual magnitude.
+        // Lines join stars by index. Sources: Yale Bright Star Catalogue
+        // positions (J2000), traditional nakshatra star identifications.
+        const NAKSHATRAS = [
+            ['అశ్విని', 'Ashwini', 'Hamal, Sheratan and Mesarthim in Aries', [[2.119, 23.46, 2.0], [1.911, 20.81, 2.6], [1.892, 19.29, 3.9]], [[0, 1], [1, 2]]],
+            ['భరణి', 'Bharani', '35, 39 and 41 Arietis', [[2.725, 27.71, 4.7], [2.798, 29.25, 4.5], [2.833, 27.26, 3.6]], [[0, 1], [1, 2], [2, 0]]],
+            ['కృత్తిక', 'Krittika', 'The Pleiades', [[3.791, 24.11, 2.9], [3.819, 24.05, 3.6], [3.748, 24.11, 3.7], [3.763, 24.37, 3.9], [3.772, 23.95, 4.2], [3.753, 24.47, 4.3], [3.820, 24.14, 5.1]], []],
+            ['రోహిణి', 'Rohini', 'Aldebaran and the Hyades', [[4.599, 16.51, 0.9], [4.478, 15.87, 3.4], [4.330, 15.63, 3.7], [4.382, 17.54, 3.8], [4.477, 19.18, 3.5]], [[0, 1], [1, 2], [2, 3], [3, 4]]],
+            ['మృగశిర', 'Mrigashira', 'Meissa and the head of Orion', [[5.585, 9.93, 3.4], [5.580, 9.49, 4.4], [5.615, 9.29, 4.1]], [[0, 1], [1, 2], [2, 0]]],
+            ['ఆరుద్ర', 'Ardra', 'Betelgeuse', [[5.919, 7.41, 0.5]], []],
+            ['పునర్వసు', 'Punarvasu', 'Castor and Pollux', [[7.577, 31.89, 1.6], [7.755, 28.03, 1.1]], [[0, 1]]],
+            ['పుష్యమి', 'Pushyami', 'Gamma, Delta and Theta Cancri', [[8.721, 21.47, 4.7], [8.745, 18.15, 3.9], [8.527, 18.09, 5.3]], [[0, 1], [1, 2]]],
+            ['ఆశ్లేష', 'Ashlesha', 'The head of Hydra', [[8.628, 5.70, 4.1], [8.646, 3.34, 4.4], [8.720, 3.40, 4.3], [8.807, 5.84, 4.4], [8.923, 5.95, 3.1], [8.779, 6.42, 3.4]], [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0]]],
+            ['మఖ', 'Magha', 'Regulus and the Sickle of Leo', [[10.140, 11.97, 1.4], [10.122, 16.76, 3.5], [10.333, 19.84, 2.0], [10.278, 23.42, 3.4], [9.880, 26.01, 3.9], [9.764, 23.77, 3.0]], [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5]]],
+            ['పుబ్బ', 'Purva Phalguni', 'Zosma and Chertan in Leo', [[11.235, 20.52, 2.6], [11.237, 15.43, 3.3]], [[0, 1]]],
+            ['ఉత్తర', 'Uttara Phalguni', 'Denebola and 93 Leonis', [[11.818, 14.57, 2.1], [11.800, 20.22, 4.5]], [[0, 1]]],
+            ['హస్త', 'Hasta', 'The five stars of Corvus', [[12.263, -17.54, 2.6], [12.169, -22.62, 3.0], [12.498, -16.52, 2.9], [12.573, -23.40, 2.7], [12.140, -24.73, 4.0]], [[0, 1], [1, 3], [3, 2], [2, 0], [1, 4]]],
+            ['చిత్త', 'Chitra', 'Spica', [[13.420, -11.16, 1.0]], []],
+            ['స్వాతి', 'Swati', 'Arcturus', [[14.261, 19.18, -0.05]], []],
+            ['విశాఖ', 'Vishakha', 'The scales of Libra', [[14.848, -16.04, 2.8], [15.283, -9.38, 2.6], [15.592, -14.79, 3.9], [15.204, -19.79, 4.5]], [[3, 0], [0, 1], [1, 2]]],
+            ['అనూరాధ', 'Anuradha', 'Beta, Delta and Pi Scorpii', [[16.090, -19.81, 2.6], [16.006, -22.62, 2.3], [15.981, -26.11, 2.9]], [[0, 1], [1, 2]]],
+            ['జ్యేష్ఠ', 'Jyeshtha', 'Antares, the heart of the Scorpion', [[16.490, -26.43, 1.0], [16.353, -25.59, 2.9], [16.598, -28.22, 2.8]], [[1, 0], [0, 2]]],
+            ['మూల', 'Mula', 'The Scorpion\'s tail', [[16.836, -34.29, 2.3], [16.865, -38.05, 3.0], [16.910, -42.36, 3.6], [17.203, -43.24, 3.3], [17.622, -43.00, 1.9], [17.793, -40.13, 3.0], [17.708, -39.03, 2.4], [17.560, -37.10, 1.6], [17.513, -37.30, 2.7]], [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 8]]],
+            ['పూర్వాషాఢ', 'Purvashadha', 'Kaus Media and Kaus Australis', [[18.350, -29.83, 2.7], [18.403, -34.38, 1.8]], [[0, 1]]],
+            ['ఉత్తరాషాఢ', 'Uttarashadha', 'Nunki and Ascella in Sagittarius', [[18.921, -26.30, 2.0], [19.043, -29.88, 2.6], [18.762, -26.99, 3.2], [19.115, -27.67, 3.3]], [[2, 0], [0, 3], [3, 1], [1, 2]]],
+            ['శ్రవణం', 'Shravanam', 'Altair and its two companions', [[19.846, 8.87, 0.8], [19.771, 10.61, 2.7], [19.922, 6.41, 3.7]], [[1, 0], [0, 2]]],
+            ['ధనిష్ఠ', 'Dhanishta', 'The diamond of Delphinus', [[20.661, 15.91, 3.8], [20.626, 14.60, 3.6], [20.778, 16.12, 3.9], [20.724, 15.07, 4.4], [20.554, 11.30, 4.0]], [[1, 0], [0, 2], [2, 3], [3, 1], [1, 4]]],
+            ['శతభిషం', 'Shatabhisham', 'Lambda Aquarii, the hundred healers', [[22.877, -7.58, 3.7]], []],
+            ['పూర్వాభాద్ర', 'Purvabhadra', 'Markab and Scheat in Pegasus', [[23.079, 15.21, 2.5], [23.063, 28.08, 2.4]], [[0, 1]]],
+            ['ఉత్తరాభాద్ర', 'Uttarabhadra', 'Algenib and Alpheratz', [[0.220, 15.18, 2.8], [0.140, 29.09, 2.1]], [[0, 1]]],
+            ['రేవతి', 'Revati', 'Zeta Piscium and the fishes\' cord', [[1.229, 7.58, 5.2], [1.049, 7.89, 4.3], [0.812, 7.59, 4.4], [1.503, 6.14, 4.8]], [[2, 1], [1, 0], [0, 3]]]
+        ];
+
+        const sky = document.getElementById('nakSky');
+        const tip = document.createElement('div');
+        tip.className = 'nak-tip';
+        tip.hidden = true;
+        tip.setAttribute('aria-hidden', 'true'); // buttons carry their own labels
+        let todayNak = -1, openNak = -1, focusNak = 0;
+        const buttons = [];
+
+        // Project each asterism into a small box (east to the left, as in the sky)
+        function shape(stars, size) {
+            const ra0 = stars.reduce((s, st) => s + st[0], 0) / stars.length;
+            const de0 = stars.reduce((s, st) => s + st[1], 0) / stars.length;
+            const c = Math.cos(de0 * Math.PI / 180);
+            const pts = stars.map(st => [-(st[0] - ra0) * 15 * c, -(st[1] - de0), st[2]]);
+            const span = Math.max(0.0001, ...pts.map(p => Math.max(Math.abs(p[0]), Math.abs(p[1]))));
+            const k = (size / 2 - 8) / span;
+            return pts.map(p => [size / 2 + p[0] * k, size / 2 + p[1] * k, p[2]]);
+        }
+
+        function buildSky() {
+            const size = window.innerWidth < 700 ? 78 : 112;
+            NAKSHATRAS.forEach((n, idx) => {
+                const [te, en, desc, stars, lines] = n;
+                const pts = shape(stars, size);
+                let svg = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true" focusable="false">`;
+                if (stars.length === 1) svg += `<circle class="ring" cx="${size / 2}" cy="${size / 2}" r="${size / 2 - 14}"/>`;
+                svg += '<g class="lines">' + lines.map(([a, b]) =>
+                    `<line x1="${pts[a][0].toFixed(1)}" y1="${pts[a][1].toFixed(1)}" x2="${pts[b][0].toFixed(1)}" y2="${pts[b][1].toFixed(1)}"/>`).join('') + '</g>';
+                svg += pts.map(p => `<circle class="star" cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="${Math.max(1.3, 3.6 - 0.5 * p[2]).toFixed(1)}"/>`).join('');
+                svg += '</svg>';
+                let b = buttons[idx];
+                if (!b) {
+                    b = document.createElement('button');
+                    b.type = 'button';
+                    b.className = 'nak';
+                    b.tabIndex = idx === 0 ? 0 : -1;
+                    b.addEventListener('mouseenter', () => showTip(idx));
+                    b.addEventListener('mouseleave', () => { if (openNak !== idx) hideTip(); });
+                    b.addEventListener('focus', () => { focusNak = idx; showTip(idx); });
+                    b.addEventListener('blur', () => { if (openNak !== idx) hideTip(); });
+                    b.addEventListener('click', () => {
+                        if (openNak === idx) { openNak = -1; b.classList.remove('is-open'); hideTip(); }
+                        else { setOpen(idx); showTip(idx); }
+                    });
+                    buttons[idx] = b;
+                    sky.appendChild(b);
+                }
+                b.innerHTML = svg;
+                b.setAttribute('aria-label', `${en} (${te}), nakshatra ${idx + 1} of 27: ${desc}${idx === todayNak ? '. The Moon is here today.' : ''}`);
+            });
+            sky.appendChild(tip);
+            layoutSky(size);
+        }
+
+        // Spread Ashwini..Revati down the page, zig-zagging in the margins
+        function layoutSky(size) {
+            const W = document.documentElement.clientWidth;
+            const H = document.body.scrollHeight;
+            const content = Math.min(W, 640);
+            const margin = (W - content) / 2;
+            const wide = margin > size + 40;
+            buttons.forEach((b, k) => {
+                const jitter = ((k * 7919) % 100) / 100; // fixed pseudo-random 0..1
+                const left = k % 2 === 0;
+                let x;
+                if (wide) {
+                    const lo = 20, hi = margin - size - 20;
+                    x = lo + jitter * Math.max(0, hi - lo);
+                    if (!left) x = W - x - size;
+                } else {
+                    x = (left ? 0.02 : 0.58) * W + jitter * 0.18 * W;
+                }
+                const y = 60 + (k + 0.5) / 27 * (H - 200) - size / 2;
+                b.style.left = Math.round(x) + 'px';
+                b.style.top = Math.round(y) + 'px';
+            });
+        }
+
+        function setOpen(idx) {
+            buttons.forEach(b => b.classList.remove('is-open'));
+            openNak = idx;
+            if (idx >= 0) buttons[idx].classList.add('is-open');
+        }
+
+        function showTip(idx) {
+            const [te, en, desc] = NAKSHATRAS[idx];
+            const b = buttons[idx];
+            tip.innerHTML =
+                `<span class="num">${idx + 1} / 27</span>` +
+                `<span class="te" lang="te">${te}</span>` +
+                `<span class="en">${en}</span>${desc}` +
+                (idx === todayNak ? `<span class="today">${lang === 'te' ? 'ఈరోజు చంద్రుడు ఇక్కడ' : 'The Moon is here today'}</span>` : '');
+            tip.hidden = false;
+            const bx = b.offsetLeft, by = b.offsetTop, bs = b.offsetWidth;
+            const W = document.documentElement.clientWidth;
+            let x = bx + bs + 8;
+            if (x + tip.offsetWidth > W - 12) x = bx - tip.offsetWidth - 8;
+            if (x < 12) x = Math.max(12, Math.min(W - tip.offsetWidth - 12, bx));
+            tip.style.left = x + 'px';
+            tip.style.top = (by + bs / 2 - tip.offsetHeight / 2) + 'px';
+        }
+        function hideTip() { tip.hidden = true; }
+
+        // One tab stop for the whole sky; arrows move, Escape closes
+        sky.addEventListener('keydown', (e) => {
+            const keys = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1, Home: -99, End: 99 };
+            if (e.key === 'Escape') { setOpen(-1); hideTip(); return; }
+            if (!(e.key in keys)) return;
+            e.preventDefault();
+            const next = Math.max(0, Math.min(26, focusNak + keys[e.key]));
+            buttons[focusNak].tabIndex = -1;
+            buttons[next].tabIndex = 0;
+            buttons[next].focus({ preventScroll: true });
+            buttons[next].scrollIntoView({ block: 'center', behavior: reduce.matches ? 'auto' : 'smooth' });
+        });
+        document.addEventListener('click', (e) => {
+            if (openNak !== -1 && !e.target.closest('.nak')) { setOpen(-1); hideTip(); }
+        });
+
+        function focusToday() {
+            if (todayNak < 0) return;
+            buttons[focusNak].tabIndex = -1;
+            focusNak = todayNak;
+            buttons[todayNak].tabIndex = 0;
+            buttons[todayNak].scrollIntoView({ block: 'center', behavior: reduce.matches ? 'auto' : 'smooth' });
+            buttons[todayNak].focus({ preventScroll: true });
+            setOpen(todayNak);
+            showTip(todayNak);
+        }
+
+
+        /* ============ 3. PANCHANGAM ============ */
+        // Sun and Moon longitudes from Meeus, Astronomical Algorithms
+        // (ch. 25 and 47). Checked against astronomy-engine: within 0.01°,
+        // which puts tithi end times within about a minute.
+        const RAD = Math.PI / 180;
+        const norm = a => ((a % 360) + 360) % 360;
+        // [D, M, M', F, coefficient × 1e-6 degrees]
+        const MOON = [
+            [0,0,1,0,6288774],[2,0,-1,0,1274027],[2,0,0,0,658314],[0,0,2,0,213618],[0,1,0,0,-185116],
+            [0,0,0,2,-114332],[2,0,-2,0,58793],[2,-1,-1,0,57066],[2,0,1,0,53322],[2,-1,0,0,45758],
+            [0,1,-1,0,-40923],[1,0,0,0,-34720],[0,1,1,0,-30383],[2,0,0,-2,15327],[0,0,1,2,-12528],
+            [0,0,1,-2,10980],[4,0,-1,0,10675],[0,0,3,0,10034],[4,0,-2,0,8548],[2,1,-1,0,-7888],
+            [2,1,0,0,-6766],[1,0,-1,0,-5163],[1,1,0,0,4987],[2,-1,1,0,4036],[2,0,2,0,3994],
+            [4,0,0,0,3861],[2,0,-3,0,3665],[0,1,-2,0,-2689],[2,0,-1,2,-2602],[2,-1,-2,0,2390],
+            [1,0,1,0,-2348],[2,-2,0,0,2236],[0,1,2,0,-2120],[0,2,0,0,-2069],[2,-2,-1,0,2048],
+            [2,0,1,-2,-1773],[2,0,0,2,-1595],[4,-1,-1,0,1215],[0,0,2,2,-1110],[3,0,-1,0,-892],
+            [2,1,1,0,-810],[4,-1,-2,0,759],[0,2,-1,0,-713],[2,2,-1,0,-700],[2,1,-2,0,691],
+            [2,-1,0,-2,596],[4,0,1,0,549],[0,0,4,0,537],[4,-1,0,0,520],[1,0,-2,0,-487],
+            [2,1,0,-2,-399],[0,0,2,-2,-381],[1,1,1,0,351],[3,0,-2,0,-340],[4,0,-3,0,330],
+            [2,-1,2,0,327],[0,2,1,0,-323],[1,1,-1,0,299],[2,0,3,0,294]];
+        // Julian centuries (TT) since J2000; ΔT ≈ 69 s for the 2020s
+        const jc = d => (d.getTime() / 86400000 + 2440587.5 + 69 / 86400 - 2451545) / 36525;
+        function sunLon(T) {
+            const L0 = 280.46646 + 36000.76983 * T + 0.0003032 * T * T;
+            const M = (357.52911 + 35999.05029 * T - 0.0001537 * T * T) * RAD;
+            const C = (1.914602 - 0.004817 * T - 0.000014 * T * T) * Math.sin(M)
+                + (0.019993 - 0.000101 * T) * Math.sin(2 * M) + 0.000289 * Math.sin(3 * M);
+            return norm(L0 + C - 0.00569 - 0.00478 * Math.sin((125.04 - 1934.136 * T) * RAD));
+        }
+        function moonLon(T) {
+            const Lp = 218.3164477 + 481267.88123421 * T - 0.0015786 * T * T + T * T * T / 538841;
+            const D = (297.8501921 + 445267.1114034 * T - 0.0018819 * T * T + T * T * T / 545868) * RAD;
+            const M = (357.5291092 + 35999.0502909 * T - 0.0001536 * T * T) * RAD;
+            const Mp = (134.9633964 + 477198.8675055 * T + 0.0087414 * T * T + T * T * T / 69699) * RAD;
+            const F = (93.2720950 + 483202.0175233 * T - 0.0036539 * T * T) * RAD;
+            const E = 1 - 0.002516 * T - 0.0000074 * T * T;
+            let s = 0;
+            for (const [d, m, mp, f, c] of MOON) s += c * (m === 0 ? 1 : Math.abs(m) === 1 ? E : E * E) * Math.sin(d * D + m * M + mp * Mp + f * F);
+            s += 3958 * Math.sin((119.75 + 131.849 * T) * RAD) + 1962 * Math.sin(Lp * RAD - F) + 318 * Math.sin((53.09 + 479264.290 * T) * RAD);
+            return norm(Lp + s / 1e6 - 0.00478 * Math.sin((125.04 - 1934.136 * T) * RAD));
+        }
+        const ayanamsa = T => 23.853 + 1.3969 * T; // Lahiri
+        const elong = d => { const T = jc(d); return norm(moonLon(T) - sunLon(T)); };
+        const sidSun = d => { const T = jc(d); return norm(sunLon(T) - ayanamsa(T)); };
+        const sidMoon = d => { const T = jc(d); return norm(moonLon(T) - ayanamsa(T)); };
+
+        // When does fn (an angle that keeps increasing) next/last reach target?
+        function cross(fn, target, from, dir, rate) {
+            const gap = norm(dir > 0 ? target - fn(from) : fn(from) - target);
+            const guess = from.getTime() + dir * gap / rate * 86400000;
+            let a = guess - 2 * 86400000, b = guess + 2 * 86400000;
+            const g = t => { const x = norm(fn(new Date(t)) - target); return x > 180 ? x - 360 : x; };
+            for (let k = 0; k < 40; k++) { const m = (a + b) / 2; if (g(m) < 0) a = m; else b = m; }
+            return new Date(b);
+        }
+
+        function panchangam(now) {
+            const e = elong(now);
+            const tithi = Math.floor(e / 12);
+            const nak = Math.floor(sidMoon(now) / (360 / 27));
+            const nm0 = cross(elong, 0, now, -1, 12.19);
+            const nm1 = cross(elong, 0, new Date(nm0.getTime() + 86400000), 1, 12.19);
+            const r0 = Math.floor(sidSun(nm0) / 30), r1 = Math.floor(sidSun(nm1) / 30);
+            const month = (r0 + 1) % 12; // Sun in Meena at the new moon -> Chaitra
+            // Telugu year turns at Ugadi (Chaitra Shukla Padyami)
+            const y = now.getFullYear() - ((now.getMonth() < 6 && month >= 8) ? 1 : 0);
+            return {
+                e, tithi, nak, month, adhika: r0 === r1, year: ((y - 1987) % 60 + 60) % 60,
+                tithiEnd: cross(elong, ((tithi + 1) * 12) % 360, now, 1, 12.19),
+                nakEnd: cross(sidMoon, ((nak + 1) * 360 / 27) % 360, now, 1, 13.18)
+            };
+        }
+
+        const T = {
+            te: {
+                tithi: ['పాడ్యమి','విదియ','తదియ','చవితి','పంచమి','షష్ఠి','సప్తమి','అష్టమి','నవమి','దశమి','ఏకాదశి','ద్వాదశి','త్రయోదశి','చతుర్దశి'],
+                full: 'పౌర్ణమి', newm: 'అమావాస్య', paksha: ['శుక్ల', 'బహుళ'],
+                month: ['చైత్ర','వైశాఖ','జ్యేష్ఠ','ఆషాఢ','శ్రావణ','భాద్రపద','ఆశ్వయుజ','కార్తీక','మార్గశిర','పుష్య','మాఘ','ఫాల్గుణ'],
+                adhika: 'అధిక ',
+                day: ['ఆదివారం','సోమవారం','మంగళవారం','బుధవారం','గురువారం','శుక్రవారం','శనివారం'],
+                year: ['ప్రభవ','విభవ','శుక్ల','ప్రమోదూత','ప్రజోత్పత్తి','ఆంగీరస','శ్రీముఖ','భావ','యువ','ధాత','ఈశ్వర','బహుధాన్య','ప్రమాది','విక్రమ','వృష','చిత్రభాను','స్వభాను','తారణ','పార్థివ','వ్యయ','సర్వజిత్','సర్వధారి','విరోధి','వికృతి','ఖర','నందన','విజయ','జయ','మన్మథ','దుర్ముఖి','హేవిళంబి','విళంబి','వికారి','శార్వరి','ప్లవ','శుభకృత్','శోభకృత్','క్రోధి','విశ్వావసు','పరాభవ','ప్లవంగ','కీలక','సౌమ్య','సాధారణ','విరోధికృత్','పరీధావి','ప్రమాదీచ','ఆనంద','రాక్షస','నల','పింగళ','కాళయుక్తి','సిద్ధార్థి','రౌద్రి','దుర్మతి','దుందుభి','రుధిరోద్గారి','రక్తాక్షి','క్రోధన','అక్షయ'],
+                yearSuffix: ' నామ సంవత్సరం', until: 'వరకు',
+                labels: ['తిథి', 'నక్షత్రం', 'మాసం', 'సంవత్సరం', 'వారం'],
+                title: 'నేటి పంచాంగం', sky: 'ఆకాశంలో చూపించు',
+                note: 'మీ బ్రౌజర్‌లోనే ఈ క్షణానికి లెక్కించబడింది (లాహిరి అయనాంశ, అమాంత మాసం). సమయాలు మీ టైమ్ జోన్‌లో.'
+            },
+            en: {
+                tithi: ['Padyami','Vidiya','Tadiya','Chavithi','Panchami','Shashti','Saptami','Ashtami','Navami','Dashami','Ekadashi','Dwadashi','Trayodashi','Chaturdashi'],
+                full: 'Pournami', newm: 'Amavasya', paksha: ['Shukla', 'Bahula'],
+                month: ['Chaitra','Vaishakha','Jyeshtha','Ashadha','Shravana','Bhadrapada','Ashwayuja','Kartika','Margashira','Pushya','Magha','Phalguna'],
+                adhika: 'Adhika ',
+                day: ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
+                year: ['Prabhava','Vibhava','Shukla','Pramoduta','Prajotpatti','Angirasa','Shrimukha','Bhava','Yuva','Dhatu','Ishvara','Bahudhanya','Pramathi','Vikrama','Vrisha','Chitrabhanu','Svabhanu','Tarana','Parthiva','Vyaya','Sarvajit','Sarvadhari','Virodhi','Vikriti','Khara','Nandana','Vijaya','Jaya','Manmatha','Durmukhi','Hevilambi','Vilambi','Vikari','Sharvari','Plava','Shubhakrit','Shobhakrit','Krodhi','Vishvavasu','Parabhava','Plavanga','Kilaka','Saumya','Sadharana','Virodhikrit','Paridhavi','Pramadicha','Ananda','Rakshasa','Nala','Pingala','Kalayukti','Siddharthi','Raudri','Durmati','Dundubhi','Rudhirodgari','Raktakshi','Krodhana','Akshaya'],
+                yearSuffix: ' year', until: 'until',
+                labels: ['Tithi', 'Nakshatra', 'Month', 'Year', 'Day'],
+                title: "Today's panchangam", sky: 'Show it in the sky',
+                note: 'Worked out in your browser for this moment (Lahiri ayanamsa, amanta months). Times are in your time zone.'
+            }
+        };
+
+        // Moon disc lit by elongation e (0 = new, 180 = full)
+        function moonIcon(e, r) {
+            const c = Math.cos(e * RAD), waxing = e < 180, rx = Math.abs(c) * r;
+            const limb = waxing ? 1 : 0;
+            const term = c > 0 ? (waxing ? 0 : 1) : (waxing ? 1 : 0);
+            const d = `M ${r} 0 A ${r} ${r} 0 0 ${limb} ${r} ${2 * r} A ${rx} ${r} 0 0 ${term} ${r} 0 Z`;
+            return `<svg width="${2 * r}" height="${2 * r}" viewBox="0 0 ${2 * r} ${2 * r}"><circle cx="${r}" cy="${r}" r="${r - 0.5}" fill="#2a2a38" stroke="rgba(255,153,51,.5)"/><path d="${d}" fill="#ffd9a8"/></svg>`;
+        }
+
+        const badge = document.getElementById('panchBadge');
+        const panel = document.getElementById('panchPanel');
+        let P = null;
+
+        function fmtTime(d) {
+            const opts = { weekday: 'short', hour: 'numeric', minute: '2-digit' };
+            return d.toLocaleString(lang === 'te' ? 'te-IN' : undefined, opts);
+        }
+
+        // "until Sat 10:27 PM" / "శని 10:27 PM వరకు"
+        function untilText(d) {
+            return lang === 'te' ? `${fmtTime(d)} ${T.te.until}` : `${T.en.until} ${fmtTime(d)}`;
+        }
+
+        function renderPanch() {
+            const now = new Date();
+            P = panchangam(now);
+            const L = T[lang];
+            const inPaksha = P.tithi % 15;
+            const pakshaName = L.paksha[P.tithi < 15 ? 0 : 1];
+            const tithiName = P.tithi === 14 ? L.full : P.tithi === 29 ? L.newm : L.tithi[inPaksha];
+            const monthName = (P.adhika ? L.adhika : '') + L.month[P.month];
+            const line1 = `${monthName} ${pakshaName} ${tithiName}`;
+            const nakName = lang === 'te' ? NAKSHATRAS[P.nak][0] : NAKSHATRAS[P.nak][1];
+
+            document.getElementById('panchMoon').innerHTML = moonIcon(P.e, 13);
+            document.getElementById('panchLine1').textContent = line1;
+            document.getElementById('panchLine2').textContent = `${L.day[now.getDay()]} · ${L.year[P.year]}${lang === 'te' ? '' : L.yearSuffix}`;
+            badge.lang = lang;
+            badge.setAttribute('aria-label', `${L.title}: ${line1}`);
+
+            panel.lang = lang;
+            panel.innerHTML =
+                `<h2 id="panchTitle">${L.title}</h2><dl>` +
+                `<dt>${L.labels[0]}</dt><dd>${pakshaName} ${tithiName}<small>${untilText(P.tithiEnd)}</small></dd>` +
+                `<dt>${L.labels[1]}</dt><dd>${nakName}<small>${untilText(P.nakEnd)}</small></dd>` +
+                `<dt>${L.labels[2]}</dt><dd>${monthName}</dd>` +
+                `<dt>${L.labels[3]}</dt><dd>${L.year[P.year]}${L.yearSuffix}</dd>` +
+                `<dt>${L.labels[4]}</dt><dd>${L.day[now.getDay()]}</dd></dl>` +
+                `<button type="button" id="panchSky">${L.sky}</button>` +
+                `<p class="panch-note">${L.note}</p>`;
+            document.getElementById('panchSky').addEventListener('click', () => { closePanel(); focusToday(); });
+
+            if (todayNak !== P.nak) {
+                if (todayNak >= 0) buttons[todayNak].classList.remove('is-today');
+                todayNak = P.nak;
+                buttons[todayNak].classList.add('is-today');
+                buildSky(); // refresh labels
+            }
+        }
+
+        function openPanel() { panel.hidden = false; badge.setAttribute('aria-expanded', 'true'); }
+        function closePanel() { panel.hidden = true; badge.setAttribute('aria-expanded', 'false'); }
+        badge.addEventListener('click', () => panel.hidden ? openPanel() : closePanel());
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !panel.hidden) { closePanel(); badge.focus(); }
+        });
+        document.addEventListener('click', (e) => {
+            if (!panel.hidden && !e.target.closest('#panch')) closePanel();
+        });
+
+        /* ============ start ============ */
+        buildSky();
+        renderPanch();
+        setInterval(() => { if (P && Date.now() >= Math.min(P.tithiEnd, P.nakEnd)) renderPanch(); }, 60000);
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => { buildSky(); requestLeap(); }, 150);
+        });
+        window.addEventListener('load', () => { layoutSky(buttons[0].offsetWidth); requestLeap(); });
+
+        window.Chedalla = {
+            setLang(l) { lang = l; renderPanch(); if (!tip.hidden && openNak >= 0) showTip(openNak); },
+            panchangam
+        };
+    })();
     </script>
 </body>
 </html>
