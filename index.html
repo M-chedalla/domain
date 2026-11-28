@@ -410,23 +410,27 @@
         .panch-badge:focus-visible { outline: 2px solid var(--neon-color); outline-offset: 3px; }
         .panch-badge svg { flex: none; display: block; }
         /* The tithi text is folded away until hover, focus or open */
+        /* Fixed width and line heights, so the pill is the same size in
+           English and Telugu (Telugu glyphs are taller and wider). */
         .panch-text {
             display: block;
-            max-width: 0;
+            width: 0;
             overflow: hidden;
             white-space: nowrap;
             opacity: 0;
-            transition: max-width 0.35s ease, opacity 0.2s ease, margin 0.35s ease;
+            transition: width 0.35s ease, opacity 0.2s ease, margin 0.35s ease;
         }
         .panch:hover .panch-badge,
         .panch:focus-within .panch-badge,
         .panch.is-open .panch-badge { padding-right: 14px; }
         .panch:hover .panch-text,
         .panch:focus-within .panch-text,
-        .panch.is-open .panch-text { max-width: 280px; opacity: 1; margin-left: 10px; }
+        .panch.is-open .panch-text { width: 200px; opacity: 1; margin-left: 10px; }
         .panch.is-open .panch-badge { border-color: transparent; background-color: transparent; }
-        .panch-line1 { display: block; font-weight: 600; font-size: 14px; }
-        .panch-line2 { display: block; color: #a9adbf; font-size: 12px; }
+        .panch-line1,
+        .panch-line2 { display: block; overflow: hidden; text-overflow: ellipsis; }
+        .panch-line1 { font-weight: 600; font-size: 14px; line-height: 18px; height: 18px; }
+        .panch-line2 { color: #a9adbf; font-size: 12px; line-height: 16px; height: 16px; }
         /* The square card grows out of the pill, from the same corner */
         .panch-panel {
             position: absolute;
