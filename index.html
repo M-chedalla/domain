@@ -531,8 +531,6 @@
         const enFont = "'Playfair Display', serif"; 
         const teFont = "'Sirivennela', sans-serif"; 
 
-        const originalTitle = document.title;
-
         function markActive(activeBtn, otherBtn) {
             activeBtn.classList.add('active');
             activeBtn.setAttribute('aria-pressed', 'true');
@@ -581,15 +579,6 @@
         // 'click' covers mouse, touch, and keyboard (Enter / Space)
         btnEn.addEventListener('click', setEnglish);
         btnTe.addEventListener('click', setTelugu);
-
-        // --- 1. Dynamic Title Change ---
-        document.addEventListener("visibilitychange", () => {
-            if (document.hidden) {
-                document.title = isMayaMode ? "⚠️ SYSTEM OVERRIDE" : "🛸 Lost in Space?";
-            } else {
-                document.title = isMayaMode ? "MAYA PROTOCOL ACTIVE" : originalTitle;
-            }
-        });
 
         // --- 2. Canvas Setup ---
         const cursorStar = document.getElementById('cursorStar');
@@ -832,7 +821,6 @@
             // 1. Visual Changes - Saffron Theme
             root.style.setProperty('--neon-color', '#FF9933'); 
             currentTrailColor = '#FF9933';
-            document.title = "MAYA PROTOCOL ACTIVE"; 
             
             // 2. Hide Space Elements & Hanuman Image
             document.getElementById('starsLayer').style.opacity = '0';
@@ -860,7 +848,6 @@
 
             root.style.setProperty('--neon-color', '#0ef');
             currentTrailColor = '#0ef';
-            document.title = originalTitle;
 
             document.getElementById('starsLayer').style.opacity = '';
             document.getElementById('nebulaLayer').style.opacity = '';
