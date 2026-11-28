@@ -381,59 +381,6 @@
         }
 
 
-        /* --- NAKSHATRA SKY ---
-           27 lunar mansions drawn from real star positions, in order from
-           Ashwini to Revati: 14 above the name, 13 below it. */
-        .nak-sky {
-            position: fixed;
-            inset: 0;
-            z-index: 2;
-            pointer-events: none;
-            transition: opacity 1s ease;
-        }
-        .nak {
-            position: absolute;
-            padding: 0;
-            margin: 0;
-            border: 0;
-            background: none;
-            cursor: pointer;
-            pointer-events: auto;
-            color: rgba(255, 255, 255, 0.85);
-            border-radius: 12px;
-        }
-        .nak svg { display: block; overflow: visible; }
-        .nak .lines { stroke: rgba(255, 255, 255, 0.16); stroke-width: 1; fill: none; transition: stroke 0.25s ease; }
-        .nak .star { fill: currentColor; transition: fill 0.25s ease; }
-        .nak .ring { fill: none; stroke: rgba(255, 255, 255, 0.14); stroke-dasharray: 2 4; }
-        .nak:hover .lines, .nak:focus-visible .lines, .nak.is-open .lines { stroke: var(--neon-color); stroke-width: 1.3; }
-        .nak:hover .star, .nak:focus-visible .star, .nak.is-open .star { fill: #fff; filter: drop-shadow(0 0 4px var(--neon-color)); }
-        .nak:focus-visible { outline: 2px solid var(--neon-color); outline-offset: 6px; }
-        /* Tonight's Moon is in this one */
-        .nak.is-today .lines { stroke: var(--hanuman-saffron); stroke-opacity: 0.8; }
-        .nak.is-today .star { fill: #ffd9a8; animation: today-glow 3s ease-in-out infinite; }
-        @keyframes today-glow { 50% { filter: drop-shadow(0 0 6px var(--hanuman-saffron)); } }
-
-        .nak-tip {
-            position: absolute;
-            z-index: 3;
-            min-width: 150px;
-            max-width: 220px;
-            padding: 10px 12px;
-            border-radius: 10px;
-            background: rgba(8, 10, 22, 0.94);
-            border: 1px solid var(--neon-color);
-            color: #cfd2e0;
-            font-size: 13px;
-            line-height: 1.45;
-            pointer-events: none;
-            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
-        }
-        .nak-tip .te { display: block; font-size: 22px; color: #fff; line-height: 1.3; }
-        .nak-tip .en { display: block; color: #fff; font-weight: 600; }
-        .nak-tip .num { font-size: 11px; letter-spacing: 0.08em; color: #8a8ea3; text-transform: uppercase; }
-        .nak-tip .today { display: block; margin-top: 4px; color: var(--hanuman-saffron); }
-
         /* --- PANCHANGAM BADGE --- */
         .panch {
             position: fixed;
@@ -481,115 +428,6 @@
         .panch-panel dd { margin: 0; color: #fff; }
         .panch-panel dd small { display: block; color: #a9adbf; font-size: 12px; }
         .panch-panel .panch-note { margin: 12px 0 0; font-size: 11.5px; color: #8a8ea3; }
-        .panch-panel button {
-            margin-top: 10px;
-            font: inherit;
-            font-size: 12.5px;
-            color: #fff;
-            background: none;
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            border-radius: 999px;
-            padding: 5px 12px;
-            cursor: pointer;
-        }
-        .panch-panel button:focus-visible { outline: 2px solid var(--neon-color); outline-offset: 2px; }
-
-        /* --- Animations --- */
-        @keyframes space-drift {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(1000px); }
-        }
-
-        /* --- WARP SPEED STATE --- */
-        body.warp-active { background-color: #000510; }
-        body.warp-active .stars, body.warp-active .stars2, body.warp-active .stars3 {
-            animation-duration: 0.2s; opacity: 0.6; scale: 1 2; /* no blur filter here: blurring these huge layers every frame made Hanuman stutter */ 
-        }
-        
-        /* Hanuman steps out of frame while warp is held (the streaking stars
-           made him look jittery) and glides back in on release. */
-        body.warp-active .ufo-container { opacity: 0; transition-duration: 0.25s; }
-
-        /* --- SUDARSHANA CHAKRA CURSOR --- */
-        /* The native cursor is only hidden on mouse/trackpad devices, and it
-           comes back over links and buttons so it's always clear what is
-           clickable. The chakra keeps following the pointer everywhere. */
-        @media (hover: hover) and (pointer: fine) {
-            body.has-pointer { cursor: none; }
-            body.has-pointer a,
-            body.has-pointer button { cursor: pointer; }
-        }
-
-        .cursor-star {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            /* Dashed border looks like a spinning chakra */
-            border: 2px dashed #ffffff; 
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); 
-            pointer-events: none;
-            z-index: 9999;
-            transform: translate(-50%, -50%);
-            will-change: left, top, transform;
-            animation: spin 4s linear infinite; /* Slow normal spin */
-            transition: width 0.2s, height 0.2s, border-color 0.3s, opacity 0.3s;
-            opacity: 0; /* hidden until the pointer first moves */
-        }
-
-        body.has-pointer .cursor-star { opacity: 1; }
-
-        @keyframes spin { 100% { transform: translate(-50%, -50%) rotate(360deg); } }
-
-        /* Warp Mode: Fast Spin + Glow */
-        body.warp-active .cursor-star {
-            width: 50px;
-            height: 50px;
-            border-color: var(--neon-color);
-            box-shadow: 0 0 20px var(--neon-color), inset 0 0 10px var(--neon-color);
-            animation: spin 0.3s linear infinite; /* Furious spin */
-        }
-
-        /* --- SPARKS EFFECT (Restored) --- */
-        .cursor-star::before,
-        .cursor-star::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            /* Uses the neon-color variable, so it will be Saffron in Maya mode */
-            border: 3px dotted var(--neon-color); 
-            transform: translate(-50%, -50%) scale(0.5);
-            opacity: 0;
-            pointer-events: none;
-            filter: blur(1px);
-            transition: border-color 0.3s ease;
-        }
-
-        /* Trigger Spark Animations on Warp Active */
-        body.warp-active .cursor-star::before {
-            animation: spark-burst-1 0.4s ease-out infinite;
-        }
-
-        body.warp-active .cursor-star::after {
-            animation: spark-burst-2 0.4s ease-out infinite 0.2s; 
-        }
-
-        @keyframes spark-burst-1 {
-            0% { transform: translate(-50%, -50%) scale(0.8) rotate(0deg); opacity: 1; }
-            100% { transform: translate(-50%, -50%) scale(2.2) rotate(180deg); opacity: 0; }
-        }
-
-        @keyframes spark-burst-2 {
-            0% { transform: translate(-50%, -50%) scale(0.8) rotate(90deg); opacity: 1; }
-            100% { transform: translate(-50%, -50%) scale(2.5) rotate(270deg); opacity: 0; }
-        }
-
 
         /* --- MANTRA EASTER EGG: type "jai hanuman" --- */
         .mantra-burst {
@@ -659,11 +497,7 @@
             align-items: center;
             width: 100%;
             z-index: 10; 
-            position: relative;
-            /* let hovers reach the nakshatra sky; links opt back in */
-            pointer-events: none;
         }
-        .main-content a { pointer-events: auto; }
 
         .ticker-wrap {
             width: 100%;
@@ -749,7 +583,6 @@
                 animation: none !important;
             }
             .falling-star, .ufo-container { display: none; }
-            .nak.is-today .star { animation: none; }
             /* Mantra: a soft saffron glow that fades, no burst or sparks */
             .mantra-glow { animation: mantra-fade 2s ease-in-out forwards; transform: none; }
             .mantra-spark { display: none; }
@@ -803,10 +636,6 @@
         </button>
         <div class="panch-panel" id="panchPanel" role="region" aria-labelledby="panchTitle" hidden></div>
     </div>
-
-    <!-- Nakshatra sky: filled in by JS from the NAKSHATRAS data below.
-         One tab stop; arrow keys move between the 27 nakshatras. -->
-    <div class="nak-sky" id="nakSky" role="group" aria-label="Nakshatra sky, 27 lunar mansions. Use the arrow keys to move between them."></div>
 
     <!-- Mantra Easter egg: announced to screen readers when it fires -->
     <div class="visually-hidden" id="mantraLive" aria-live="polite"></div>
@@ -982,8 +811,8 @@
             document.body.classList.remove('has-pointer');
         });
         document.addEventListener('mousedown', (e) => {
-            // No warp when clicking a control (toggle, badge, nakshatra, links)
-            if(e.target.closest('.cyber-toggle, .panch, .nak, a, button')) return; 
+            // No warp when clicking a control (toggle, badge, links)
+            if(e.target.closest('.cyber-toggle, .panch, a, button')) return; 
             document.body.classList.add('warp-active');
         });
         document.addEventListener('mouseup', () => document.body.classList.remove('warp-active'));
@@ -994,7 +823,7 @@
         }
 
         document.addEventListener('touchstart', (e) => {
-            if(e.target.closest('.cyber-toggle, .panch, .nak')) return;
+            if(e.target.closest('.cyber-toggle, .panch')) return;
             if (e.touches.length > 1) { clearTimeout(warpTimer); return; } // pinch
             const touch = e.touches[0];
             lastX = touch.clientX;
@@ -1214,181 +1043,24 @@
 
     </script>
     <script>
-    /* Nakshatra sky, panchangam badge and the "jai hanuman" Easter egg.
+    /* Panchangam badge and the "jai hanuman" Easter egg.
        Everything is namespaced under window.Chedalla. */
     (function () {
         const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
         let lang = 'en';
 
-        /* ============ 1. NAKSHATRA SKY ============ */
-        // Star positions: RA in hours, Dec in degrees, visual magnitude.
-        // Lines join stars by index. Sources: Yale Bright Star Catalogue
-        // positions (J2000), traditional nakshatra star identifications.
+        // The 27 nakshatras, for the badge's details panel
         const NAKSHATRAS = [
-            ['అశ్విని', 'Ashwini', 'Hamal, Sheratan and Mesarthim in Aries', [[2.119, 23.46, 2.0], [1.911, 20.81, 2.6], [1.892, 19.29, 3.9]], [[0, 1], [1, 2]]],
-            ['భరణి', 'Bharani', '35, 39 and 41 Arietis', [[2.725, 27.71, 4.7], [2.798, 29.25, 4.5], [2.833, 27.26, 3.6]], [[0, 1], [1, 2], [2, 0]]],
-            ['కృత్తిక', 'Krittika', 'The Pleiades', [[3.791, 24.11, 2.9], [3.819, 24.05, 3.6], [3.748, 24.11, 3.7], [3.763, 24.37, 3.9], [3.772, 23.95, 4.2], [3.753, 24.47, 4.3], [3.820, 24.14, 5.1]], []],
-            ['రోహిణి', 'Rohini', 'Aldebaran and the Hyades', [[4.599, 16.51, 0.9], [4.478, 15.87, 3.4], [4.330, 15.63, 3.7], [4.382, 17.54, 3.8], [4.477, 19.18, 3.5]], [[0, 1], [1, 2], [2, 3], [3, 4]]],
-            ['మృగశిర', 'Mrigashira', 'Meissa and the head of Orion', [[5.585, 9.93, 3.4], [5.580, 9.49, 4.4], [5.615, 9.29, 4.1]], [[0, 1], [1, 2], [2, 0]]],
-            ['ఆరుద్ర', 'Ardra', 'Betelgeuse', [[5.919, 7.41, 0.5]], []],
-            ['పునర్వసు', 'Punarvasu', 'Castor and Pollux', [[7.577, 31.89, 1.6], [7.755, 28.03, 1.1]], [[0, 1]]],
-            ['పుష్యమి', 'Pushyami', 'Gamma, Delta and Theta Cancri', [[8.721, 21.47, 4.7], [8.745, 18.15, 3.9], [8.527, 18.09, 5.3]], [[0, 1], [1, 2]]],
-            ['ఆశ్లేష', 'Ashlesha', 'The head of Hydra', [[8.628, 5.70, 4.1], [8.646, 3.34, 4.4], [8.720, 3.40, 4.3], [8.807, 5.84, 4.4], [8.923, 5.95, 3.1], [8.779, 6.42, 3.4]], [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0]]],
-            ['మఖ', 'Magha', 'Regulus and the Sickle of Leo', [[10.140, 11.97, 1.4], [10.122, 16.76, 3.5], [10.333, 19.84, 2.0], [10.278, 23.42, 3.4], [9.880, 26.01, 3.9], [9.764, 23.77, 3.0]], [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5]]],
-            ['పుబ్బ', 'Purva Phalguni', 'Zosma and Chertan in Leo', [[11.235, 20.52, 2.6], [11.237, 15.43, 3.3]], [[0, 1]]],
-            ['ఉత్తర', 'Uttara Phalguni', 'Denebola and 93 Leonis', [[11.818, 14.57, 2.1], [11.800, 20.22, 4.5]], [[0, 1]]],
-            ['హస్త', 'Hasta', 'The five stars of Corvus', [[12.263, -17.54, 2.6], [12.169, -22.62, 3.0], [12.498, -16.52, 2.9], [12.573, -23.40, 2.7], [12.140, -24.73, 4.0]], [[0, 1], [1, 3], [3, 2], [2, 0], [1, 4]]],
-            ['చిత్త', 'Chitra', 'Spica', [[13.420, -11.16, 1.0]], []],
-            ['స్వాతి', 'Swati', 'Arcturus', [[14.261, 19.18, -0.05]], []],
-            ['విశాఖ', 'Vishakha', 'The scales of Libra', [[14.848, -16.04, 2.8], [15.283, -9.38, 2.6], [15.592, -14.79, 3.9], [15.204, -19.79, 4.5]], [[3, 0], [0, 1], [1, 2]]],
-            ['అనూరాధ', 'Anuradha', 'Beta, Delta and Pi Scorpii', [[16.090, -19.81, 2.6], [16.006, -22.62, 2.3], [15.981, -26.11, 2.9]], [[0, 1], [1, 2]]],
-            ['జ్యేష్ఠ', 'Jyeshtha', 'Antares, the heart of the Scorpion', [[16.490, -26.43, 1.0], [16.353, -25.59, 2.9], [16.598, -28.22, 2.8]], [[1, 0], [0, 2]]],
-            ['మూల', 'Mula', 'The Scorpion\'s tail', [[16.836, -34.29, 2.3], [16.865, -38.05, 3.0], [16.910, -42.36, 3.6], [17.203, -43.24, 3.3], [17.622, -43.00, 1.9], [17.793, -40.13, 3.0], [17.708, -39.03, 2.4], [17.560, -37.10, 1.6], [17.513, -37.30, 2.7]], [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 8]]],
-            ['పూర్వాషాఢ', 'Purvashadha', 'Kaus Media and Kaus Australis', [[18.350, -29.83, 2.7], [18.403, -34.38, 1.8]], [[0, 1]]],
-            ['ఉత్తరాషాఢ', 'Uttarashadha', 'Nunki and Ascella in Sagittarius', [[18.921, -26.30, 2.0], [19.043, -29.88, 2.6], [18.762, -26.99, 3.2], [19.115, -27.67, 3.3]], [[2, 0], [0, 3], [3, 1], [1, 2]]],
-            ['శ్రవణం', 'Shravanam', 'Altair and its two companions', [[19.846, 8.87, 0.8], [19.771, 10.61, 2.7], [19.922, 6.41, 3.7]], [[1, 0], [0, 2]]],
-            ['ధనిష్ఠ', 'Dhanishta', 'The diamond of Delphinus', [[20.661, 15.91, 3.8], [20.626, 14.60, 3.6], [20.778, 16.12, 3.9], [20.724, 15.07, 4.4], [20.554, 11.30, 4.0]], [[1, 0], [0, 2], [2, 3], [3, 1], [1, 4]]],
-            ['శతభిషం', 'Shatabhisham', 'Lambda Aquarii, the hundred healers', [[22.877, -7.58, 3.7]], []],
-            ['పూర్వాభాద్ర', 'Purvabhadra', 'Markab and Scheat in Pegasus', [[23.079, 15.21, 2.5], [23.063, 28.08, 2.4]], [[0, 1]]],
-            ['ఉత్తరాభాద్ర', 'Uttarabhadra', 'Algenib and Alpheratz', [[0.220, 15.18, 2.8], [0.140, 29.09, 2.1]], [[0, 1]]],
-            ['రేవతి', 'Revati', 'Zeta Piscium and the fishes\' cord', [[1.229, 7.58, 5.2], [1.049, 7.89, 4.3], [0.812, 7.59, 4.4], [1.503, 6.14, 4.8]], [[2, 1], [1, 0], [0, 3]]]
+            ['అశ్విని', 'Ashwini'], ['భరణి', 'Bharani'], ['కృత్తిక', 'Krittika'], ['రోహిణి', 'Rohini'],
+            ['మృగశిర', 'Mrigashira'], ['ఆరుద్ర', 'Ardra'], ['పునర్వసు', 'Punarvasu'], ['పుష్యమి', 'Pushyami'],
+            ['ఆశ్లేష', 'Ashlesha'], ['మఖ', 'Magha'], ['పుబ్బ', 'Purva Phalguni'], ['ఉత్తర', 'Uttara Phalguni'],
+            ['హస్త', 'Hasta'], ['చిత్త', 'Chitra'], ['స్వాతి', 'Swati'], ['విశాఖ', 'Vishakha'],
+            ['అనూరాధ', 'Anuradha'], ['జ్యేష్ఠ', 'Jyeshtha'], ['మూల', 'Mula'], ['పూర్వాషాఢ', 'Purvashadha'],
+            ['ఉత్తరాషాఢ', 'Uttarashadha'], ['శ్రవణం', 'Shravanam'], ['ధనిష్ఠ', 'Dhanishta'], ['శతభిషం', 'Shatabhisham'],
+            ['పూర్వాభాద్ర', 'Purvabhadra'], ['ఉత్తరాభాద్ర', 'Uttarabhadra'], ['రేవతి', 'Revati']
         ];
 
-        const sky = document.getElementById('nakSky');
-        const tip = document.createElement('div');
-        tip.className = 'nak-tip';
-        tip.hidden = true;
-        tip.setAttribute('aria-hidden', 'true'); // buttons carry their own labels
-        let todayNak = -1, openNak = -1, focusNak = 0;
-        const buttons = [];
-
-        // Project each asterism into a small box (east to the left, as in the sky)
-        function shape(stars, size) {
-            const ra0 = stars.reduce((s, st) => s + st[0], 0) / stars.length;
-            const de0 = stars.reduce((s, st) => s + st[1], 0) / stars.length;
-            const c = Math.cos(de0 * Math.PI / 180);
-            const pts = stars.map(st => [-(st[0] - ra0) * 15 * c, -(st[1] - de0), st[2]]);
-            const span = Math.max(0.0001, ...pts.map(p => Math.max(Math.abs(p[0]), Math.abs(p[1]))));
-            const k = (size / 2 - 8) / span;
-            return pts.map(p => [size / 2 + p[0] * k, size / 2 + p[1] * k, p[2]]);
-        }
-
-        function buildSky() {
-            const size = Math.round(Math.max(40, Math.min(96, window.innerWidth / 9, window.innerHeight / 7)));
-            NAKSHATRAS.forEach((n, idx) => {
-                const [te, en, desc, stars, lines] = n;
-                const pts = shape(stars, size);
-                let svg = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true" focusable="false">`;
-                if (stars.length === 1) svg += `<circle class="ring" cx="${size / 2}" cy="${size / 2}" r="${size / 2 - 14}"/>`;
-                svg += '<g class="lines">' + lines.map(([a, b]) =>
-                    `<line x1="${pts[a][0].toFixed(1)}" y1="${pts[a][1].toFixed(1)}" x2="${pts[b][0].toFixed(1)}" y2="${pts[b][1].toFixed(1)}"/>`).join('') + '</g>';
-                svg += pts.map(p => `<circle class="star" cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="${Math.max(1.3, 3.6 - 0.5 * p[2]).toFixed(1)}"/>`).join('');
-                svg += '</svg>';
-                let b = buttons[idx];
-                if (!b) {
-                    b = document.createElement('button');
-                    b.type = 'button';
-                    b.className = 'nak';
-                    b.tabIndex = idx === 0 ? 0 : -1;
-                    b.addEventListener('mouseenter', () => showTip(idx));
-                    b.addEventListener('mouseleave', () => { if (openNak !== idx) hideTip(); });
-                    b.addEventListener('focus', () => { focusNak = idx; showTip(idx); });
-                    b.addEventListener('blur', () => { if (openNak !== idx) hideTip(); });
-                    b.addEventListener('click', () => {
-                        if (openNak === idx) { openNak = -1; b.classList.remove('is-open'); hideTip(); }
-                        else { setOpen(idx); showTip(idx); }
-                    });
-                    buttons[idx] = b;
-                    sky.appendChild(b);
-                }
-                b.innerHTML = svg;
-                b.setAttribute('aria-label', `${en} (${te}), nakshatra ${idx + 1} of 27: ${desc}${idx === todayNak ? '. The Moon is here today.' : ''}`);
-            });
-            sky.appendChild(tip);
-            layoutSky(size);
-        }
-
-        // One screen: Ashwini..Chitra (1-14) in a zig-zag above the name,
-        // Swati..Revati (15-27) below it, so they read in order like a path.
-        function layoutSky(size) {
-            const W = window.innerWidth, H = window.innerHeight;
-            const ticker = document.querySelector('.ticker-wrap').getBoundingClientRect();
-            const icons = document.querySelector('.social-icons-container').getBoundingClientRect();
-            const footer = document.querySelector('.footer-container').getBoundingClientRect();
-            const badge = document.getElementById('panch').getBoundingClientRect();
-            const bands = [
-                [badge.bottom + 12, ticker.top - 4, 14],
-                [icons.bottom + 12, footer.top - 4, 13]
-            ];
-            let k = 0;
-            bands.forEach(([top, bottom, count]) => {
-                const cols = Math.ceil(count / 2);
-                const colW = (W - 32) / cols;
-                const span = Math.max(0, bottom - top - size);
-                for (let n = 0; n < count; n++, k++) {
-                    const col = Math.floor(n / 2), row = n % 2;
-                    const jitter = ((k * 7919) % 100) / 100 - 0.5; // fixed pseudo-random
-                    const x = 16 + colW * (col + (row ? 0.75 : 0.25)) - size / 2 + jitter * colW * 0.2;
-                    const y = top + (row ? span : 0) + jitter * Math.min(20, span * 0.15);
-                    buttons[k].style.left = Math.round(Math.max(8, Math.min(W - size - 8, x))) + 'px';
-                    buttons[k].style.top = Math.round(Math.max(8, y)) + 'px';
-                }
-            });
-        }
-
-        function setOpen(idx) {
-            buttons.forEach(b => b.classList.remove('is-open'));
-            openNak = idx;
-            if (idx >= 0) buttons[idx].classList.add('is-open');
-        }
-
-        function showTip(idx) {
-            const [te, en, desc] = NAKSHATRAS[idx];
-            const b = buttons[idx];
-            tip.innerHTML =
-                `<span class="num">${idx + 1} / 27</span>` +
-                `<span class="te" lang="te">${te}</span>` +
-                `<span class="en">${en}</span>${desc}` +
-                (idx === todayNak ? `<span class="today">${lang === 'te' ? 'ఈరోజు చంద్రుడు ఇక్కడ' : 'The Moon is here today'}</span>` : '');
-            tip.hidden = false;
-            const bx = b.offsetLeft, by = b.offsetTop, bs = b.offsetWidth;
-            const W = document.documentElement.clientWidth;
-            let x = bx + bs + 8;
-            if (x + tip.offsetWidth > W - 12) x = bx - tip.offsetWidth - 8;
-            if (x < 12) x = Math.max(12, Math.min(W - tip.offsetWidth - 12, bx));
-            tip.style.left = x + 'px';
-            const H = window.innerHeight;
-            tip.style.top = Math.max(8, Math.min(H - tip.offsetHeight - 8, by + bs / 2 - tip.offsetHeight / 2)) + 'px';
-        }
-        function hideTip() { tip.hidden = true; }
-
-        // One tab stop for the whole sky; arrows move, Escape closes
-        sky.addEventListener('keydown', (e) => {
-            const keys = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1, Home: -99, End: 99 };
-            if (e.key === 'Escape') { setOpen(-1); hideTip(); return; }
-            if (!(e.key in keys)) return;
-            e.preventDefault();
-            const next = Math.max(0, Math.min(26, focusNak + keys[e.key]));
-            buttons[focusNak].tabIndex = -1;
-            buttons[next].tabIndex = 0;
-            buttons[next].focus();
-        });
-        document.addEventListener('click', (e) => {
-            if (openNak !== -1 && !e.target.closest('.nak')) { setOpen(-1); hideTip(); }
-        });
-
-        function focusToday() {
-            if (todayNak < 0) return;
-            buttons[focusNak].tabIndex = -1;
-            focusNak = todayNak;
-            buttons[todayNak].tabIndex = 0;
-            buttons[todayNak].focus();
-            setOpen(todayNak);
-            showTip(todayNak);
-        }
-
-
-        /* ============ 2. PANCHANGAM ============ */
+        /* ============ 1. PANCHANGAM ============ */
         // Sun and Moon longitudes from Meeus, Astronomical Algorithms
         // (ch. 25 and 47). Checked against astronomy-engine: within 0.01°,
         // which puts tithi end times within about a minute.
@@ -1471,7 +1143,7 @@
                 year: ['ప్రభవ','విభవ','శుక్ల','ప్రమోదూత','ప్రజోత్పత్తి','ఆంగీరస','శ్రీముఖ','భావ','యువ','ధాత','ఈశ్వర','బహుధాన్య','ప్రమాది','విక్రమ','వృష','చిత్రభాను','స్వభాను','తారణ','పార్థివ','వ్యయ','సర్వజిత్','సర్వధారి','విరోధి','వికృతి','ఖర','నందన','విజయ','జయ','మన్మథ','దుర్ముఖి','హేవిళంబి','విళంబి','వికారి','శార్వరి','ప్లవ','శుభకృత్','శోభకృత్','క్రోధి','విశ్వావసు','పరాభవ','ప్లవంగ','కీలక','సౌమ్య','సాధారణ','విరోధికృత్','పరీధావి','ప్రమాదీచ','ఆనంద','రాక్షస','నల','పింగళ','కాళయుక్తి','సిద్ధార్థి','రౌద్రి','దుర్మతి','దుందుభి','రుధిరోద్గారి','రక్తాక్షి','క్రోధన','అక్షయ'],
                 yearSuffix: ' నామ సంవత్సరం', until: 'వరకు',
                 labels: ['తిథి', 'నక్షత్రం', 'మాసం', 'సంవత్సరం', 'వారం'],
-                title: 'నేటి పంచాంగం', sky: 'ఆకాశంలో చూపించు',
+                title: 'నేటి పంచాంగం',
                 note: 'మీ బ్రౌజర్‌లోనే ఈ క్షణానికి లెక్కించబడింది (లాహిరి అయనాంశ, అమాంత మాసం). సమయాలు మీ టైమ్ జోన్‌లో.'
             },
             en: {
@@ -1483,7 +1155,7 @@
                 year: ['Prabhava','Vibhava','Shukla','Pramoduta','Prajotpatti','Angirasa','Shrimukha','Bhava','Yuva','Dhatu','Ishvara','Bahudhanya','Pramathi','Vikrama','Vrisha','Chitrabhanu','Svabhanu','Tarana','Parthiva','Vyaya','Sarvajit','Sarvadhari','Virodhi','Vikriti','Khara','Nandana','Vijaya','Jaya','Manmatha','Durmukhi','Hevilambi','Vilambi','Vikari','Sharvari','Plava','Shubhakrit','Shobhakrit','Krodhi','Vishvavasu','Parabhava','Plavanga','Kilaka','Saumya','Sadharana','Virodhikrit','Paridhavi','Pramadicha','Ananda','Rakshasa','Nala','Pingala','Kalayukti','Siddharthi','Raudri','Durmati','Dundubhi','Rudhirodgari','Raktakshi','Krodhana','Akshaya'],
                 yearSuffix: ' year', until: 'until',
                 labels: ['Tithi', 'Nakshatra', 'Month', 'Year', 'Day'],
-                title: "Today's panchangam", sky: 'Show it in the sky',
+                title: "Today's panchangam",
                 note: 'Worked out in your browser for this moment (Lahiri ayanamsa, amanta months). Times are in your time zone.'
             }
         };
@@ -1536,16 +1208,8 @@
                 `<dt>${L.labels[2]}</dt><dd>${monthName}</dd>` +
                 `<dt>${L.labels[3]}</dt><dd>${L.year[P.year]}${L.yearSuffix}</dd>` +
                 `<dt>${L.labels[4]}</dt><dd>${L.day[now.getDay()]}</dd></dl>` +
-                `<button type="button" id="panchSky">${L.sky}</button>` +
                 `<p class="panch-note">${L.note}</p>`;
-            document.getElementById('panchSky').addEventListener('click', () => { closePanel(); focusToday(); });
 
-            if (todayNak !== P.nak) {
-                if (todayNak >= 0) buttons[todayNak].classList.remove('is-today');
-                todayNak = P.nak;
-                buttons[todayNak].classList.add('is-today');
-                buildSky(); // refresh labels
-            }
         }
 
         function openPanel() { panel.hidden = false; badge.setAttribute('aria-expanded', 'true'); }
@@ -1558,7 +1222,7 @@
             if (!panel.hidden && !e.target.closest('#panch')) closePanel();
         });
 
-        /* ============ 3. MANTRA EASTER EGG ============ */
+        /* ============ 2. MANTRA EASTER EGG ============ */
         // Typing "jai hanuman" anywhere (spaces optional) sets off a burst
         // of saffron light. Reduced motion gets a soft glow instead.
         const MANTRA = 'jaihanuman';
@@ -1598,19 +1262,11 @@
         }
 
         /* ============ start ============ */
-        buildSky();
         renderPanch();
         setInterval(() => { if (P && Date.now() >= Math.min(P.tithiEnd, P.nakEnd)) renderPanch(); }, 60000);
-        let resizeTimer;
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(buildSky, 150);
-        });
-        // Fonts change the name's height, so lay out again once they're in
-        window.addEventListener('load', () => layoutSky(buttons[0].offsetWidth));
 
         window.Chedalla = {
-            setLang(l) { lang = l; renderPanch(); if (!tip.hidden && openNak >= 0) showTip(openNak); },
+            setLang(l) { lang = l; renderPanch(); },
             panchangam,
             mantraBurst
         };
