@@ -511,13 +511,6 @@
         .copyright-year { font-family: 'Major Mono Display', monospace; font-weight: bold; letter-spacing: 1px; margin-right: 8px; }
         .signature-text { font-family: 'Sirivennela', sans-serif; font-size: 18px; }
         
-        .flag-icon {
-            font-size: 14px;
-            margin-left: 8px;
-            vertical-align: middle;
-            filter: drop-shadow(0 0 5px var(--hanuman-saffron));
-        }
-
         @media (max-width: 600px) {
             .ticker-item { font-size: 15vw; }
             .ticker-wrap { height: 24vw; }
@@ -977,13 +970,7 @@
             }, 2000);
         }
 
-    </script>
-    <script>
-    /* The "jai hanuman" Easter egg, namespaced under window.Chedalla. */
-    (function () {
-        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
-
-        /* ============ MANTRA EASTER EGG ============ */
+        // ============ MANTRA EASTER EGG ============
         // Typing "jai hanuman" anywhere (spaces optional) sets off a burst
         // of saffron light. Reduced motion gets a soft glow instead.
         const MANTRA = 'jaihanuman';
@@ -1004,7 +991,7 @@
             layer.className = 'mantra-burst';
             layer.setAttribute('aria-hidden', 'true');
             let html = '<div class="mantra-glow"></div>';
-            if (!reduce.matches) {
+            if (!reducedMotion.matches) {
                 const reach = Math.max(window.innerWidth, window.innerHeight) * 0.6;
                 for (let k = 0; k < 28; k++) {
                     const ang = k * (360 / 28) + ((k * 37) % 9);
@@ -1021,9 +1008,6 @@
                 document.getElementById('mantraLive').textContent = '';
             }, 2600);
         }
-
-        window.Chedalla = { mantraBurst };
-    })();
     </script>
 </body>
 </html>
