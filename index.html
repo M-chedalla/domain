@@ -58,9 +58,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <!-- Fonts are subset with &text= to only the characters this page shows
-         (both names, "©2026", "EN" and "తె"). If you add new text that uses
+         (both names, "©2026", "EN", "తె" and the mantra "జై హనుమాన్"). If you add new text that uses
          these fonts, add its characters to the text= parameter too. -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Major+Mono+Display&family=Sirivennela&family=Sree+Krushnadevaraya&display=swap&text=Mani%20Krishna%20Chandra%20Teja%20Chedalla%20%E0%B0%AE%E0%B0%A3%E0%B0%BF%20%E0%B0%95%E0%B1%83%E0%B0%B7%E0%B1%8D%E0%B0%A3%20%E0%B0%9A%E0%B0%82%E0%B0%A6%E0%B1%8D%E0%B0%B0%20%E0%B0%A4%E0%B1%87%E0%B0%9C%20%E0%B0%9A%E0%B1%86%E0%B0%A6%E0%B0%B3%E0%B1%8D%E0%B0%B3%20%C2%A9%202026%20EN" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Major+Mono+Display&family=Sirivennela&family=Sree+Krushnadevaraya&display=swap&text=Mani%20Krishna%20Chandra%20Teja%20Chedalla%20%E0%B0%AE%E0%B0%A3%E0%B0%BF%20%E0%B0%95%E0%B1%83%E0%B0%B7%E0%B1%8D%E0%B0%A3%20%E0%B0%9A%E0%B0%82%E0%B0%A6%E0%B1%8D%E0%B0%B0%20%E0%B0%A4%E0%B1%87%E0%B0%9C%20%E0%B0%9A%E0%B1%86%E0%B0%A6%E0%B0%B3%E0%B1%8D%E0%B0%B3%20%C2%A9%202026%20EN%20%E0%B0%9C%E0%B1%88%20%E0%B0%B9%E0%B0%A8%E0%B1%81%E0%B0%AE%E0%B0%BE%E0%B0%A8%E0%B1%8D" rel="stylesheet">
 
     <style>
         :root {
@@ -75,10 +75,12 @@
             padding: 0;
             background-color: #050505;
             color: #fff;
-            /* The page now scrolls through sections (Hanuman leaps between them) */
-            position: relative;
-            min-height: 100vh;
-            overflow-x: hidden;
+            height: 100vh;
+            height: 100dvh; /* avoids the jump when mobile browser bars show/hide */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow: hidden; 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             transition: background-color 0.2s ease;
             -webkit-user-select: none;
@@ -260,164 +262,130 @@
             100% { transform: translate(-300px, 300px) rotate(-45deg); opacity: 0; }
         }
 
-        /* --- HANUMAN'S LEAP ---
-           Hanuman sits on a "landing pad" in each section and leaps in an
-           arc to the next one as you scroll, like his leap to Lanka.
-           Position is set from JS with transform only. */
+        /* --- FLYING HANUMAN IMAGE --- */
         .ufo-container {
+            position: fixed;
+            left: -300px; 
+            z-index: 5;
+            width: 180px; 
+            height: auto;
+            /* Saffron Glow for Hanuman Energy */
+            filter: drop-shadow(0 0 20px var(--hanuman-saffron)); 
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+            will-change: transform; /* own GPU layer, so it glides smoothly */
+        }
+        
+        .ufo-fly-anim { animation: ufo-fly linear forwards; }
+        
+        @keyframes ufo-fly {
+            0% { transform: translateX(0) translateY(100px) scale(0.8); }
+            50% { transform: translateX(50vw) translateY(0px) scale(0.65); }
+            100% { transform: translateX(calc(100vw + 300px)) translateY(-100px) scale(0.5); }
+        }
+
+        /* --- Animations --- */
+        @keyframes space-drift {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(1000px); }
+        }
+
+        /* --- WARP SPEED STATE --- */
+        body.warp-active { background-color: #000510; }
+        body.warp-active .stars, body.warp-active .stars2, body.warp-active .stars3 {
+            animation-duration: 0.2s; opacity: 0.6; scale: 1 2; /* no blur filter here: blurring these huge layers every frame made Hanuman stutter */ 
+        }
+        
+        /* Hanuman steps out of frame while warp is held (the streaking stars
+           made him look jittery) and glides back in on release. */
+        body.warp-active .ufo-container { opacity: 0; transition-duration: 0.25s; }
+
+        /* --- SUDARSHANA CHAKRA CURSOR --- */
+        /* The native cursor is only hidden on mouse/trackpad devices, and it
+           comes back over links and buttons so it's always clear what is
+           clickable. The chakra keeps following the pointer everywhere. */
+        @media (hover: hover) and (pointer: fine) {
+            body.has-pointer { cursor: none; }
+            body.has-pointer a,
+            body.has-pointer button { cursor: pointer; }
+        }
+
+        .cursor-star {
             position: fixed;
             top: 0;
             left: 0;
-            z-index: 20;
-            width: var(--leaper-width, 150px);
-            height: auto;
-            /* Saffron Glow for Hanuman Energy */
-            filter: drop-shadow(0 0 16px var(--hanuman-saffron));
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            /* Dashed border looks like a spinning chakra */
+            border: 2px dashed #ffffff; 
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); 
             pointer-events: none;
-            transition: opacity 0.35s ease;
-            will-change: transform; /* own GPU layer, so it glides smoothly */
-            opacity: 0; /* shown once JS has placed him */
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            will-change: left, top, transform;
+            animation: spin 4s linear infinite; /* Slow normal spin */
+            transition: width 0.2s, height 0.2s, border-color 0.3s, opacity 0.3s;
+            opacity: 0; /* hidden until the pointer first moves */
         }
-        .ufo-container.is-placed { opacity: 1; }
 
-        .landing-pad {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            pointer-events: none;
-            top: 27%;
+        body.has-pointer .cursor-star { opacity: 1; }
+
+        @keyframes spin { 100% { transform: translate(-50%, -50%) rotate(360deg); } }
+
+        /* Warp Mode: Fast Spin + Glow */
+        body.warp-active .cursor-star {
+            width: 50px;
+            height: 50px;
+            border-color: var(--neon-color);
+            box-shadow: 0 0 20px var(--neon-color), inset 0 0 10px var(--neon-color);
+            animation: spin 0.3s linear infinite; /* Furious spin */
         }
-        .landing-pad--left { left: 16%; }
-        .landing-pad--right { right: 16%; }
-        /* Saffron ring when he lands */
-        .landing-pad::after {
+
+        /* --- SPARKS EFFECT (Restored) --- */
+        .cursor-star::before,
+        .cursor-star::after {
             content: '';
             position: absolute;
-            left: -60px;
-            top: 30px;
-            width: 120px;
-            height: 26px;
-            border-radius: 50%;
-            border: 2px solid var(--hanuman-saffron);
-            box-shadow: 0 0 18px var(--hanuman-saffron);
-            opacity: 0;
-            transform: scale(0.3);
-        }
-        .landing-pad.just-landed::after { animation: land-ring 0.7s ease-out; }
-        @keyframes land-ring {
-            0% { opacity: 0.9; transform: scale(0.3); }
-            100% { opacity: 0; transform: scale(1.6); }
-        }
-
-        /* --- Sections Hanuman lands on --- */
-        .leap-section {
-            position: relative;
-            min-height: 100vh;
-            min-height: 100dvh;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 14vh max(16px, 6vw);
-            /* Let hovers reach the nakshatra sky behind the text;
-               links and buttons opt back in below. */
-            pointer-events: none;
-            z-index: 10;
-        }
-        .leap-section a,
-        .leap-section button { pointer-events: auto; }
-
-        .leap-card {
-            max-width: 34rem;
-            width: 100%;
-            padding: 28px 30px;
-            border-radius: 14px;
-            background: rgba(6, 8, 18, 0.72);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            line-height: 1.6;
-            color: #d9dbe6;
-        }
-        .leap-eyebrow {
-            font-size: 15px;
-            letter-spacing: 0.02em;
-            color: var(--hanuman-saffron);
-        }
-        .leap-card h2 {
-            font-family: Georgia, 'Times New Roman', serif;
-            font-weight: 600;
-            font-size: clamp(28px, 4vw, 40px);
-            margin: 4px 0 12px;
-            color: #fff;
-            text-wrap: balance;
-        }
-        .leap-card p { margin: 0 0 12px; }
-        .leap-card a { color: #fff; }
-        .leap-card a:focus-visible {
-            outline: 2px solid var(--neon-color);
-            outline-offset: 3px;
-            border-radius: 4px;
-        }
-        .placeholder-note {
-            font-size: 12px;
-            color: #8a8ea3;
-            margin-top: 14px;
-        }
-        .work-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
-        .work-list a {
-            display: block;
-            padding: 12px 14px;
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            text-decoration: none;
-            transition: border-color 0.2s ease;
-        }
-        .work-list a:hover { border-color: var(--neon-color); }
-        .work-list strong { display: block; color: #fff; }
-        .work-list span { font-size: 14px; color: #a9adbf; }
-
-        /* --- Section dots: the four landing spots, also keyboard nav --- */
-        .leap-nav {
-            position: fixed;
-            right: max(14px, env(safe-area-inset-right, 0px));
             top: 50%;
-            transform: translateY(-50%);
-            z-index: 1000;
-        }
-        .leap-nav ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
-        .leap-nav a {
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 10px;
-            color: #fff;
-            text-decoration: none;
-            font-size: 13px;
-            padding: 4px;
-        }
-        .leap-nav .dot {
-            width: 9px;
-            height: 9px;
+            left: 50%;
+            width: 100%;
+            height: 100%;
             border-radius: 50%;
-            border: 1.5px solid rgba(255, 255, 255, 0.55);
-            transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+            /* Uses the neon-color variable, so it will be Saffron in Maya mode */
+            border: 3px dotted var(--neon-color); 
+            transform: translate(-50%, -50%) scale(0.5);
+            opacity: 0;
+            pointer-events: none;
+            filter: blur(1px);
+            transition: border-color 0.3s ease;
         }
-        .leap-nav .label { opacity: 0; transform: translateX(6px); transition: opacity 0.2s ease, transform 0.2s ease; }
-        .leap-nav a:hover .label,
-        .leap-nav a:focus-visible .label { opacity: 1; transform: none; }
-        .leap-nav a[aria-current="true"] .dot {
-            background: var(--hanuman-saffron);
-            border-color: var(--hanuman-saffron);
-            transform: scale(1.3);
-            box-shadow: 0 0 8px var(--hanuman-saffron);
+
+        /* Trigger Spark Animations on Warp Active */
+        body.warp-active .cursor-star::before {
+            animation: spark-burst-1 0.4s ease-out infinite;
         }
-        .leap-nav a:focus-visible { outline: 2px solid var(--neon-color); outline-offset: 2px; border-radius: 6px; }
+
+        body.warp-active .cursor-star::after {
+            animation: spark-burst-2 0.4s ease-out infinite 0.2s; 
+        }
+
+        @keyframes spark-burst-1 {
+            0% { transform: translate(-50%, -50%) scale(0.8) rotate(0deg); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(2.2) rotate(180deg); opacity: 0; }
+        }
+
+        @keyframes spark-burst-2 {
+            0% { transform: translate(-50%, -50%) scale(0.8) rotate(90deg); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(2.5) rotate(270deg); opacity: 0; }
+        }
+
 
         /* --- NAKSHATRA SKY ---
-           27 lunar mansions drawn from real star positions, spread down
-           the whole page from Ashwini (top) to Revati (bottom). */
+           27 lunar mansions drawn from real star positions, in order from
+           Ashwini to Revati: 14 above the name, 13 below it. */
         .nak-sky {
-            position: absolute;
+            position: fixed;
             inset: 0;
             z-index: 2;
             pointer-events: none;
@@ -469,8 +437,8 @@
         /* --- PANCHANGAM BADGE --- */
         .panch {
             position: fixed;
-            left: max(16px, env(safe-area-inset-left, 0px));
-            bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+            left: max(24px, env(safe-area-inset-left, 0px));
+            top: calc(24px + env(safe-area-inset-top, 0px));
             z-index: 1000;
             font-size: 13px;
         }
@@ -496,7 +464,7 @@
         .panch-panel {
             position: absolute;
             left: 0;
-            bottom: calc(100% + 10px);
+            top: calc(100% + 10px);
             width: min(320px, calc(100vw - 32px));
             box-sizing: border-box;
             padding: 16px 18px;
@@ -623,6 +591,65 @@
         }
 
 
+        /* --- MANTRA EASTER EGG: type "jai hanuman" --- */
+        .mantra-burst {
+            position: fixed;
+            inset: 0;
+            z-index: 900;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .mantra-glow {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 160vmax;
+            height: 160vmax;
+            margin: -80vmax 0 0 -80vmax;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 214, 150, 0.85) 0%, rgba(255, 153, 51, 0.55) 18%, rgba(255, 120, 20, 0.18) 40%, transparent 62%);
+            animation: mantra-glow 1.6s ease-out forwards;
+        }
+        @keyframes mantra-glow {
+            0% { transform: scale(0.05); opacity: 0; }
+            20% { opacity: 1; }
+            100% { transform: scale(1); opacity: 0; }
+        }
+        .mantra-spark {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 6px;
+            height: 6px;
+            margin: -3px 0 0 -3px;
+            border-radius: 50%;
+            background: #ffd9a8;
+            box-shadow: 0 0 10px 3px var(--hanuman-saffron);
+            animation: mantra-spark 1.4s ease-out forwards;
+        }
+        @keyframes mantra-spark {
+            0% { transform: rotate(var(--a)) translateX(0); opacity: 1; }
+            100% { transform: rotate(var(--a)) translateX(var(--d)); opacity: 0; }
+        }
+        .mantra-words {
+            position: absolute;
+            left: 50%;
+            top: 24%; /* above the name, so both stay readable */
+            transform: translate(-50%, -50%);
+            font-family: 'Sree Krushnadevaraya', serif;
+            font-size: clamp(32px, 7vw, 84px);
+            color: #fff;
+            text-shadow: 0 0 18px var(--hanuman-saffron), 0 0 40px var(--hanuman-saffron);
+            white-space: nowrap;
+            animation: mantra-words 2.2s ease-out forwards;
+        }
+        @keyframes mantra-words {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+            25% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            75% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
         /* --- Main Content Area --- */
         .main-content {
             flex-grow: 1;
@@ -632,7 +659,11 @@
             align-items: center;
             width: 100%;
             z-index: 10; 
+            position: relative;
+            /* let hovers reach the nakshatra sky; links opt back in */
+            pointer-events: none;
         }
+        .main-content a { pointer-events: auto; }
 
         .ticker-wrap {
             width: 100%;
@@ -704,15 +735,9 @@
         @media (max-width: 600px) {
             .ticker-item { font-size: 15vw; }
             .ticker-wrap { height: 24vw; }
-            :root { --leaper-width: 104px; }
-            .leap-section { justify-content: flex-end; padding-top: 30vh; padding-bottom: 10vh; }
-            .leap-card { padding: 22px 20px; }
-            .leap-nav { right: 4px; }
-            .leap-nav .label { display: none; }
+            .panch { left: 16px; top: calc(20px + env(safe-area-inset-top, 0px)); }
             .panch-line2 { display: none; }
         }
-
-        html { scroll-behavior: smooth; }
 
         /* --- Reduced motion: keep the look, drop the movement --- */
         @media (prefers-reduced-motion: reduce) {
@@ -723,11 +748,12 @@
             .cursor-star::after {
                 animation: none !important;
             }
-            .falling-star { display: none; }
-            html { scroll-behavior: auto; }
-            /* Hanuman doesn't fly: he fades from one landing spot to the next */
-            .landing-pad.just-landed::after,
+            .falling-star, .ufo-container { display: none; }
             .nak.is-today .star { animation: none; }
+            /* Mantra: a soft saffron glow that fades, no burst or sparks */
+            .mantra-glow { animation: mantra-fade 2s ease-in-out forwards; transform: none; }
+            .mantra-spark { display: none; }
+            .mantra-words { animation: mantra-fade 2.4s ease-in-out forwards; }
 
             /* Show the name once, centred, instead of scrolling */
             .ticker-wrap { height: auto; white-space: normal; justify-content: center; }
@@ -737,6 +763,8 @@
 
             body.warp-active .stars, body.warp-active .stars2, body.warp-active .stars3 { scale: none; }
         }
+
+        @keyframes mantra-fade { 0%, 100% { opacity: 0; } 40%, 60% { opacity: 0.8; } }
 
         /* Windows High Contrast etc.: use the system cursor */
         @media (forced-colors: active) {
@@ -764,95 +792,64 @@
 
     <canvas id="scribbleCanvas"></canvas>
 
+    <!-- Panchangam: today's tithi, computed in the browser -->
+    <div class="panch" id="panch">
+        <button type="button" class="panch-badge" id="panchBadge" aria-expanded="false" aria-controls="panchPanel">
+            <span id="panchMoon" aria-hidden="true"></span>
+            <span>
+                <span class="panch-line1" id="panchLine1"></span>
+                <span class="panch-line2" id="panchLine2"></span>
+            </span>
+        </button>
+        <div class="panch-panel" id="panchPanel" role="region" aria-labelledby="panchTitle" hidden></div>
+    </div>
+
     <!-- Nakshatra sky: filled in by JS from the NAKSHATRAS data below.
          One tab stop; arrow keys move between the 27 nakshatras. -->
     <div class="nak-sky" id="nakSky" role="group" aria-label="Nakshatra sky, 27 lunar mansions. Use the arrow keys to move between them."></div>
 
-    <!-- Decorative: Hanuman leaps between the sections' landing pads -->
+    <!-- Mantra Easter egg: announced to screen readers when it fires -->
+    <div class="visually-hidden" id="mantraLive" aria-live="polite"></div>
+
+    <!-- Decorative fly-by, so it's hidden from screen readers -->
     <img id="ufo" class="ufo-container" src="images/hanuman.webp" alt="" aria-hidden="true" width="400" height="199" decoding="async">
 
     <div class="cursor-star" id="cursorStar" aria-hidden="true"></div>
 
-    <nav class="leap-nav" aria-label="Sections">
-        <ol>
-            <li><a href="#home"><span class="label">Home</span><span class="dot" aria-hidden="true"></span></a></li>
-            <li><a href="#about"><span class="label">About</span><span class="dot" aria-hidden="true"></span></a></li>
-            <li><a href="#work"><span class="label">Work</span><span class="dot" aria-hidden="true"></span></a></li>
-            <li><a href="#contact"><span class="label">Say hello</span><span class="dot" aria-hidden="true"></span></a></li>
-        </ol>
-    </nav>
-
-    <main>
-        <section class="leap-section main-content" id="home" aria-labelledby="srName">
-            <span class="landing-pad landing-pad--left" aria-hidden="true"></span>
-            <!-- The ticker repeats the name 4 times; screen readers get it once -->
-            <h1 class="visually-hidden" id="srName">Mani Krishna Chandra Teja Chedalla</h1>
-            <div class="ticker-wrap" aria-hidden="true">
-                <div class="ticker-move">
-                    <div class="ticker-item main-text">Mani Krishna Chandra Teja Chedalla</div>
-                    <div class="ticker-item main-text">Mani Krishna Chandra Teja Chedalla</div>
-                    <div class="ticker-item main-text">Mani Krishna Chandra Teja Chedalla</div>
-                    <div class="ticker-item main-text">Mani Krishna Chandra Teja Chedalla</div>
-                </div>
+    <main class="main-content">
+        <!-- The ticker repeats the name 4 times; screen readers get it once -->
+        <h1 class="visually-hidden" id="srName">Mani Krishna Chandra Teja Chedalla</h1>
+        <div class="ticker-wrap" aria-hidden="true">
+            <div class="ticker-move">
+                <div class="ticker-item main-text">Mani Krishna Chandra Teja Chedalla</div>
+                <div class="ticker-item main-text">Mani Krishna Chandra Teja Chedalla</div>
+                <div class="ticker-item main-text">Mani Krishna Chandra Teja Chedalla</div>
+                <div class="ticker-item main-text">Mani Krishna Chandra Teja Chedalla</div>
             </div>
+        </div>
 
-            <nav class="social-icons-container" aria-label="Contact and social links">
-                <a href="mailto:hello@chedalla.in" class="social-icon" aria-label="Email" title="Email">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                        <rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/>
-                        <path d="m3.5 6.5 8.5 6.5 8.5-6.5"/>
-                    </svg>
-                </a>
-                <a href="https://www.linkedin.com/in/chedalla" class="social-icon" aria-label="LinkedIn" title="LinkedIn">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                        <rect x="2.5" y="2.5" width="19" height="19" rx="3"/>
-                        <path d="M7.5 10.5v6M11.5 16.5v-6M11.5 13a2.5 2.5 0 0 1 5 0v3.5"/>
-                        <circle cx="7.5" cy="7.2" r="0.6" fill="currentColor"/>
-                    </svg>
-                </a>
-                <a href="https://www.instagram.com/t4teja" class="social-icon" aria-label="Instagram" title="Instagram">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                        <rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/>
-                        <circle cx="12" cy="12" r="4.2"/>
-                        <circle cx="17.4" cy="6.6" r="0.6" fill="currentColor"/>
-                    </svg>
-                </a>
-            </nav>
-        </section>
-
-        <!-- PREVIEW: section copy below is placeholder until Teja sends real text -->
-        <section class="leap-section" id="about" aria-labelledby="aboutTitle">
-            <span class="landing-pad landing-pad--right" aria-hidden="true"></span>
-            <div class="leap-card">
-                <div class="leap-eyebrow" lang="te">నా గురించి</div>
-                <h2 id="aboutTitle">About</h2>
-                <p>I'm Teja, a builder who likes turning ideas into things people can use. I spend my days making software and my nights exploring design, culture and the stories behind them.</p>
-                <p class="placeholder-note">Placeholder copy for the preview.</p>
-            </div>
-        </section>
-
-        <section class="leap-section" id="work" aria-labelledby="workTitle">
-            <span class="landing-pad landing-pad--left" aria-hidden="true"></span>
-            <div class="leap-card">
-                <div class="leap-eyebrow" lang="te">నా పని</div>
-                <h2 id="workTitle">Work</h2>
-                <ul class="work-list">
-                    <li><a href="#work"><strong>Project one</strong><span>One line on what it is and why it matters.</span></a></li>
-                    <li><a href="#work"><strong>Project two</strong><span>One line on what it is and why it matters.</span></a></li>
-                    <li><a href="#work"><strong>Project three</strong><span>One line on what it is and why it matters.</span></a></li>
-                </ul>
-                <p class="placeholder-note">Placeholder projects for the preview.</p>
-            </div>
-        </section>
-
-        <section class="leap-section" id="contact" aria-labelledby="contactTitle">
-            <span class="landing-pad landing-pad--right" aria-hidden="true"></span>
-            <div class="leap-card">
-                <div class="leap-eyebrow" lang="te">పలకరించండి</div>
-                <h2 id="contactTitle">Say hello</h2>
-                <p>The quickest way to reach me is email: <a href="mailto:hello@chedalla.in">hello@chedalla.in</a></p>
-            </div>
-        </section>
+        <nav class="social-icons-container" aria-label="Contact and social links">
+            <a href="mailto:hello@chedalla.in" class="social-icon" aria-label="Email" title="Email">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                    <rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/>
+                    <path d="m3.5 6.5 8.5 6.5 8.5-6.5"/>
+                </svg>
+            </a>
+            <a href="https://www.linkedin.com/in/chedalla" class="social-icon" aria-label="LinkedIn" title="LinkedIn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                    <rect x="2.5" y="2.5" width="19" height="19" rx="3"/>
+                    <path d="M7.5 10.5v6M11.5 16.5v-6M11.5 13a2.5 2.5 0 0 1 5 0v3.5"/>
+                    <circle cx="7.5" cy="7.2" r="0.6" fill="currentColor"/>
+                </svg>
+            </a>
+            <a href="https://www.instagram.com/t4teja" class="social-icon" aria-label="Instagram" title="Instagram">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                    <rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/>
+                    <circle cx="12" cy="12" r="4.2"/>
+                    <circle cx="17.4" cy="6.6" r="0.6" fill="currentColor"/>
+                </svg>
+            </a>
+        </nav>
     </main>
 
     <footer class="footer-container">
@@ -862,18 +859,6 @@
             <span class="signature-text" id="footerSignature" lang="te">మణి కృష్ణ చంద్ర తేజ చెదళ్ళ</span>
         </div>
     </footer>
-
-    <!-- Panchangam: today's tithi, computed in the browser -->
-    <div class="panch" id="panch">
-        <div class="panch-panel" id="panchPanel" role="region" aria-labelledby="panchTitle" hidden></div>
-        <button type="button" class="panch-badge" id="panchBadge" aria-expanded="false" aria-controls="panchPanel">
-            <span id="panchMoon" aria-hidden="true"></span>
-            <span>
-                <span class="panch-line1" id="panchLine1"></span>
-                <span class="panch-line2" id="panchLine2"></span>
-            </span>
-        </button>
-    </div>
 
     <script>
         const root = document.documentElement; 
@@ -998,7 +983,7 @@
         });
         document.addEventListener('mousedown', (e) => {
             // No warp when clicking a control (toggle, badge, nakshatra, links)
-            if(e.target.closest('.cyber-toggle, .panch, .nak, .leap-nav, a, button')) return; 
+            if(e.target.closest('.cyber-toggle, .panch, .nak, a, button')) return; 
             document.body.classList.add('warp-active');
         });
         document.addEventListener('mouseup', () => document.body.classList.remove('warp-active'));
@@ -1009,7 +994,7 @@
         }
 
         document.addEventListener('touchstart', (e) => {
-            if(e.target.closest('.cyber-toggle')) return;
+            if(e.target.closest('.cyber-toggle, .panch, .nak')) return;
             if (e.touches.length > 1) { clearTimeout(warpTimer); return; } // pinch
             const touch = e.touches[0];
             lastX = touch.clientX;
@@ -1025,7 +1010,7 @@
             document.body.classList.remove('warp-active'); 
             // Leave pinch-zoom and zoomed-in panning to the browser
             if (e.touches.length > 1 || isZoomed()) return;
-            // No preventDefault: the page scrolls now, so touch must pan it
+            if (e.cancelable) e.preventDefault();
             const touch = e.touches[0];
             updatePointer(touch.clientX, touch.clientY);
         }, { passive: false });
@@ -1086,8 +1071,31 @@
         }
 
 
-        // --- 5. HANUMAN'S LEAP: see leap.js section at the end ---
+        // --- 5. FLYING HANUMAN Logic ---
         const ufo = document.getElementById('ufo');
+
+        function triggerUFO() {
+            if(isMayaMode || reducedMotion.matches) { setTimeout(triggerUFO, 15000); return; }
+
+            // Random starting height
+            const randomTop = Math.floor(Math.random() * 60) + 20; 
+            const randomDuration = Math.random() * 5 + 8; 
+
+            ufo.style.top = randomTop + '%';
+            ufo.style.animationDuration = randomDuration + 's';
+            
+            ufo.classList.remove('ufo-fly-anim');
+            void ufo.offsetWidth; 
+            ufo.classList.add('ufo-fly-anim');
+
+            const nextFlightIn = Math.random() * 15000 + 12000;
+            setTimeout(triggerUFO, nextFlightIn);
+        }
+        // Start a bit later to ensure image loads
+        window.addEventListener('load', () => {
+             setTimeout(triggerUFO, 3000);
+        });
+       
 
         // --- 6. Falling Stars Logic ---
         function createFallingStar() {
@@ -1169,6 +1177,7 @@
             // 2. Hide Space Elements & Hanuman Image
             document.getElementById('starsLayer').style.opacity = '0';
             document.getElementById('nebulaLayer').style.opacity = '0';
+            ufo.style.opacity = '0'; 
             document.querySelectorAll('.falling-star').forEach(el => el.remove());
 
             // 3. Show Matrix Layer (skipped for people who prefer reduced motion)
@@ -1194,6 +1203,7 @@
 
             document.getElementById('starsLayer').style.opacity = '';
             document.getElementById('nebulaLayer').style.opacity = '';
+            ufo.style.opacity = '';
 
             // Fade the rain out (2s CSS transition), then wipe it
             matrixCanvas.style.opacity = '0';
@@ -1204,106 +1214,13 @@
 
     </script>
     <script>
-    /* Hanuman's leap, nakshatra sky and panchangam badge.
+    /* Nakshatra sky, panchangam badge and the "jai hanuman" Easter egg.
        Everything is namespaced under window.Chedalla. */
     (function () {
         const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
         let lang = 'en';
 
-        /* ============ 1. HANUMAN'S LEAP ============ */
-        const leaper = document.getElementById('ufo');
-        const pads = Array.from(document.querySelectorAll('.landing-pad'));
-        const navLinks = Array.from(document.querySelectorAll('.leap-nav a'));
-        let landedAt = -1, activeIdx = -1, facing = 1, rmShown = -1, ticking = false;
-
-        const smooth = x => x <= 0 ? 0 : x >= 1 ? 1 : x * x * (3 - 2 * x);
-
-        function padCentre(i) {
-            const r = pads[i].getBoundingClientRect();
-            return { x: r.left, y: r.top };
-        }
-
-        function updateLeap() {
-            ticking = false;
-            const vh = window.innerHeight;
-            // A pad counts as "landed" when it sits at 28% of the screen, which
-            // is where the pads are when a section is scrolled to its top.
-            const anchor = vh * 0.28;
-            const tops = pads.map(p => p.getBoundingClientRect().top);
-            // Which gap are we in, and how far through it (0..1)?
-            let i = 0;
-            while (i < pads.length - 2 && tops[i + 1] <= anchor) i++;
-            const gap = tops[i + 1] - tops[i];
-            const t = Math.min(1, Math.max(0, (anchor - tops[i]) / gap));
-            // Ride along with the pad for the first and last 15% of the gap,
-            // leap in between
-            const T0 = 0.15, T1 = 0.85;
-            const e = smooth((t - T0) / (T1 - T0));
-            const nearest = e < 0.5 ? i : i + 1;
-
-            if (nearest !== activeIdx) {
-                activeIdx = nearest;
-                navLinks.forEach((a, k) => a.setAttribute('aria-current', k === nearest ? 'true' : 'false'));
-            }
-
-            const w = leaper.offsetWidth, h = leaper.offsetHeight;
-            let x, y, rot = 0, scale = 1;
-
-            if (reduce.matches) {
-                // No flight: fade out, move to the nearest pad, fade in
-                const p = padCentre(nearest);
-                x = p.x; y = p.y;
-                if (rmShown !== nearest) {
-                    rmShown = nearest;
-                    leaper.classList.remove('is-placed');
-                    setTimeout(() => leaper.classList.add('is-placed'), 200);
-                }
-            } else {
-                // Take-off and touch-down points in screen space: where the two
-                // pads are at the start and end of the leap, so the arc
-                // joins the ride-along parts smoothly.
-                const a = padCentre(i), b = padCentre(i + 1);
-                const sy = a.y + (t - T0) * gap, ey = b.y - (T1 - t) * gap;
-                const lift = Math.min(vh * 0.16, 150);
-                const pos = k => ({
-                    x: a.x + (b.x - a.x) * k,
-                    y: sy + (ey - sy) * k - Math.sin(Math.PI * k) * lift
-                });
-                const p = e <= 0 ? a : e >= 1 ? b : pos(e);
-                x = p.x; y = p.y;
-                if (e > 0 && e < 1) {
-                    facing = b.x >= a.x ? 1 : -1;
-                    const q = pos(Math.min(1, e + 0.03));
-                    const ang = Math.atan2(q.y - p.y, Math.abs(q.x - p.x) || 0.001) * 180 / Math.PI;
-                    rot = Math.max(-35, Math.min(35, ang));
-                    scale = 1 + 0.3 * Math.sin(Math.PI * e);
-                }
-                // Landing ring when he touches down on a pad
-                const landed = e <= 0 ? i : e >= 1 ? i + 1 : -1;
-                if (landed !== -1 && landed !== landedAt) {
-                    if (landedAt !== -1 || landed !== 0) {
-                        pads[landed].classList.remove('just-landed');
-                        void pads[landed].offsetWidth;
-                        pads[landed].classList.add('just-landed');
-                    }
-                }
-                if (landed !== -1) landedAt = landed;
-                leaper.classList.add('is-placed');
-            }
-
-            leaper.style.transform =
-                `translate(${x - w / 2}px, ${y - h / 2}px) rotate(${rot * facing}deg) scale(${scale * facing}, ${scale})`;
-        }
-
-        function requestLeap() {
-            if (!ticking) { ticking = true; requestAnimationFrame(updateLeap); }
-        }
-        window.addEventListener('scroll', requestLeap, { passive: true });
-        window.addEventListener('resize', requestLeap);
-        if (leaper.complete) requestLeap(); else leaper.addEventListener('load', requestLeap);
-
-
-        /* ============ 2. NAKSHATRA SKY ============ */
+        /* ============ 1. NAKSHATRA SKY ============ */
         // Star positions: RA in hours, Dec in degrees, visual magnitude.
         // Lines join stars by index. Sources: Yale Bright Star Catalogue
         // positions (J2000), traditional nakshatra star identifications.
@@ -1357,7 +1274,7 @@
         }
 
         function buildSky() {
-            const size = window.innerWidth < 700 ? 78 : 112;
+            const size = Math.round(Math.max(40, Math.min(96, window.innerWidth / 9, window.innerHeight / 7)));
             NAKSHATRAS.forEach((n, idx) => {
                 const [te, en, desc, stars, lines] = n;
                 const pts = shape(stars, size);
@@ -1391,27 +1308,31 @@
             layoutSky(size);
         }
 
-        // Spread Ashwini..Revati down the page, zig-zagging in the margins
+        // One screen: Ashwini..Chitra (1-14) in a zig-zag above the name,
+        // Swati..Revati (15-27) below it, so they read in order like a path.
         function layoutSky(size) {
-            const W = document.documentElement.clientWidth;
-            const H = document.body.scrollHeight;
-            const content = Math.min(W, 640);
-            const margin = (W - content) / 2;
-            const wide = margin > size + 40;
-            buttons.forEach((b, k) => {
-                const jitter = ((k * 7919) % 100) / 100; // fixed pseudo-random 0..1
-                const left = k % 2 === 0;
-                let x;
-                if (wide) {
-                    const lo = 20, hi = margin - size - 20;
-                    x = lo + jitter * Math.max(0, hi - lo);
-                    if (!left) x = W - x - size;
-                } else {
-                    x = (left ? 0.02 : 0.58) * W + jitter * 0.18 * W;
+            const W = window.innerWidth, H = window.innerHeight;
+            const ticker = document.querySelector('.ticker-wrap').getBoundingClientRect();
+            const icons = document.querySelector('.social-icons-container').getBoundingClientRect();
+            const footer = document.querySelector('.footer-container').getBoundingClientRect();
+            const badge = document.getElementById('panch').getBoundingClientRect();
+            const bands = [
+                [badge.bottom + 12, ticker.top - 4, 14],
+                [icons.bottom + 12, footer.top - 4, 13]
+            ];
+            let k = 0;
+            bands.forEach(([top, bottom, count]) => {
+                const cols = Math.ceil(count / 2);
+                const colW = (W - 32) / cols;
+                const span = Math.max(0, bottom - top - size);
+                for (let n = 0; n < count; n++, k++) {
+                    const col = Math.floor(n / 2), row = n % 2;
+                    const jitter = ((k * 7919) % 100) / 100 - 0.5; // fixed pseudo-random
+                    const x = 16 + colW * (col + (row ? 0.75 : 0.25)) - size / 2 + jitter * colW * 0.2;
+                    const y = top + (row ? span : 0) + jitter * Math.min(20, span * 0.15);
+                    buttons[k].style.left = Math.round(Math.max(8, Math.min(W - size - 8, x))) + 'px';
+                    buttons[k].style.top = Math.round(Math.max(8, y)) + 'px';
                 }
-                const y = 60 + (k + 0.5) / 27 * (H - 200) - size / 2;
-                b.style.left = Math.round(x) + 'px';
-                b.style.top = Math.round(y) + 'px';
             });
         }
 
@@ -1436,7 +1357,8 @@
             if (x + tip.offsetWidth > W - 12) x = bx - tip.offsetWidth - 8;
             if (x < 12) x = Math.max(12, Math.min(W - tip.offsetWidth - 12, bx));
             tip.style.left = x + 'px';
-            tip.style.top = (by + bs / 2 - tip.offsetHeight / 2) + 'px';
+            const H = window.innerHeight;
+            tip.style.top = Math.max(8, Math.min(H - tip.offsetHeight - 8, by + bs / 2 - tip.offsetHeight / 2)) + 'px';
         }
         function hideTip() { tip.hidden = true; }
 
@@ -1449,8 +1371,7 @@
             const next = Math.max(0, Math.min(26, focusNak + keys[e.key]));
             buttons[focusNak].tabIndex = -1;
             buttons[next].tabIndex = 0;
-            buttons[next].focus({ preventScroll: true });
-            buttons[next].scrollIntoView({ block: 'center', behavior: reduce.matches ? 'auto' : 'smooth' });
+            buttons[next].focus();
         });
         document.addEventListener('click', (e) => {
             if (openNak !== -1 && !e.target.closest('.nak')) { setOpen(-1); hideTip(); }
@@ -1461,14 +1382,13 @@
             buttons[focusNak].tabIndex = -1;
             focusNak = todayNak;
             buttons[todayNak].tabIndex = 0;
-            buttons[todayNak].scrollIntoView({ block: 'center', behavior: reduce.matches ? 'auto' : 'smooth' });
-            buttons[todayNak].focus({ preventScroll: true });
+            buttons[todayNak].focus();
             setOpen(todayNak);
             showTip(todayNak);
         }
 
 
-        /* ============ 3. PANCHANGAM ============ */
+        /* ============ 2. PANCHANGAM ============ */
         // Sun and Moon longitudes from Meeus, Astronomical Algorithms
         // (ch. 25 and 47). Checked against astronomy-engine: within 0.01°,
         // which puts tithi end times within about a minute.
@@ -1638,6 +1558,45 @@
             if (!panel.hidden && !e.target.closest('#panch')) closePanel();
         });
 
+        /* ============ 3. MANTRA EASTER EGG ============ */
+        // Typing "jai hanuman" anywhere (spaces optional) sets off a burst
+        // of saffron light. Reduced motion gets a soft glow instead.
+        const MANTRA = 'jaihanuman';
+        let typed = '', burstAt = 0;
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey || e.altKey || e.key.length !== 1) return;
+            if (e.key === ' ') return; // spaces don't break the mantra
+            typed = (typed + e.key.toLowerCase()).slice(-MANTRA.length);
+            if (typed === MANTRA && Date.now() - burstAt > 2500) {
+                burstAt = Date.now();
+                typed = '';
+                mantraBurst();
+            }
+        });
+
+        function mantraBurst() {
+            const layer = document.createElement('div');
+            layer.className = 'mantra-burst';
+            layer.setAttribute('aria-hidden', 'true');
+            let html = '<div class="mantra-glow"></div>';
+            if (!reduce.matches) {
+                const reach = Math.max(window.innerWidth, window.innerHeight) * 0.6;
+                for (let k = 0; k < 28; k++) {
+                    const ang = k * (360 / 28) + ((k * 37) % 9);
+                    const dist = reach * (0.45 + ((k * 53) % 50) / 100);
+                    html += `<span class="mantra-spark" style="--a:${ang}deg;--d:${Math.round(dist)}px;animation-delay:${(k % 4) * 0.05}s"></span>`;
+                }
+            }
+            html += '<div class="mantra-words" lang="te">జై హనుమాన్</div>';
+            layer.innerHTML = html;
+            document.body.appendChild(layer);
+            document.getElementById('mantraLive').textContent = 'జై హనుమాన్! Jai Hanuman!';
+            setTimeout(() => {
+                layer.remove();
+                document.getElementById('mantraLive').textContent = '';
+            }, 2600);
+        }
+
         /* ============ start ============ */
         buildSky();
         renderPanch();
@@ -1645,13 +1604,15 @@
         let resizeTimer;
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(() => { buildSky(); requestLeap(); }, 150);
+            resizeTimer = setTimeout(buildSky, 150);
         });
-        window.addEventListener('load', () => { layoutSky(buttons[0].offsetWidth); requestLeap(); });
+        // Fonts change the name's height, so lay out again once they're in
+        window.addEventListener('load', () => layoutSky(buttons[0].offsetWidth));
 
         window.Chedalla = {
             setLang(l) { lang = l; renderPanch(); if (!tip.hidden && openNak >= 0) showTip(openNak); },
-            panchangam
+            panchangam,
+            mantraBurst
         };
     })();
     </script>
