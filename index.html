@@ -381,7 +381,9 @@
         }
 
 
-        /* --- PANCHANGAM BADGE --- */
+        /* --- PANCHANGAM BADGE ---
+           Three states: just today's Moon (default), a pill with the
+           tithi on hover or keyboard focus, and a square card on click. */
         .panch {
             position: fixed;
             left: max(24px, env(safe-area-inset-left, 0px));
@@ -390,10 +392,11 @@
             font-size: 13px;
         }
         .panch-badge {
+            position: relative;
+            z-index: 1; /* sits on top of the card when it's open */
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 8px 14px 8px 10px;
+            padding: 6px;
             border-radius: 999px;
             border: 1px solid rgba(255, 153, 51, 0.45);
             background: rgba(8, 8, 16, 0.82);
@@ -401,21 +404,40 @@
             font: inherit;
             text-align: left;
             cursor: pointer;
-            transition: border-color 0.2s ease;
+            transition: border-color 0.2s ease, padding 0.3s ease, background-color 0.2s ease;
         }
         .panch-badge:hover { border-color: var(--hanuman-saffron); }
         .panch-badge:focus-visible { outline: 2px solid var(--neon-color); outline-offset: 3px; }
-        .panch-badge svg { flex: none; }
+        .panch-badge svg { flex: none; display: block; }
+        /* The tithi text is folded away until hover, focus or open */
+        .panch-text {
+            display: block;
+            max-width: 0;
+            overflow: hidden;
+            white-space: nowrap;
+            opacity: 0;
+            transition: max-width 0.35s ease, opacity 0.2s ease, margin 0.35s ease;
+        }
+        .panch:hover .panch-badge,
+        .panch:focus-within .panch-badge,
+        .panch.is-open .panch-badge { padding-right: 14px; }
+        .panch:hover .panch-text,
+        .panch:focus-within .panch-text,
+        .panch.is-open .panch-text { max-width: 280px; opacity: 1; margin-left: 10px; }
+        .panch.is-open .panch-badge { border-color: transparent; background-color: transparent; }
         .panch-line1 { display: block; font-weight: 600; font-size: 14px; }
         .panch-line2 { display: block; color: #a9adbf; font-size: 12px; }
+        /* The square card grows out of the pill, from the same corner */
         .panch-panel {
             position: absolute;
             left: 0;
-            top: calc(100% + 10px);
+            top: 0;
             width: min(320px, calc(100vw - 32px));
             box-sizing: border-box;
-            padding: 16px 18px;
-            border-radius: 14px;
+            padding: 64px 18px 16px;
+            border-radius: 18px;
+            transform-origin: top left;
+            animation: panch-grow 0.28s ease-out;
             background: rgba(8, 10, 22, 0.96);
             border: 1px solid rgba(255, 153, 51, 0.45);
             color: #cfd2e0;
@@ -428,6 +450,10 @@
         .panch-panel dd { margin: 0; color: #fff; }
         .panch-panel dd small { display: block; color: #a9adbf; font-size: 12px; }
         .panch-panel .panch-note { margin: 12px 0 0; font-size: 11.5px; color: #8a8ea3; }
+        @keyframes panch-grow {
+            from { transform: scale(0.5, 0.2); opacity: 0; }
+            to { transform: none; opacity: 1; }
+        }
 
         /* --- MANTRA EASTER EGG: type "jai hanuman" --- */
         .mantra-burst {
@@ -586,6 +612,8 @@
             /* Mantra: a soft saffron glow that fades, no burst or sparks */
             .mantra-glow { animation: mantra-fade 2s ease-in-out forwards; transform: none; }
             .mantra-spark { display: none; }
+            .panch-panel { animation: none; }
+            .panch-badge, .panch-text { transition: none; }
             .mantra-words { animation: mantra-fade 2.4s ease-in-out forwards; }
 
             /* Show the name once, centred, instead of scrolling */
@@ -629,7 +657,7 @@
     <div class="panch" id="panch">
         <button type="button" class="panch-badge" id="panchBadge" aria-expanded="false" aria-controls="panchPanel">
             <span id="panchMoon" aria-hidden="true"></span>
-            <span>
+            <span class="panch-text">
                 <span class="panch-line1" id="panchLine1"></span>
                 <span class="panch-line2" id="panchLine2"></span>
             </span>
@@ -1194,7 +1222,7 @@
             const line1 = `${monthName} ${pakshaName} ${tithiName}`;
             const nakName = lang === 'te' ? NAKSHATRAS[P.nak][0] : NAKSHATRAS[P.nak][1];
 
-            document.getElementById('panchMoon').innerHTML = moonIcon(P.e, 13);
+            document.getElementById('panchMoon').innerHTML = moonIcon(P.e, 14);
             document.getElementById('panchLine1').textContent = line1;
             document.getElementById('panchLine2').textContent = `${L.day[now.getDay()]} · ${L.year[P.year]}${lang === 'te' ? '' : L.yearSuffix}`;
             badge.lang = lang;
@@ -1212,8 +1240,9 @@
 
         }
 
-        function openPanel() { panel.hidden = false; badge.setAttribute('aria-expanded', 'true'); }
-        function closePanel() { panel.hidden = true; badge.setAttribute('aria-expanded', 'false'); }
+        const panchBox = document.getElementById('panch');
+        function openPanel() { panel.hidden = false; panchBox.classList.add('is-open'); badge.setAttribute('aria-expanded', 'true'); }
+        function closePanel() { panel.hidden = true; panchBox.classList.remove('is-open'); badge.setAttribute('aria-expanded', 'false'); }
         badge.addEventListener('click', () => panel.hidden ? openPanel() : closePanel());
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && !panel.hidden) { closePanel(); badge.focus(); }
